@@ -16,6 +16,7 @@
         kdePackages.kate 
         kdePackages.kdeconnect-kde
         netflix
+        ytmdesktop
       ];
     };
   };

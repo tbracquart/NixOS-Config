@@ -34,6 +34,8 @@
       defaultEditor = true;
     };
 
+    kdeconnect.enable = true;
+
     fish = {
       enable = true;
       interactiveShellInit = ''

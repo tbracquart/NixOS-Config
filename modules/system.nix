@@ -12,14 +12,14 @@
       timeout = 0;
     };
 
-    kernelPackages = pkgs.linuxPackages_latest; 
-    kernelParams = [ "quiet" "splash" "i915.force_probe=9a49" "video=eDP-1:1920x1080@60" ];
+    kernelPackages = pkgs.linuxPackages_zen; 
+    kernelParams = [ "quiet" "splash" "i915.force_probe=!9a49" "xe.force_probe=9a49" ];
     consoleLogLevel = 3; 
 
     plymouth = { enable = true; theme = "bgrt"; };
 
     initrd = {
-      kernelModules = [ ];
+      kernelModules = [ "xe" ];
       systemd.enable = true;
       verbose = false;
     };
@@ -32,7 +32,7 @@
   networking = {
     hostName = "NixOS";
     networkmanager.enable = true;
-    firewall.enable = false;
+    firewall.enable = true;
     firewall.allowedUDPPorts = [ 5353 ];
   };
 
