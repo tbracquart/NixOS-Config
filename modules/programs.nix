@@ -51,6 +51,15 @@
         function rebuild
           sudo nixos-rebuild switch
         end
+
+        function nixpush
+          cd /etc/nixos
+          sudo git add .
+          sudo git status
+          read -P "Message de commit : " commit_msg
+          sudo git commit -m "$commit_msg"
+          sudo git push
+        end
       '';
     };
   };
