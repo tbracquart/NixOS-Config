@@ -26,11 +26,27 @@
   };
 
   # ==========================================
+  #  BATTERIE
+  # ==========================================
+
+  systemd.services.battery-charge-threshold = {
+    description = "Limiter la charge de la batterie à 80%";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.writeShellScript "set-charge-threshold" ''
+        echo 80 > /sys/class/power_supply/BAT0/charge_control_end_threshold
+      ''}";
+      RemainAfterExit = true;
+    };
+  };
+  # ==========================================
   #  RÉSEAU & LOCALISATION
   # ==========================================
 
   networking = {
-    hostName = "NixOS";
+    hostName = "NixOS-ZenBook13";
     networkmanager.enable = true;
     firewall.enable = true;
     firewall.allowedUDPPorts = [ 5353 ];
