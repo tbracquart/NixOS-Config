@@ -9,17 +9,7 @@
 
   environment = {
     shells = [ pkgs.fish ];
-    systemPackages = with pkgs; [
-      btop
-      fastfetch
-      pciutils
-      tree
-      kde-rounded-corners
-      file
-      bat
-      mpv
-      git
-    ];
+    systemPackages = with pkgs; [ btop fastfetch pciutils tree kde-rounded-corners file bat mpv ];
   };
 
   # ==========================================
@@ -29,10 +19,7 @@
   programs = {
     firefox.enable = true;
 
-    vim = {
-      enable = true;
-      defaultEditor = true;
-    };
+    vim = { enable = true; defaultEditor = true; };
 
     kdeconnect.enable = true;
 
@@ -62,5 +49,11 @@
         end
       '';
     };
+
+    git = {
+      enable = true;
+      config = { user.name = "Thibaut Bracquart"; user.email = "thibaut.racquart@proton.me"; };
+    };
+
   };
 }
