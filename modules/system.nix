@@ -47,7 +47,7 @@
   # ==========================================
 
   networking = {
-    hostName = "NixOS-ZenBook13";
+    hostName = "ZenBook-13";
     networkmanager.enable = true;
     firewall.enable = true;
     firewall.allowedUDPPorts = [ 5353 ];
