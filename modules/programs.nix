@@ -52,7 +52,7 @@
 
     git = {
       enable = true;
-      config = { user.name = "Thibaut Bracquart"; user.email = "thibaut.bracquart@proton.me"; };
+      config = { user.name = "Thibaut Bracquart"; user.email = "202062783+tbracquart@users.noreply.github.com"; };
     };
 
   };
