@@ -53,6 +53,15 @@
     firewall.allowedUDPPorts = [ 5353 ];
   };
 
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    publish = {
+      enable = true;
+      addresses = true;
+    };
+  };
+
   time.timeZone = "Europe/Paris";
 
   i18n = {
@@ -71,4 +80,11 @@
   };
 
   console.keyMap = "fr";
+
+  services.geoclue2 = {
+    enable = true;
+    geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
+  };
+
+  location.provider = "geoclue2";
 }
