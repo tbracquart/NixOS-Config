@@ -39,6 +39,14 @@
           sudo nixos-rebuild switch
         end
 
+        function update
+          sudo nix-channel --update
+        end
+
+        function upgrade
+          sudo nixos-rebuild switch --upgrade
+        end
+
         function nixpush
           cd /etc/nixos
           sudo git add .
@@ -55,5 +63,6 @@
       config = { user.name = "Thibaut Bracquart"; user.email = "202062783+tbracquart@users.noreply.github.com"; };
     };
 
+    nh.enable = true;
   };
 }
