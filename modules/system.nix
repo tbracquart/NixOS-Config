@@ -90,9 +90,13 @@
   #  RÉSEAU & LOCALISATION
   # ==========================================
 
-  networking = {
+networking = {
     hostName = "ZenBook-13";
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      settings = { connection."wifi.powersave" = 2; };
+    };
+
     firewall.enable = true;
     firewall.allowedUDPPorts = [ ];
   };
