@@ -12,9 +12,9 @@
       timeout = 0;
     };
 
-    kernelPackages = pkgs.linuxPackages_zen; 
+    kernelPackages = pkgs.linuxPackages_zen;
     kernelParams = [ "quiet" "splash" "i915.force_probe=!9a49" "xe.force_probe=9a49" ];
-    consoleLogLevel = 3; 
+    consoleLogLevel = 3;
 
     plymouth = { enable = true; theme = "bgrt"; };
 
@@ -24,6 +24,50 @@
       verbose = false;
     };
   };
+
+  # ==========================================
+  #  GPU (ACCÉLÉRATION MATÉRIELLE - INTEL XE)
+  # ==========================================
+
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver     # VA-API (iHD) - requis pour Xe/Arc
+      vpl-gpu-rt              # oneVPL (QSV) runtime
+      intel-compute-runtime   # OpenCL / Level Zero
+    ];
+  };
+
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "iHD"; # force le backend moderne iHD (au lieu de i965)
+  };
+
+  # ==========================================
+  #  FIRMWARE (WIFI/BLUETOOTH, MICROCODE)
+  # ==========================================
+
+  hardware.enableRedistributableFirmware = true;
+  # Note : hardware.wirelessRegulatoryDatabase (régulation WiFi) est activé
+  # automatiquement par enableRedistributableFirmware, pas besoin de le forcer.
+  # Note : sof-firmware (son Tiger Lake) est aussi inclus automatiquement ici.
+
+  # ==========================================
+  #  AUDIO — CONTOURNEMENT CONNU (TIGER LAKE + SOF)
+  # ==========================================
+  # Bug documenté (kernel/thesofproject) sur les puces audio Tiger Lake :
+  # le son peut disparaître après une veille. Pas garanti de se produire
+  # sur ce système précis (dépend du kernel). Si ça arrive, décommenter :
+  #
+  # powerManagement.resumeCommands = ''
+  #   ${pkgs.kmod}/bin/modprobe -r snd_sof_pci_intel_tgl
+  #   ${pkgs.kmod}/bin/modprobe snd_sof_pci_intel_tgl
+  # '';
+
+  # ==========================================
+  #  MISES À JOUR FIRMWARE (BIOS, CONTRÔLEURS)
+  # ==========================================
+
+  services.fwupd.enable = true;
 
   # ==========================================
   #  BATTERIE
