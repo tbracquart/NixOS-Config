@@ -53,15 +53,6 @@
     firewall.allowedUDPPorts = [ 5353 ];
   };
 
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-    publish = {
-      enable = true;
-      addresses = true;
-    };
-  };
-
   time.timeZone = "Europe/Paris";
 
   i18n = {
