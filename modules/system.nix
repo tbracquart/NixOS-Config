@@ -50,16 +50,17 @@
     hostName = "ZenBook-13";
     networkmanager.enable = true;
     firewall.enable = true;
-    firewall.allowedUDPPorts = [ 5353 ];
+    firewall.allowedUDPPorts = [ ];
   };
 
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-    publish = {
+  services = {
+    avahi = {
       enable = true;
-      addresses = true;
+      nssmdns4 = true;
+      publish = { enable = true; addresses = true; };
     };
+
+    samba.enable = true;
   };
 
   time.timeZone = "Europe/Paris";
@@ -80,11 +81,4 @@
   };
 
   console.keyMap = "fr";
-
-  services.geoclue2 = {
-    enable = true;
-    geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
-  };
-
-  location.provider = "geoclue2";
 }
