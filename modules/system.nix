@@ -63,26 +63,6 @@
     samba.enable = true;
   };
 
-    dbus.packages = [
-      (pkgs.writeTextFile {
-        name = "geoclue-wpa-supplicant-dbus-policy";
-        destination = "/etc/dbus-1/system.d/geoclue-wpa-supplicant.conf";
-        text = ''
-          <!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
-           "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
-          <busconfig>
-            <policy user="geoclue">
-              <allow receive_sender="fi.w1.wpa_supplicant1" receive_type="signal"/>
-              <allow send_destination="fi.w1.wpa_supplicant1" send_interface="org.freedesktop.DBus.Properties" send_member="Get"/>
-              <allow send_destination="fi.w1.wpa_supplicant1" send_interface="org.freedesktop.DBus.Properties" send_member="GetAll"/>
-              <allow send_destination="fi.w1.wpa_supplicant1" send_interface="org.freedesktop.DBus.Introspectable"/>
-              <allow send_destination="fi.w1.wpa_supplicant1" send_interface="fi.w1.wpa_supplicant1.Interface" send_type="method_call" send_member="Scan"/>
-            </policy>
-          </busconfig>
-        '';
-      })
-    ];
-
   time.timeZone = "Europe/Paris";
 
   i18n = {
