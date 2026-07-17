@@ -32,27 +32,9 @@
     };
 
     openssh.enable = true;
+
+    flatpak.enable = true;
   };
-
-  # =========================================
-  #  RÉSEAU
-  # =========================================
-
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-    publish = {
-      enable = true;
-      addresses = true;
-    };
-  };
-
-  services.geoclue2 = {
-    enable = true;
-    geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
-  };
-
-  location.provider = "geoclue2";
 
   # ==========================================
   #  BLUETOOTH
