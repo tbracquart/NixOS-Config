@@ -23,45 +23,13 @@
 
     kdeconnect.enable = true;
 
-    fish = {
-      enable = true;
-      interactiveShellInit = ''
-        fastfetch
-        echo
+    # Fish activé au niveau système (nécessaire pour users.users.thibaut.shell).
+    # Les fonctions perso (rebuild, nixpush, etc.) sont gérées côté
+    # Home Manager : voir https://github.com/tbracquart/Home-Manager-Config
+    fish.enable = true;
 
-        function clr
-          clear
-          fastfetch
-          echo
-        end
-
-        function rebuild
-          sudo nixos-rebuild switch
-        end
-
-        function update
-          sudo nix-channel --update
-        end
-
-        function upgrade
-          sudo nixos-rebuild switch --upgrade
-        end
-
-        function nixpush
-          cd /etc/nixos
-          sudo git add .
-          sudo git status
-          read -P "Message de commit : " commit_msg
-          sudo git commit -m "$commit_msg"
-          sudo git push
-        end
-      '';
-    };
-
-    git = {
-      enable = true;
-      config = { user.name = "Thibaut Bracquart"; user.email = "202062783+tbracquart@users.noreply.github.com"; };
-    };
+    # Config Git perso (nom, email) migrée vers Home Manager :
+    # https://github.com/tbracquart/Home-Manager-Config
 
     nh.enable = true;
   };
