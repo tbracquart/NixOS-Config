@@ -17,27 +17,12 @@
   # ==========================================
 
   programs = {
+    fish = { enable = true; };
+
     firefox.enable = true;
 
+    kdeconnect. enable = false;
+
     vim = { enable = true; defaultEditor = true; };
-
-    kdeconnect.enable = true;
-
-    fish = {
-      enable = true;
-      interactiveShellInit = ''
-        function rebuild
-          sudo nixos-rebuild switch
-        end
-
-        function update
-          sudo nix-channel --update
-        end
-
-        function upgrade
-          sudo nixos-rebuild switch --upgrade
-        end
-      '';
-    };
   };
 }
