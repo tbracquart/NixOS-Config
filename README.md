@@ -44,14 +44,14 @@ Au-delà du côté pratique, c'est aussi un terrain de jeu pour comprendre en pr
 .
 ├── configuration.nix           # Point d'entrée principal
 ├── hardware-configuration.nix  # Config matérielle générée par NixOS
-├── modules/
-│   ├── system.nix              # Boot, kernel, GPU, réseau, localisation
-│   ├── services.nix            # Services système (Plasma, audio, Howdy...)
-│   ├── users.nix                # Comptes utilisateurs
-│   └── programs.nix            # Programmes, shell Fish, Git
-└── home/
-    └── thibaut.nix              # Config Home Manager (en cours d'intégration)
+└── modules/
+    ├── system.nix              # Boot, kernel, GPU, réseau, localisation
+    ├── services.nix            # Services système (Plasma, audio, Howdy...)
+    ├── users.nix                # Comptes utilisateurs
+    └── programs.nix            # Programmes, shell Fish, Git
 ```
+
+Ma configuration **Home Manager** (packages et dotfiles utilisateur) vit dans un dépôt séparé : **[Home-Manager-Config](https://github.com/tbracquart/Home-Manager-Config)**. Séparation volontaire, pour garder une frontière nette entre config système (`root`) et config utilisateur (`thibaut`).
 
 Chaque module est responsable d'un domaine précis, pour que ce soit facile à faire évoluer sans tout casser.
 
@@ -67,4 +67,4 @@ Chaque module est responsable d'un domaine précis, pour que ce soit facile à f
 
 ## Note
 
-Cette configuration est en perpétuelle évolution, au rythme de mes découvertes et de mes envies de personnalisation. Certaines parties (comme l'intégration Home Manager) sont encore en chantier.
+Cette configuration est en perpétuelle évolution, au rythme de mes découvertes et de mes envies de personnalisation.
