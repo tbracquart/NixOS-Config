@@ -16,6 +16,7 @@
         kdePackages.kdeconnect-kde
         netflix
         ytmdesktop
+        klavaro
       ];
     };
   };
