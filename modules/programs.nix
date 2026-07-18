@@ -23,14 +23,21 @@
 
     kdeconnect.enable = true;
 
-    # Fish activé au niveau système (nécessaire pour users.users.thibaut.shell).
-    # Les fonctions perso (rebuild, nixpush, etc.) sont gérées côté
-    # Home Manager : voir https://github.com/tbracquart/Home-Manager-Config
-    fish.enable = true;
+    fish = {
+      enable = true;
+      interactiveShellInit = ''
+        function rebuild
+          sudo nixos-rebuild switch
+        end
 
-    # Config Git perso (nom, email) migrée vers Home Manager :
-    # https://github.com/tbracquart/Home-Manager-Config
+        function update
+          sudo nix-channel --update
+        end
 
-    nh.enable = true;
+        function upgrade
+          sudo nixos-rebuild switch --upgrade
+        end
+      '';
+    };
   };
 }
