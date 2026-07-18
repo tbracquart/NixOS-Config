@@ -136,4 +136,10 @@ networking = {
   };
 
   location.provider = "geoclue2";
+
+  # ===========================================
+  #  AUTRE FONCTIONS
+  # ==========================================
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 }
