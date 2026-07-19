@@ -21,7 +21,7 @@
 
     firefox.enable = true;
 
-    kdeconnect. enable = false;
+    kdeconnect. enable = true;
 
     vim = { enable = true; defaultEditor = true; };
   };
