@@ -21,7 +21,10 @@
 
     firefox.enable = true;
 
-    kdeconnect. enable = true;
+    kdeconnect = {
+      enable = false;
+      openFirewall = true;
+    };
 
     vim = { enable = true; defaultEditor = true; };
   };
