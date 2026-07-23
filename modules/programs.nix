@@ -9,7 +9,7 @@
 
   environment = {
     shells = [ pkgs.fish ];
-    systemPackages = with pkgs; [ htop btop fastfetch pciutils tree kde-rounded-corners file bat mpv ];
+    systemPackages = with pkgs; [ htop btop fastfetch pciutils tree kde-rounded-corners file bat mpv ripgrep ];
   };
 
   # ==========================================
