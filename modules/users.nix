@@ -11,13 +11,7 @@
       description = "Thibaut Bracquart";
       extraGroups = [ "networkmanager" "wheel" "sudo" ];
       shell = pkgs.fish;
-      packages = with pkgs; [
-        kdePackages.kate 
-        kdePackages.kdeconnect-kde
-        netflix
-        ytmdesktop
-        klavaro
-      ];
+      packages = with pkgs; [ ];
     };
   };
 }
