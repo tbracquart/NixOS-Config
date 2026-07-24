@@ -34,7 +34,6 @@
     extraPackages = with pkgs; [
       intel-media-driver     # VA-API (iHD) - requis pour Xe/Arc
       vpl-gpu-rt              # oneVPL (QSV) runtime
-      intel-compute-runtime   # OpenCL / Level Zero
     ];
   };
 
@@ -50,18 +49,6 @@
   # Note : hardware.wirelessRegulatoryDatabase (régulation WiFi) est activé
   # automatiquement par enableRedistributableFirmware, pas besoin de le forcer.
   # Note : sof-firmware (son Tiger Lake) est aussi inclus automatiquement ici.
-
-  # ==========================================
-  #  AUDIO — CONTOURNEMENT CONNU (TIGER LAKE + SOF)
-  # ==========================================
-  # Bug documenté (kernel/thesofproject) sur les puces audio Tiger Lake :
-  # le son peut disparaître après une veille. Pas garanti de se produire
-  # sur ce système précis (dépend du kernel). Si ça arrive, décommenter :
-  #
-  # powerManagement.resumeCommands = ''
-  #   ${pkgs.kmod}/bin/modprobe -r snd_sof_pci_intel_tgl
-  #   ${pkgs.kmod}/bin/modprobe snd_sof_pci_intel_tgl
-  # '';
 
   # ==========================================
   #  MISES À JOUR FIRMWARE (BIOS, CONTRÔLEURS)
@@ -90,7 +77,7 @@
   #  RÉSEAU & LOCALISATION
   # ==========================================
 
-networking = {
+  networking = {
     hostName = "ZenBook-13";
     networkmanager = {
       enable = true;
@@ -130,7 +117,7 @@ networking = {
 
   console.keyMap = "fr";
 
-    services.geoclue2 = {
+  services.geoclue2 = {
     enable = true;
     geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
   };
