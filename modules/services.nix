@@ -18,12 +18,14 @@
 
     displayManager.sddm.enable = true;
     desktopManager.plasma6.enable = true;
-    printing.enable = true;
+    printing = {
+      enable = true;
+      drivers = [ pkgs.hplip ]; # requis pour l'imprimante HP Deskjet
+    };
 
     pipewire = {
       enable = true;
       alsa.enable = true;
-      alsa.support32Bit = true;
       pulse.enable = true;
     };
 
@@ -55,7 +57,7 @@
       enable = true;
       control = "sufficient";
     };
-  
-  pam.services.polkit-1.howdy.enable = false;
+
+    pam.services.polkit-1.howdy.enable = false;
   };
 }
