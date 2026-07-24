@@ -1,12 +1,13 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ 
+  imports = [
     ./hardware-configuration.nix
     ./modules/system.nix
     ./modules/services.nix
     ./modules/users.nix
     ./modules/programs.nix
+    ./modules/hyprland.nix
     ./kdeconnect-openfirewall.nix
   ];
 
