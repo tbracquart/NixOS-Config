@@ -1,20 +1,21 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
-  # ==========================================
-  #  HYPRLAND (dual-config avec KDE Plasma)
-  # ==========================================
+  # 1. Activer le module NixOS pour Hyprland
+  programs.hyprland.enable = true;
 
-  programs.hyprland = {
-    enable = true;
-    withUWSM = true;      # intégration systemd propre, cohabite avec SDDM + Plasma
-    xwayland.enable = true;
-  };
-
-  # Electron/Chromium en Wayland natif
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
-
-  environment.systemPackages = with pkgs; [
-    kitty          # requis par la config par défaut de Hyprland
-  ];
+  # 2. Optionnel mais recommandé : meilleure intégration XDG Portal
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+  
+  # 3. Définir la session Hyprland pour ton Display Manager (SDDM)
+  services.displayManager.defaultSession = "hyprland";
+  
+  # 4. Si tu veux utiliser SDDM avec Hyprland, c'est déjà bon.
+  #    Sinon, tu peux aussi ajouter Hyprland comme session:
+  # services.displayManager.session = [{
+  #   manage = "desktop";
+  #   name = "hyprland";
+  #   start = "exec Hyprland";
+  # }];
 }
