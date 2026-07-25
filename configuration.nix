@@ -23,13 +23,17 @@ in
     ./kdeconnect-openfirewall.nix
   ];
 
-  # Noctalia est géré ici, une seule fois, via le module NixOS officiel.
-  # Il ne faut PAS le relancer manuellement depuis la config Lua Hyprland
-  # côté Home Manager (hl.on("hyprland.start", ...)) pour éviter un double
-  # lancement / une double configuration.
+  # Ce module NixOS installe le paquet Noctalia et permet sa configuration
+  # déclarative (programs.noctalia.settings), mais NE LANCE PAS le shell.
+  # Le lancement se fait via le compositeur (voir Home-Manager-Config/
+  # modules/desktop/hyprland.nix, hl.on("hyprland.start", ...)), qui est la
+  # méthode officiellement recommandée par Noctalia.
+  #
+  # ⚠️ systemd.enable est volontairement laissé désactivé (par défaut) :
+  # le démarrage via service systemd est déprécié côté Noctalia et peut
+  # créer une double instance si le compositeur le lance aussi.
   programs.noctalia = {
     enable = true;
-    # systemd.enable = true; # optionnel : gérer Noctalia via un service systemd user
   };
 
   disabledModules = [ "programs/kdeconnect.nix" ];
