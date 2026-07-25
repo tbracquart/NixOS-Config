@@ -12,11 +12,6 @@ in
     trusted-public-keys = [ "noctalia.cachix.org-1:Q+Yc4k8bqOUb5hbZB30DoePrspQ2qrm/WcB1MsOa3wE=" ];
   };
 
-  # 👇 OPTIONNEL MAIS RECOMMANDÉ pour Hyprland + Noctalia
-  programs.hyprland.withUWSM = true;
-
-  # ... le reste de ta config
-
   imports = [
     "${noctalia-src}/nix/nixos-module.nix"
     ./hardware-configuration.nix
@@ -28,10 +23,13 @@ in
     ./kdeconnect-openfirewall.nix
   ];
 
+  # Noctalia est géré ici, une seule fois, via le module NixOS officiel.
+  # Il ne faut PAS le relancer manuellement depuis la config Lua Hyprland
+  # côté Home Manager (hl.on("hyprland.start", ...)) pour éviter un double
+  # lancement / une double configuration.
   programs.noctalia = {
     enable = true;
-    # Optionnel : configurer le service systemd
-    # systemd.enable = true;
+    # systemd.enable = true; # optionnel : gérer Noctalia via un service systemd user
   };
 
   disabledModules = [ "programs/kdeconnect.nix" ];
