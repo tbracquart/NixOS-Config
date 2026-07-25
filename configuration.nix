@@ -13,5 +13,12 @@
 
   disabledModules = [ "programs/kdeconnect.nix" ];
 
+
+  virtualisation.vmVariant = {
+    # Définit un mot de passe temporaire pour votre utilisateur, uniquement dans la VM
+    users.users.thibaut.initialPassword = "test";
+  };
+
+
   system.stateVersion = "26.05";
 }

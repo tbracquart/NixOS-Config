@@ -36,6 +36,8 @@
     openssh.enable = true;
 
     flatpak.enable = true;
+
+    gpm.enable = true;
   };
 
   # ==========================================
