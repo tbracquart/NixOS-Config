@@ -9,7 +9,17 @@
 
   environment = {
     shells = [ pkgs.fish ];
-    systemPackages = with pkgs; [ htop btop fastfetch pciutils tree file bat mpv ripgrep ];
+    systemPackages = with pkgs; [
+      htop
+      btop
+      fastfetch
+      pciutils
+      tree
+      file
+      bat
+      mpv
+      ripgrep
+    ];
   };
 
   # ==========================================
