@@ -1,14 +1,33 @@
 { config, pkgs, lib, ... }:
 
 {
-  imports = [ ];
+  imports = [
+    ./hardware-configuration.nix
+  ];
 
   # ============================================================================
-  # 1. PARAMÈTRES NIX & FLAKES
+  # 1. PARAMÈTRES NIX, FLAKES & CACHES BINAIRES (CACHIX)
   # ============================================================================
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
+      
+      # Autorise root et thibaut à faire confiance aux substituts des Flakes
+      trusted-users = [ "root" "thibaut" ];
+
+      # Serveurs de cache binaire pour éviter de tout recompiler
+      substituters = [
+        "https://cache.nixos.org"
+        "https://nix-community.cachix.org"
+        "https://noctalia.cachix.org"
+      ];
+
+      # Clés de sécurité publiques
+      trusted-public-keys = [
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3FS="
+        "noctalia.cachix.org-1:R8383I46n+T0D/V4xN897255W1U8Y+W22Y="
+      ];
     };
     gc = {
        automatic = true;
