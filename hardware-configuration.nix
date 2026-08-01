@@ -4,69 +4,44 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+  imports =
+    [ (modulesPath + "/installer/scan/not-detected.nix")
+    ];
 
-  # ==========================================
-  #  MODULES DE DÉMARRAGE & CRYPTAGE (BOOT)
-  # ==========================================
+  boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "nvme" "rtsx_pci_sdmmc" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
 
-  boot = {
-    initrd = {
-      availableKernelModules = [ "xhci_pci" "thunderbolt" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
-      kernelModules = [ ];
-      
-      # Tous les déchiffrements LUKS matériels sont regroupés ici
-      luks.devices = {
-        "luks-ade5f675-089a-4464-a215-22e7ba9daa6d".device = "/dev/disk/by-uuid/ade5f675-089a-4464-a215-22e7ba9daa6d";
-        "luks-a0f369c9-319a-4e22-ac5f-7b5a191b22e8".device = "/dev/disk/by-uuid/a0f369c9-319a-4e22-ac5f-7b5a191b22e8";
-      };
-    };
-    
-    kernelModules = [ "kvm-intel" ];
-    extraModulePackages = [ ];
-  };
-
-  # ==========================================
-  #  SYSTEMES DE FICHIERS (DISQUES)
-  # ==========================================
-
-  fileSystems = {
-    "/" = { 
-      device = "/dev/mapper/luks-ade5f675-089a-4464-a215-22e7ba9daa6d";
+  fileSystems."/" =
+    { device = "/dev/mapper/luks-ade5f675-089a-4464-a215-22e7ba9daa6d";
       fsType = "btrfs";
     };
 
-    "/home" = { 
-      device = "/dev/mapper/luks-ade5f675-089a-4464-a215-22e7ba9daa6d";
-      fsType = "btrfs";
-      options = [ "subvol=home" ];
-    };
+  boot.initrd.luks.devices."luks-ade5f675-089a-4464-a215-22e7ba9daa6d".device = "/dev/disk/by-uuid/ade5f675-089a-4464-a215-22e7ba9daa6d";
 
-    "/nix" = { 
-      device = "/dev/mapper/luks-ade5f675-089a-4464-a215-22e7ba9daa6d";
+  fileSystems."/nix" =
+    { device = "/dev/mapper/luks-ade5f675-089a-4464-a215-22e7ba9daa6d";
       fsType = "btrfs";
       options = [ "subvol=nix" ];
     };
 
-    "/boot" = { 
-      device = "/dev/disk/by-uuid/B6F3-B2D4";
+  fileSystems."/home" =
+    { device = "/dev/mapper/luks-ade5f675-089a-4464-a215-22e7ba9daa6d";
+      fsType = "btrfs";
+      options = [ "subvol=home" ];
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/B6F3-B2D4";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
-  };
 
-  # ==========================================
-  #  PARTITION DE SWAP
-  # ==========================================
+  swapDevices =
+    [ { device = "/dev/mapper/luks-a0f369c9-319a-4e22-ac5f-7b5a191b22e8"; }
+    ];
 
-  swapDevices = [ 
-    { device = "/dev/mapper/luks-a0f369c9-319a-4e22-ac5f-7b5a191b22e8"; }
-  ];
-
-  # ==========================================
-  #  CONFIGURATION DU PROCESSEUR (PILOTES)
-  # ==========================================
- 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
