@@ -47,7 +47,7 @@
     };
 
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelParams = [ "quiet" "splash" "i915.force_probe=!9a49" "xe.force_probe=9a49" ];
+    kernelParams = [ "quiet" "splash" "i915.force_probe=!9a49" "xe.force_probe=9a49" "loglevel=3" "rd.systemd.show_status=false" ];
     consoleLogLevel = 3;
 
     # Support de l'hibernation (Resume) & déverrouillage de la Swap LUKS
@@ -94,6 +94,8 @@
     };
     firewall.enable = true;
   };
+
+  systemd.services.NetworkManager-wait-online.enable = false;
 
   time.timeZone = "Europe/Paris";
 
