@@ -85,7 +85,7 @@
       update = ''
         echo "🔄 Mise à jour des Flakes..."
         cd /etc/nixos
-        nix flake update
+        sudo nix flake update
         echo "✅ Flakes à jour !"
       '';
 
