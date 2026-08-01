@@ -30,9 +30,9 @@
       ];
     };
     gc = {
-       automatic = true;
-       dates = "weekly";
-       options = "--delete-older-than 14d";
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 14d";
     };
   };
 
@@ -50,6 +50,9 @@
     kernelParams = [ "quiet" "splash" "i915.force_probe=!9a49" "xe.force_probe=9a49" ];
     consoleLogLevel = 3;
 
+    # Support de l'hibernation (Resume) & déverrouillage de la Swap LUKS
+    resumeDevice = "/dev/mapper/luks-a0f369c9-319a-4e22-ac5f-7b5a191b22e8";
+
     plymouth = {
       enable = true;
       theme = "bgrt";
@@ -59,6 +62,9 @@
       kernelModules = [ "xe" ];
       systemd.enable = true;
       verbose = false;
+      
+      # Déverrouillage de la partition SWAP chiffrée lors du boot/initrd
+      luks.devices."luks-a0f369c9-319a-4e22-ac5f-7b5a191b22e8".device = "/dev/disk/by-uuid/a0f369c9-319a-4e22-ac5f-7b5a191b22e8";
     };
   };
 
