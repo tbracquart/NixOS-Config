@@ -56,5 +56,20 @@
         # Pas de Home Manager ici : machine partagée, pas de config perso à toi dessus.
       ];
     };
+
+    # Config de test pour vérifier la reproductibilité de ZenBook-13 dans une VM vierge
+    nixosConfigurations.ZenBook-13-vmtest = nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit inputs; };
+      modules = [
+        ./hosts/ZenBook-13-vmtest/configuration.nix
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.users.thibaut = import ./hosts/ZenBook-13-vmtest/home.nix;
+        }
+      ];
+    };
   };
 }
