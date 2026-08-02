@@ -49,13 +49,11 @@
       ];
     };
 
-    # Pour ajouter une autre machine plus tard :
-    # nixosConfigurations.NomDeLaMachine = nixpkgs.lib.nixosSystem {
-    #   specialArgs = { inherit inputs; };
-    #   modules = [
-    #     ./hosts/V145-15AST/configuration.nix
-    #     # + home-manager si besoin, avec ./hosts/nom-machine/home.nix
-    #   ];
-    # };
+    nixosConfigurations.V145-15AST = nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit inputs; };
+      modules = [
+        ./hosts/V145-15AST/configuration.nix
+      ];
+    };
   };
 }
