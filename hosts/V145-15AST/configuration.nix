@@ -127,6 +127,13 @@
     };
 
     kdeconnect.enable = true;
+    git = {
+      enable = true;
+      config = {
+        user.name = "Thibaut Bracquart";
+        user.email = "202062783+tbracquart@users.noreply.github.com";
+      };
+    };
   };
 
   # List services that you want to enable:
