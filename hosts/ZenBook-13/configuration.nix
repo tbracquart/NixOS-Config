@@ -233,6 +233,7 @@
       bat
       mpv
       ripgrep
+      qemu
     ];
   };
 
