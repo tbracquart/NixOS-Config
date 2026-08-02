@@ -1,1 +1,1 @@
-hosts/ZenBook-13/home.nix
+../ZenBook-13/home.nix
