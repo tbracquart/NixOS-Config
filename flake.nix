@@ -14,28 +14,31 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+
+    # Branche unstable, nécessaire pour Noctalia (dépend de la dernière version de Quickshell)
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     # Module Noctalia
     noctalia = {
       url = "github:noctalia-dev/noctalia";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     # Application FreeSMLauncher
     freesmlauncher = {
       url = "github:FreesmTeam/FreesmLauncher/develop";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, noctalia, freesmlauncher, ... }@inputs: {
-    nixosConfigurations.ZenBook-13 = nixpkgs.lib.nixosSystem {
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia, freesmlauncher, ... }@inputs: {
+    nixosConfigurations.ZenBook-13 = nixpkgs-unstable.lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/ZenBook-13/configuration.nix
@@ -53,6 +56,7 @@
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/V145-15AST/configuration.nix
+        # Pas de Home Manager ici : machine partagée, pas de config perso à toi dessus.
       ];
     };
   };
