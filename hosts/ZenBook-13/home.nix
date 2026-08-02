@@ -27,9 +27,7 @@
     ytmdesktop
     klavaro
     scrcpy
-  ]) ++ [
-    inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default
-  ];
+  ]) ++ [ inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
   # --- SERVICES UTILISATEUR ---
   services.kdeconnect.enable = true;
@@ -91,7 +89,7 @@
 
       rebuild = ''
         echo "🚀 Reconstruction du système NixOS + Home Manager..."
-        sudo nixos-rebuild switch --flake /etc/nixos#ZenBook-13
+        sudo nixos-rebuild switch --flake /etc/nixos
         echo "✅ Fini !"
       '';
 
