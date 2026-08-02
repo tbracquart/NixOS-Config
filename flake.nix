@@ -9,7 +9,7 @@
     ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3FS="
-      "noctalia.cachix.org-1:R8383I46n+T0D/V4xN897255W1U8Y+W22Y="
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
     ];
   };
 
