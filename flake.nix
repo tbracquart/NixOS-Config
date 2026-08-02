@@ -44,7 +44,7 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users.thibaut = import ./hosts/zenbook/home.nix;
+          home-manager.users.thibaut = import ./hosts/ZenBook-13/home.nix;
         }
       ];
     };
@@ -53,7 +53,7 @@
     # nixosConfigurations.NomDeLaMachine = nixpkgs.lib.nixosSystem {
     #   specialArgs = { inherit inputs; };
     #   modules = [
-    #     ./hosts/nom-machine/configuration.nix
+    #     ./hosts/V145-15AST/configuration.nix
     #     # + home-manager si besoin, avec ./hosts/nom-machine/home.nix
     #   ];
     # };
