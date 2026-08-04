@@ -27,6 +27,7 @@
     ytmdesktop
     klavaro
     scrcpy
+    vinegar
   ]) ++ [ inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
   # --- SERVICES UTILISATEUR ---
