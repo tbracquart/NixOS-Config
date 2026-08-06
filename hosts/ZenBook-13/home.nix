@@ -73,11 +73,12 @@
 
       push = ''
         cd /etc/nixos
-        git add .
-        git status
+        sudo git add .
+        sudo git status
+        sudo git diff --cached
         read -l -P "Message de commit : " commit_msg
-        git commit -m "$commit_msg"
-        git push
+        sudo git commit -m "$commit_msg"
+        sudo git push
         echo "✅ Push terminé !"
       '';
 

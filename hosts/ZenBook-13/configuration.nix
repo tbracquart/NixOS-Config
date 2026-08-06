@@ -32,7 +32,7 @@
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 14d";
+      options = "--delete-older-than 7d";
     };
   };
 
@@ -222,7 +222,6 @@
   nixpkgs.config.allowUnfree = true;
 
   environment = {
-    shells = [ pkgs.fish ];
     systemPackages = with pkgs; [
       htop
       btop
@@ -238,8 +237,8 @@
   };
 
   programs = {
-    fish.enable = true;
     firefox.enable = true;
+    fish.enable = true;
     vim = {
       enable = true;
       defaultEditor = true;
