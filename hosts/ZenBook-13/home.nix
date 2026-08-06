@@ -74,8 +74,8 @@
       push = ''
         cd /etc/nixos
         sudo git add .
-        sudo git status
         sudo git diff --cached
+        sudo git status
         read -l -P "Message de commit : " commit_msg
         sudo git commit -m "$commit_msg"
         sudo git push
