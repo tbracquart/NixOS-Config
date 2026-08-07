@@ -185,10 +185,6 @@
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
   };
 
-  # Noctalia : paquet direct depuis nixpkgs unstable (pas de module, cf. home.nix
-  # pour les settings). Service systemd utilisateur pour le lancer/relancer proprement.
-  environment.systemPackages = [ pkgs.noctalia ];
-
   # ============================================================================
   # 6. SÉCURITÉ & AUTHENTIFICATION (HOWDY)
   # ============================================================================
@@ -240,7 +236,7 @@
       enable = true;
       defaultEditor = true;
     };
-    kdeconnect.enable = false;
+    kdeconnect.enable = true;
   };
 
   # ============================================================================

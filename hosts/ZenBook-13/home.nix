@@ -24,6 +24,7 @@
     klavaro
     scrcpy
     vinegar
+    noctalia
   ]) ++ [ inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
   # --- SERVICES UTILISATEUR ---
