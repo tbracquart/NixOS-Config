@@ -5,26 +5,18 @@
   nixConfig = {
     extra-substituters = [
       "https://nix-community.cachix.org"
-      "https://noctalia.cachix.org"
     ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3FS="
-      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
     ];
   };
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-26.05";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Module Noctalia — garde son propre nixpkgs interne (nécessaire pour le cache Cachix,
-    # et permet au reste du système de rester en stable)
-    noctalia = {
-      url = "github:noctalia-dev/noctalia";
     };
 
     # Application FreeSMLauncher
@@ -34,7 +26,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, noctalia, freesmlauncher, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, freesmlauncher, ... }@inputs: {
     nixosConfigurations.ZenBook-13 = nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [

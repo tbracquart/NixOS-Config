@@ -1,10 +1,6 @@
 { config, pkgs, inputs, ... }:
 
 {
-  imports = [
-    inputs.noctalia.homeModules.default
-  ];
-
   # --- INFORMATIONS UTILISATEUR & ÉTAT ---
   home.stateVersion = "26.05";
   programs.home-manager.enable = true;
@@ -104,21 +100,13 @@
     };
   };
 
-  # 4. Noctalia Shell
-  programs.noctalia = {
-    enable = true;
-    settings = {
-      theme = {
-        mode = "light";
-        source = "wallpaper";
-        builtin = "vibrant";
-      };
-      wallpaper = {
-        enabled = true;
-        default.path = "/home/thibaut/Images/Fonds d'écran/wp12329556-nixos-wallpapers.png";
-      };
-    };
-  };
+  # 4. Noctalia Shell — settings versionnés dans le repo, symlinkés hors du store
+  # pour rester éditables en place depuis l'UI Noctalia. Après une session de réglages
+  # UI, penser à `diff` puis commit du fichier noctalia-settings.toml pour rester
+  # reproductible.
+  home.file.".config/noctalia/settings.toml".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "/etc/nixos/hosts/ZenBook-13/noctalia-settings.toml";
 
   # 5. Compositeur Hyprland (Config Lua)
   wayland.windowManager.hyprland = {

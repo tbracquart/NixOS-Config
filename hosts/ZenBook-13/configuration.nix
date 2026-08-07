@@ -3,7 +3,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    inputs.noctalia.nixosModules.default
   ];
 
   # ============================================================================
@@ -20,13 +19,11 @@
       substituters = [
         "https://cache.nixos.org"
         "https://nix-community.cachix.org"
-        "https://noctalia.cachix.org"
       ];
 
       # Clés de sécurité publiques
       trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3FS="
-        "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       ];
     };
     gc = {
@@ -188,9 +185,9 @@
     extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
   };
 
-  programs.noctalia = {
-    enable = true;
-  };
+  # Noctalia : paquet direct depuis nixpkgs unstable (pas de module, cf. home.nix
+  # pour les settings). Service systemd utilisateur pour le lancer/relancer proprement.
+  environment.systemPackages = [ pkgs.noctalia ];
 
   # ============================================================================
   # 6. SÉCURITÉ & AUTHENTIFICATION (HOWDY)
