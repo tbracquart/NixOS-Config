@@ -226,6 +226,7 @@
       mpv
       ripgrep
       qemu
+      alacritty
     ];
   };
 
