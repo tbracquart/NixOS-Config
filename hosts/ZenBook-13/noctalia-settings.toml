@@ -222,6 +222,10 @@ show_label = false
 [widget.brightness]
 show_label = false
 
+[widget.clock]
+format = "{:%H:%M %D}"
+timezone = "Europe/Paris"
+
 [widget.media]
 hide_when_no_media = true
 
