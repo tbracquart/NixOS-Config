@@ -210,8 +210,14 @@ transition_on_startup = true
 [widget.brightness]
 show_label = false
 
+[widget.media]
+hide_when_no_media = true
+
 [widget.network]
 show_label = false
+
+[widget.notifications]
+hide_when_no_unread = true
 
 [widget.volume]
 show_label = false
