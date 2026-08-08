@@ -8,11 +8,19 @@ sound_volume = 0.99999997764825821
 [bar.default]
 capsule = true
 center = [ "clock", "media", "notifications", "clipboard" ]
-end = [ "tray", "network", "bluetooth", "volume", "brightness", "battery", "session" ]
+end = [ "tray", "group:g1", "session" ]
 start = [ "launcher", "workspaces" ]
 
     [bar.default.dead_zone.actions]
     middle = "settings-toggle"
+
+    [[bar.default.capsule_group]]
+    enabled = true
+    fill = "surface_variant"
+    id = "g1"
+    members = [ "network", "bluetooth", "volume", "brightness", "battery" ]
+    opacity = 1.0
+    padding = 6.0
 
 [battery]
 warning_threshold = 20
@@ -207,6 +215,9 @@ transition_on_startup = true
 
     [wallpaper.monitors.eDP-1]
     path = "/home/thibaut/Images/Fonds d'écran/wp12329556-nixos-wallpapers.png"
+
+[widget.battery]
+show_label = false
 
 [widget.brightness]
 show_label = false
