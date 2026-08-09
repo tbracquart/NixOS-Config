@@ -6,6 +6,21 @@
   programs.home-manager.enable = true;
   home.enableNixpkgsReleaseCheck = false;
 
+  systemd.user.services.hyprland-power-inhibit = {
+    Unit = {
+      Description = "Inhibit logind power key handling for Hyprland session";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.systemd}/bin/systemd-inhibit --what=handle-power-key --who=Hyprland --why=\"Noctalia power menu\" --mode=block sleep infinity";
+      Restart = "on-failure";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
+
   # --- VARIABLES D'ENVIRONNEMENT ---
   home.sessionVariables = {
     EDITOR = "vim";
@@ -297,7 +312,7 @@
       hl.bind("XF86AudioMute",         hl.dsp.exec_cmd(ipc .. "volume-mute"))
       hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd(ipc .. "brightness-up"))
       hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(ipc .. "brightness-down"))
-
+      hl.bind("XF86PowerOff", hl.dsp.exec_cmd("noctalia msg panel-toggle session"), { locked = true })
       hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
       hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
       hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
