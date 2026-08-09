@@ -259,7 +259,7 @@
       hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
       hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 
-      hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("kitty"))
+      hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd("alacritty"))
       hl.bind(mainMod .. " + O",      hl.dsp.exec_cmd("firefox"))
       hl.bind(mainMod .. " + F",           hl.dsp.window.fullscreen({ action = "toggle" }))
       hl.bind(mainMod .. " + SHIFT + F",   hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
