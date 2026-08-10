@@ -7,7 +7,7 @@ sound_volume = 0.99999997764825821
 
 [bar.default]
 capsule = true
-center = [ "clock", "media", "notifications", "clipboard" ]
+center = [ "notifications", "clock", "media", "clipboard" ]
 end = [ "tray", "group:g1", "session" ]
 start = [ "launcher", "workspaces" ]
 
