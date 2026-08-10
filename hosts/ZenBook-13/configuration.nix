@@ -3,7 +3,22 @@
 {
   imports = [
     ./hardware-configuration.nix
-  ];
+    inputs.noctalia-greeter.nixosModules.default
+];
+
+  programs.noctalia-greeter = {
+    enable = true;
+#     greeter-args = "";
+      settings = {
+#       cursor = {
+#         theme = "Bibata-Modern-Ice";
+#         size = 24;
+#         path = "${pkgs.bibata-cursors}/share/icons";
+#       };
+        keyboard = { layout = "fr"; };
+        output = { scale = 1; };
+      };
+    };
 
   # ============================================================================
   # 1. PARAMÈTRES NIX, FLAKES & CACHES BINAIRES (CACHIX)
@@ -136,6 +151,7 @@
       enable = true;
       geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
     };
+    greetd.enable = true;
   };
 
   location.provider = "geoclue2";
@@ -172,30 +188,6 @@
   };
 
   services.libinput.enable = true;
-
-  services.displayManager.regreet = {
-    enable = true;
-    theme = {
-      package = pkgs.catppuccin-gtk.override {
-        accents = [ "mauve" ];
-        size = "standard";
-        variant = "mocha";
-      };
-      name = "Catppuccin-Mocha-Standard-Mauve-Dark";
-    };
-    iconTheme = {
-      package = pkgs.papirus-icon-theme;
-      name = "Papirus-Dark";
-    };
-    cursorTheme = {
-      package = pkgs.catppuccin-cursors.mochaMauve;
-      name = "Catppuccin-Mocha-Mauve-Cursors";
-    };
-    font = {
-      name = "JetBrainsMono Nerd Font";
-      size = 12;
-    };
-  };
 
   services.desktopManager.plasma6.enable = true;
 

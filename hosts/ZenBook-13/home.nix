@@ -39,6 +39,7 @@
     scrcpy
     vinegar
     noctalia
+    noctalia-greeter
   ]) ++ [ inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
   # --- SERVICES UTILISATEUR ---
@@ -163,6 +164,7 @@
       -------------------------------
       hl.env("XCURSOR_SIZE", "24")
       hl.env("HYPRCURSOR_SIZE", "24")
+      hl.env("XCURSOR_THEME", "Adwaita")
 
       -----------------------
       ---- LOOK AND FEEL ----

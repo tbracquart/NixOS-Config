@@ -35,7 +35,7 @@ enabled = true
 [dock]
 active_monitor_only = true
 enabled = true
-pinned = [ "firefox", "org.kde.dolphin", "kitty", "org.kde.kate" ]
+pinned = [ "firefox", "org.kde.dolphin", "Alacritty", "org.kde.kate" ]
 reserve_space = false
 show_dots = true
 smart_auto_hide = true
