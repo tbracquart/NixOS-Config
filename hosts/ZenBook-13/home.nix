@@ -24,6 +24,9 @@
   # --- VARIABLES D'ENVIRONNEMENT ---
   home.sessionVariables = {
     EDITOR = "vim";
+    NIXFLK = "/etc/nixos";
+    NIXCFG = "/etc/nixos/hosts/ZenBook-13";
+
   };
 
   # Pour UWSM
