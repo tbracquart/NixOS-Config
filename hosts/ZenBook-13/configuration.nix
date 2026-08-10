@@ -172,7 +172,31 @@
   };
 
   services.libinput.enable = true;
-  services.displayManager.sddm.enable = true;
+
+  services.displayManager.regreet = {
+    enable = true;
+    theme = {
+      package = pkgs.catppuccin-gtk.override {
+        accents = [ "mauve" ];
+        size = "standard";
+        variant = "mocha";
+      };
+      name = "Catppuccin-Mocha-Standard-Mauve-Dark";
+    };
+    iconTheme = {
+      package = pkgs.papirus-icon-theme;
+      name = "Papirus-Dark";
+    };
+    cursorTheme = {
+      package = pkgs.catppuccin-cursors.mochaMauve;
+      name = "Catppuccin-Mocha-Mauve-Cursors";
+    };
+    font = {
+      name = "JetBrainsMono Nerd Font";
+      size = 12;
+    };
+  };
+
   services.desktopManager.plasma6.enable = true;
 
   programs.hyprland.enable = true;
