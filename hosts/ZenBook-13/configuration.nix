@@ -209,7 +209,8 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+    extraPortals = [ pkgs.xdg-desktop-portal-hyprland pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = "gtk";
   };
 
   # ============================================================================
@@ -254,11 +255,20 @@
       ripgrep
       qemu
       alacritty
+      adw-gtk3
+      qt6Packages.qt6ct
     ];
   };
 
+  # Thème Qt piloté par qt5ct/qt6ct (eux-mêmes thémés par Noctalia via le
+  # template "qt"). Note : la valeur d'énum accepté par NixOS est "qt5ct"
+  # même si elle pilote aussi qt6ct — c'est le nom historique de l'option.
+  qt = {
+    enable = true;
+    platformTheme = "qt5ct";
+  };
+
   programs = {
-    firefox.enable = true;
     fish.enable = true;
     vim = {
       enable = true;

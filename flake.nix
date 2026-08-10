@@ -34,6 +34,12 @@
 
     # Kernel CachyOS + BORE, précompilé (Chaotic-Nyx est archivé, ce fork le remplace)
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+
+    # Extensions Firefox packagées pour Nix (fournit l'extension Pywalfox)
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, freesmlauncher, nix-cachyos-kernel, ... }@inputs: {

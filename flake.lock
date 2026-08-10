@@ -1,5 +1,27 @@
 {
   "nodes": {
+    "firefox-addons": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "dir": "pkgs/firefox-addons",
+        "lastModified": 1786334532,
+        "narHash": "sha256-C/efnaEGK18irNAyDM7JtNG6QhMNewTTp/JZNdyStWs=",
+        "owner": "rycee",
+        "repo": "nur-expressions",
+        "rev": "89326e8b272f25875f3dbebe3ec2b510016f57e0",
+        "type": "gitlab"
+      },
+      "original": {
+        "dir": "pkgs/firefox-addons",
+        "owner": "rycee",
+        "repo": "nur-expressions",
+        "type": "gitlab"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -199,6 +221,7 @@
     },
     "root": {
       "inputs": {
+        "firefox-addons": "firefox-addons",
         "freesmlauncher": "freesmlauncher",
         "home-manager": "home-manager",
         "nix-cachyos-kernel": "nix-cachyos-kernel",

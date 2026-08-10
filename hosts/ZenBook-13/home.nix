@@ -26,7 +26,6 @@
     EDITOR = "vim";
     NIXFLK = "/etc/nixos";
     NIXCFG = "/etc/nixos/hosts/ZenBook-13";
-
   };
 
   # --- PAQUETS UTILISATEUR ---
@@ -116,6 +115,26 @@
     };
   };
 
+  # 3bis. Firefox — extension Pywalfox pour suivre le thème Noctalia.
+  # Le paquet pywalfox-native est déclaré ici (pas via un "pywalfox start" à
+  # la main) car nativeMessagingHosts.packages est le mécanisme officiel
+  # Home Manager qui écrit le manifeste JSON au bon endroit
+  # (~/.mozilla/native-messaging-hosts/) sans toucher au store Nix — la
+  # commande `pywalfox install` casse sur NixOS car elle essaie de chmod un
+  # fichier dans le store, qui est en lecture seule.
+  programs.firefox = {
+    enable = true;
+    nativeMessagingHosts = [ pkgs.pywalfox-native ];
+    profiles.thibaut = {
+      id = 0;
+      isDefault = true;
+      path = "2jto0bxf.default";
+      extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
+        pywalfox
+      ];
+    };
+  };
+
   # 4. Noctalia Shell — le fichier réellement écrit par l'UI (settings.toml dans
   # ~/.local/state/) est symlinké hors du store, directement vers le repo. Chaque
   # réglage fait depuis l'UI Noctalia est donc automatiquement versionné, sans
@@ -157,7 +176,8 @@
       -------------------
       hl.on("hyprland.start", function()
         hl.exec_cmd("noctalia")
-      end)
+        hl.exec_cmd("kdeconnect-indicator")
+      end
 
       -------------------------------
       ---- ENVIRONMENT VARIABLES ----
@@ -165,6 +185,7 @@
       hl.env("XCURSOR_SIZE", "24")
       hl.env("HYPRCURSOR_SIZE", "24")
       hl.env("XCURSOR_THEME", "Adwaita")
+      hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 
       -----------------------
       ---- LOOK AND FEEL ----
