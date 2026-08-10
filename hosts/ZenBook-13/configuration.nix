@@ -55,10 +55,10 @@
     loader = {
       systemd-boot = { enable = true; configurationLimit = 15; };
       efi.canTouchEfiVariables = true;
-      timeout = 0;
+      timeout = 1;
     };
 
-    kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore;
     kernelParams = [ "i915.force_probe=!9a49" "xe.force_probe=9a49" "loglevel=3" "rd.systemd.show_status=false" ];
     consoleLogLevel = 3;
 
@@ -134,7 +134,7 @@
       nssmdns4 = true;
       publish = { enable = true; addresses = true; };
     };
-    samba.enable = true;
+    samba.enable = false;
     pipewire = {
       enable = true;
       alsa.enable = true;

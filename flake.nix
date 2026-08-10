@@ -5,9 +5,11 @@
   nixConfig = {
     extra-substituters = [
       "https://nix-community.cachix.org"
+      "https://attic.xuyh0120.win/lantian"
     ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3FS="
+      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
     ];
   };
 
@@ -29,12 +31,16 @@
        url = "github:noctalia-dev/noctalia-greeter";
        inputs.nixpkgs.follows = "nixpkgs";
      };
+
+    # Kernel CachyOS + BORE, précompilé (Chaotic-Nyx est archivé, ce fork le remplace)
+    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
   };
 
-  outputs = { self, nixpkgs, home-manager, freesmlauncher, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, freesmlauncher, nix-cachyos-kernel, ... }@inputs: {
     nixosConfigurations.ZenBook-13 = nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [
+        { nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ]; }
         ./hosts/ZenBook-13/configuration.nix
         home-manager.nixosModules.home-manager
         {
