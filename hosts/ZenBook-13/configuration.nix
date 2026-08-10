@@ -53,7 +53,21 @@
   # ============================================================================
   boot = {
     loader = {
-      systemd-boot = { enable = true; configurationLimit = 15; };
+      limine = {
+        enable = true;
+        maxGenerations = 20;
+        style = {
+          wallpapers = [
+            (pkgs.fetchurl {
+              name = "nix-wallpaper.png";
+              url = "https://cf.preview.redd.it/grub-splash-screen-for-nix-v0-tuq7k37dy8sf1.png?width=1920&format=png&auto=webp&s=784d42b9a44b8502a0d0b1aa15441a30dc26d8ff";
+              hash = "sha256-slo/dwigA6z/JmfoQDoq/hl5g71EK3xKEpoJ5dGpwJE=";
+            })
+          ];
+          wallpaperStyle = "stretched";
+        };
+      };
+
       efi.canTouchEfiVariables = true;
       timeout = 1;
     };
