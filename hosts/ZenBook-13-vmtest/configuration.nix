@@ -1,1 +1,0 @@
-../ZenBook-13/configuration.nix

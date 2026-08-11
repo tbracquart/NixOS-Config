@@ -38,11 +38,9 @@
     scrcpy
     vinegar
     noctalia
-    noctalia-greeter
   ]) ++ [ inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
   # --- SERVICES UTILISATEUR ---
-  services.kdeconnect.enable = true;
 
   # --- APPLICATIONS & CONFIGURATIONS ---
 
