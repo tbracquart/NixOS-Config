@@ -147,7 +147,7 @@
   wayland.windowManager.hyprland = {
     enable = true;
     configType = "lua";
-    systemd.enable = false;
+    systemd.enable = true;
 
     extraConfig = ''
       -- ============================================================

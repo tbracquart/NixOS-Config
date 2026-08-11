@@ -8,13 +8,7 @@
 
   programs.noctalia-greeter = {
     enable = true;
-#     greeter-args = "";
       settings = {
-#       cursor = {
-#         theme = "Bibata-Modern-Ice";
-#         size = 24;
-#         path = "${pkgs.bibata-cursors}/share/icons";
-#       };
         keyboard = { layout = "fr"; };
         output = { scale = 1; };
       };
@@ -80,7 +74,7 @@
     resumeDevice = "/dev/mapper/luks-a0f369c9-319a-4e22-ac5f-7b5a191b22e8";
 
     plymouth = {
-      enable = false;
+      enable = true;
       theme = "bgrt";
     };
 
