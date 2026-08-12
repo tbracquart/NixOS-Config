@@ -259,14 +259,16 @@
     vim = { enable = true; defaultEditor = true; };
     kdeconnect.enable = true;
     noctalia-greeter = { enable = true; settings = { keyboard = { layout = "fr"; }; }; };
-    virt-manager.enable = true;
   };
 
+  # ============================================================================
+  # 9. VIRTUALISATION (LIBVIRT/QEMU)
+  # ============================================================================
   virtualisation.libvirtd.enable = true;
-
+  programs.virt-manager.enable = true;
 
   # ============================================================================
-  # 9. VERSION DU SYSTÈME
+  # 10. VERSION DU SYSTÈME
   # ============================================================================
   system.stateVersion = "26.05";
 }
