@@ -25,7 +25,7 @@
   home.sessionVariables = {
     EDITOR = "vim";
     NIXFLK = "/etc/nixos";
-    NIXCFG = "/etc/nixos/hosts/ZenBook-13";
+    NIXCFG = "/etc/nixos/common";
   };
 
   # --- PAQUETS UTILISATEUR ---
@@ -139,7 +139,7 @@
   # étape manuelle (`noctalia config export`) à répéter.
   home.file.".local/state/noctalia/settings.toml".source =
     config.lib.file.mkOutOfStoreSymlink
-      "/etc/nixos/hosts/ZenBook-13/noctalia-settings.toml";
+      "/etc/nixos/common/noctalia-settings.toml";
 
   # 5. Compositeur Hyprland (Config Lua)
   # Même logique que le settings.toml de Noctalia plus haut : le fichier .lua
@@ -155,7 +155,7 @@
   # require() explicite dans extraConfig.
   home.file.".config/hypr/init.lua".source =
     config.lib.file.mkOutOfStoreSymlink
-      "/etc/nixos/hosts/ZenBook-13/hyprland.lua";
+      "/etc/nixos/common/hyprland.lua";
 
   wayland.windowManager.hyprland = {
     enable = true;

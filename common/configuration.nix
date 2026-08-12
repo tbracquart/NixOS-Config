@@ -2,9 +2,8 @@
 
 {
   imports = [
-    ./hardware-configuration.nix
     inputs.noctalia-greeter.nixosModules.default
-];
+  ];
 
   # ============================================================================
   # 1. PARAMÈTRES NIX, FLAKES & CACHES BINAIRES (CACHIX)

@@ -47,13 +47,14 @@
       specialArgs = { inherit inputs; };
       modules = [
         { nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ]; }
-        ./hosts/ZenBook-13/configuration.nix
+        ./hosts/ZenBook-13/hardware-configuration.nix
+        ./common/configuration.nix
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users.thibaut = import ./hosts/ZenBook-13/home.nix;
+          home-manager.users.thibaut = import ./common/home.nix;
         }
       ];
     };
