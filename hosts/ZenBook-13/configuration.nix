@@ -256,25 +256,14 @@
 
   programs = {
     fish.enable = true;
-
-    vim = {
-      enable = true;
-      defaultEditor = true;
-    };
-
+    vim = { enable = true; defaultEditor = true; };
     kdeconnect.enable = true;
-
-    programs.noctalia-greeter = {
-      enable = true;
-      settings = {
-        keyboard = { layout = "fr"; };
-        output = { scale = 1; };
-      };
-    };
+    noctalia-greeter = { enable = true; settings = { keyboard = { layout = "fr"; }; }; };
+    virt-manager.enable = true;
   };
 
   virtualisation.libvirtd.enable = true;
-  programs.virt-manager.enable = true;
+
 
   # ============================================================================
   # 9. VERSION DU SYSTÈME
