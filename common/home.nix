@@ -52,9 +52,6 @@
         name = "Thibaut Bracquart";
         email = "202062783+tbracquart@users.noreply.github.com";
       };
-      safe = {
-        directory = "/etc/nixos";
-      };
       init = {
         defaultBranch = "main";
       };
@@ -81,26 +78,26 @@
       '';
 
       push = ''
-        cd /etc/nixos
-        sudo git add .
-        sudo git diff --cached
-        sudo git status
+        cd ~/nixos-config
+        git add .
+        git diff --cached
+        git status
         read -l -P "Message de commit : " commit_msg
-        sudo git commit -m "$commit_msg"
-        sudo git push
+        git commit -m "$commit_msg"
+        git push
         echo "✅ Push terminé !"
       '';
 
       update = ''
         echo "🔄 Mise à jour des Flakes..."
-        cd /etc/nixos
-        sudo nix flake update
+        cd ~/nixos-config
+        nix flake update
         echo "✅ Flakes à jour !"
       '';
 
       rebuild = ''
         echo "🚀 Reconstruction du système NixOS + Home Manager..."
-        sudo nixos-rebuild switch --flake /etc/nixos
+        nixos-rebuild switch --flake ~/nixos-config#ZenBook-13
         echo "✅ Fini !"
       '';
 
@@ -139,7 +136,7 @@
   # étape manuelle (`noctalia config export`) à répéter.
   home.file.".local/state/noctalia/settings.toml".source =
     config.lib.file.mkOutOfStoreSymlink
-      "/etc/nixos/common/noctalia-settings.toml";
+      "/home/thibaut/nixos-config/noctalia-settings.toml";
 
   # 5. Compositeur Hyprland (Config Lua)
   # Même logique que le settings.toml de Noctalia plus haut : le fichier .lua
@@ -155,13 +152,13 @@
   # require() explicite dans extraConfig.
   home.file.".config/hypr/init.lua".source =
     config.lib.file.mkOutOfStoreSymlink
-      "/etc/nixos/common/hyprland.lua";
+      "/home/thibaut/nixos-config/hyprland.lua";
 
   wayland.windowManager.hyprland = {
     enable = true;
     configType = "lua";
     systemd.enable = true;
 
-    extraConfig = ''require("init")'';
+    extraConfig = ''require("init.lua")'';
   };
 }
