@@ -144,18 +144,24 @@
   # 5. Compositeur Hyprland (Config Lua)
   # Même logique que le settings.toml de Noctalia plus haut : le fichier .lua
   # est un mkOutOfStoreSymlink vers le repo, pas une copie figée dans le
-  # store. Toute édition de hyprland/init.lua est donc reprise par Hyprland
-  # au simple rechargement de la config (hyprctl reload), sans passer par un
+  # store. Toute édition de hyprland.lua est donc reprise par Hyprland au
+  # simple rechargement de la config (hyprctl reload), sans passer par un
   # nixos-rebuild switch complet.
+  #
+  # Note : extraLuaFiles.<name>.content copie le CONTENU dans le store (donc
+  # figé, pas de rechargement à chaud) même si on lui passe un
+  # mkOutOfStoreSymlink en valeur. Pour un vrai symlink hors-store, il faut
+  # passer par home.file directement, puis charger le fichier avec un
+  # require() explicite dans extraConfig.
+  home.file.".config/hypr/init.lua".source =
+    config.lib.file.mkOutOfStoreSymlink
+      "/etc/nixos/hosts/ZenBook-13/hyprland.lua";
+
   wayland.windowManager.hyprland = {
     enable = true;
     configType = "lua";
     systemd.enable = true;
 
-    extraLuaFiles."init" = {
-      autoLoad = true;
-      content = config.lib.file.mkOutOfStoreSymlink
-        "/etc/nixos/hosts/ZenBook-13/hyprland.lua";
-    };
+    extraConfig = ''require("init")'';
   };
 }
