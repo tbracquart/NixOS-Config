@@ -97,7 +97,7 @@
 
       rebuild = ''
         echo "🚀 Reconstruction du système NixOS + Home Manager..."
-        nixos-rebuild switch --flake ~/nixos-config#ZenBook-13
+        sudo nixos-rebuild switch --flake ~/nixos-config#ZenBook-13
         and begin
           echo "✅ Fini ! Push réuss ✨!"
           push
