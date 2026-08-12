@@ -92,7 +92,8 @@
         echo "🔄 Mise à jour des Flakes..."
         cd ~/nixos-config
         nix flake update
-        echo "✅ Flakes à jour !"
+        and echo "✅ Flakes à jour !"
+        or echo "❌ Mise à jour des flakes échouée."
       '';
 
       rebuild = ''
@@ -114,7 +115,8 @@
         echo "🌟 Mise à jour complète du système 🌟"
         update
         and rebuild
-        echo "🎉 Terminé !"
+        and echo "🎉 Terminé !"
+        or echo "❌ Upgrade interrompu."
       '';
     };
   };
