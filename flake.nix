@@ -63,7 +63,6 @@
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/V145-15AST/configuration.nix
-        # Pas de Home Manager ici : machine partagée, pas de config perso à toi dessus.
       ];
     };
   };

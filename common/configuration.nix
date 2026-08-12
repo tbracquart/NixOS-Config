@@ -257,7 +257,7 @@
     fish.enable = true;
     vim = { enable = true; defaultEditor = true; };
     kdeconnect.enable = true;
-    noctalia-greeter = { enable = true; settings = { keyboard = { layout = "fr"; }; }; };
+    noctalia-greeter = { enable = true; settings = { keyboard.layout = "fr"; output.scale = 1; }; };
   };
 
   # ============================================================================
