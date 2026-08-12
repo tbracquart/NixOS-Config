@@ -100,7 +100,12 @@
         sudo nixos-rebuild switch --flake ~/nixos-config#ZenBook-13
         and begin
           echo "✅ Fini !"
-          push
+          cd ~/nixos-config
+          if git diff --quiet; and git diff --cached --quiet
+            echo "ℹ️  Rien à commit, pas de push."
+          else
+            push
+          end
         end
         or echo "❌ Rebuild échoué, pas de push."
       '';
