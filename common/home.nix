@@ -102,7 +102,7 @@
         and begin
           echo "✅ Fini !"
           cd ~/nixos-config
-          if git diff --quiet; and git diff --cached --quiet
+          if test -z (git status --porcelain)
             echo "ℹ️  Rien à commit, pas de push."
           else
             push
