@@ -6,14 +6,6 @@
     inputs.noctalia-greeter.nixosModules.default
 ];
 
-  programs.noctalia-greeter = {
-    enable = true;
-      settings = {
-        keyboard = { layout = "fr"; };
-        output = { scale = 1; };
-      };
-    };
-
   # ============================================================================
   # 1. PARAMÈTRES NIX, FLAKES & CACHES BINAIRES (CACHIX)
   # ============================================================================
@@ -227,7 +219,7 @@
   users.users."thibaut" = {
     isNormalUser = true;
     description = "Thibaut Bracquart";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
     shell = pkgs.fish;
   };
 
@@ -247,7 +239,7 @@
       bat
       mpv
       ripgrep
-      qemu
+      dnsmasq
       alacritty
       adw-gtk3
       qt6Packages.qt6ct
@@ -264,12 +256,25 @@
 
   programs = {
     fish.enable = true;
+
     vim = {
       enable = true;
       defaultEditor = true;
     };
+
     kdeconnect.enable = true;
+
+    programs.noctalia-greeter = {
+      enable = true;
+      settings = {
+        keyboard = { layout = "fr"; };
+        output = { scale = 1; };
+      };
+    };
   };
+
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
 
   # ============================================================================
   # 9. VERSION DU SYSTÈME
