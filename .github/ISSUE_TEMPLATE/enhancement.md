@@ -1,24 +1,26 @@
 ---
-name: Enhancement
-about: Une amélioration ou un nettoyage à faire, pas un bug
-title: ''
-labels: enhancement
-assignees: ''
+name: "💡 Suggestion d'évolution"
+about: Proposer une nouvelle idée, une amélioration ou une fonctionnalité.
+title: "[FEAT] "
+labels: ["enhancement"]
+assignees: ""
 ---
 
-## Idée
-<!-- Ce qu'on veut améliorer ou nettoyer -->
+## Idée / Proposition
+Description claire de l'évolution que vous souhaitez apporter.
 
-## Host concerné
+## Contexte technique
+### Host / Environnement concerné
 - [ ] ZenBook-13
 - [ ] V145-15AST
-- [ ] Les deux / peu importe
+- [ ] CI (GitHub Actions)
 
-## Fichier(s) Nix concerné(s)
-<!-- ex: common/configuration.nix -->
+### Fichier(s) Nix concerné(s)
+- 
 
-## Pourquoi
-<!-- Motivation : perf, lisibilité, cohérence, etc. -->
+## Pourquoi cette modification ?
+Expliquez le problème résolu ou le gain apporté (simplicité, propreté, performance).
 
-## Piste de mise en œuvre
-<!-- Optionnel : comment tu comptes t'y prendre -->
+## Pistes de mise en œuvre
+Vos idées ou suggestions sur la manière d'implémenter ce changement.
+
