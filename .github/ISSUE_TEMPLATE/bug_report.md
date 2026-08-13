@@ -1,35 +1,32 @@
 ---
-name: Bug report
-about: Un truc cassé ou qui ne se comporte pas comme prévu
-title: ''
-labels: bug
-assignees: ''
+name: " Rapport de Bug"
+about: Signaler un problème ou un comportement inattendu.
+title: "[BUG] "
+labels: ["bug"]
+assignees: ""
 ---
 
-## Problème
-<!-- Description courte et factuelle -->
+## Description du bug
+Description claire et concise du problème rencontré.
 
-## Host concerné
-<!-- Une seule case, en général -->
+## Contexte technique
+### Host / Environnement concerné
 - [ ] ZenBook-13
 - [ ] V145-15AST
+- [ ] CI (GitHub Actions)
 
-## Fichier(s) Nix concerné(s)
-<!-- ex: common/hyprland.lua, hosts/ZenBook-13/hardware-configuration.nix -->
+### Fichier(s) Nix impacté(s)
+*(Ex: configuration.nix, home.nix, etc.)*
+- 
 
-## Comportement attendu vs observé
-- Attendu :
-- Observé :
+## Étapes pour reproduire
+1. 
+2. 
+3. 
 
-## Gravité
-- [ ] Bloquant (empêche de bosser normalement)
-- [ ] Gênant (contournable pour l'instant)
-- [ ] Cosmétique
+## Comportement attendu
+Ce qui aurait dû se passer normalement.
 
-## Déjà essayé
-<!-- Pistes déjà testées, pour éviter de reboucler dessus -->
+## Captures d'écran / Logs
+Ajoutez toute information utile ici (messages d'erreur de `nixos-rebuild`, stacktraces, etc.).
 
-## Logs
-```
-<!-- Sortie pertinente de journalctl, nixos-rebuild, etc. -->
-```
