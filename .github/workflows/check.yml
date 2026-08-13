@@ -13,12 +13,11 @@ jobs:
 
       - uses: cachix/install-nix-action@v27
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
             experimental-features = nix-command flakes
 
       - name: Vérification rapide (évaluation seule, pas de build)
-        run: nix flake check --no-build
+        run: nix flake check --no-build --accept-flake-config
 
   build:
     needs: flake-check
@@ -32,9 +31,12 @@ jobs:
 
       - uses: cachix/install-nix-action@v27
         with:
-          nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
             experimental-features = nix-command flakes
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: nix-community
 
       - name: Build ${{ matrix.host }}
         run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --print-build-logs --accept-flake-config
