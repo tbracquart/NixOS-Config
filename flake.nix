@@ -9,7 +9,7 @@
       "https://freesmlauncher.cachix.org"
     ];
     extra-trusted-public-keys = [
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3FS="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
       "freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs="
     ];
@@ -23,9 +23,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Application FreeSMLauncher
+    # Application FreeSMLauncher (épinglé sur une release taguée pour matcher leur cache Cachix ;
+    # se met à jour normalement via `nix flake update`, comme les autres inputs)
     freesmlauncher = {
-      url = "github:FreesmTeam/FreesmLauncher/develop";
+      url = "github:FreesmTeam/FreesmLauncher/2.2.2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
