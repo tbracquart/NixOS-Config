@@ -65,16 +65,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1786356406,
-        "narHash": "sha256-JMT52vDwrvpebB+DL/ZTEa62fPmKcKSR7b15RJVu3Yo=",
+        "lastModified": 1783942025,
+        "narHash": "sha256-FPBifWh/1hOhUpEl+eoB685T9lP5lSA9FQHQeFBJu24=",
         "owner": "FreesmTeam",
         "repo": "FreesmLauncher",
-        "rev": "4d8858540acd04fcf3fca20f6286d090279cba51",
+        "rev": "6d415912b11792ff0bf8c966bf8b819585862bed",
         "type": "github"
       },
       "original": {
         "owner": "FreesmTeam",
-        "ref": "develop",
+        "ref": "2.2.2",
         "repo": "FreesmLauncher",
         "type": "github"
       }
