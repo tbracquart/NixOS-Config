@@ -19,7 +19,7 @@ jobs:
             substituters = https://cache.nixos.org https://nix-community.cachix.org https://attic.xuyh0120.win/lantian https://freesmlauncher.cachix.org
 
       - name: Vérification rapide (évaluation seule, pas de build)
-        run: nix flake check --no-build
+        run: nix flake check --no-build --accept-flake-config
 
   build:
     needs: flake-check
@@ -39,4 +39,4 @@ jobs:
             substituters = https://cache.nixos.org https://nix-community.cachix.org https://attic.xuyh0120.win/lantian https://freesmlauncher.cachix.org
 
       - name: Build ${{ matrix.host }}
-        run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --print-build-logs
+        run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --print-build-logs --accept-flake-config
