@@ -21,10 +21,11 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc= freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs= tbracquart.cachix.org-1:eTT16nwdreuvu4yagVFB1p+PeRg8ZCZsCA8648IJCZU=
-            substituters = https://nixos.org https://cachix.org https://xuyh0120.win https://cachix.org https://cachix.org
+            substituters = https://cache.nixos.org https://nix-community.cachix.org https://xuyh0120.win https://freesmlauncher.cachix.org https://tbracquart.cachix.org
 
+      # ✅ Corrigé : Passage à la v16 pour éviter l'erreur de script d'installation
       - name: Activer le cache Cachix 📦
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v16
         with:
           name: tbracquart
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -47,10 +48,11 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc= freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs= tbracquart.cachix.org-1:eTT16nwdreuvu4yagVFB1p+PeRg8ZCZsCA8648IJCZU=
-            substituters = https://nixos.org https://cachix.org https://xuyh0120.win https://cachix.org https://cachix.org
+            substituters = https://cache.nixos.org https://nix-community.cachix.org https://xuyh0120.win https://freesmlauncher.cachix.org https://tbracquart.cachix.org
 
+      # ✅ Corrigé : Passage à la v16 ici également
       - name: Activer le cache Cachix 📦
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v16
         with:
           name: tbracquart
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
