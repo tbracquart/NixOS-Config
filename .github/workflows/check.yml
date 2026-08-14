@@ -5,18 +5,28 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   flake-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@v31.11.1
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc= freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs=
             substituters = https://cache.nixos.org https://nix-community.cachix.org https://attic.xuyh0120.win/lantian https://freesmlauncher.cachix.org
+
+      - name: Cache Nix Store ⚡
+        uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
 
       - name: Vérification rapide (évaluation seule, pas de build)
         run: nix flake check --no-build --accept-flake-config
@@ -29,14 +39,20 @@ jobs:
         host: [ZenBook-13, V145-15AST]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@v31.11.1
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc= freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs=
             substituters = https://cache.nixos.org https://nix-community.cachix.org https://attic.xuyh0120.win/lantian https://freesmlauncher.cachix.org
+
+      - name: Cache Nix Store ⚡
+        uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ matrix.host }}-${{ hashFiles('**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-${{ matrix.host }}-
 
       - name: Build ${{ matrix.host }}
         run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --print-build-logs --accept-flake-config
