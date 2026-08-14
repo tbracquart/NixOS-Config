@@ -1,5 +1,5 @@
 -- ============================================================
---  Base = exemple officiel Hyprland
+--  Base = exemple officiel Hyprland + Paramètres Doctalia
 -- ============================================================
 
 ------------------
@@ -23,7 +23,7 @@ local menu        = ""
 ---- AUTOSTART ----
 -------------------
 hl.on("hyprland.start", function()
-  hl.exec_cmd("noctalia")
+  hl.exec_cmd("noctalia") -- Inclus selon la documentation officielle
   hl.exec_cmd("kdeconnect-indicator")
 end)
 
@@ -40,8 +40,8 @@ hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 -----------------------
 hl.config({
     general = {
-        gaps_in  = 5,
-        gaps_out = 20,
+        gaps_in  = 5,  -- Valeur officielle du site
+        gaps_out = 10, -- Valeur officielle du site
         border_size = 2,
         col = {
             active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
@@ -53,21 +53,21 @@ hl.config({
     },
 
     decoration = {
-        rounding       = 10,
-        rounding_power = 2,
+        rounding       = 20, -- Valeur officielle du site
+        rounding_power = 2,  -- Valeur officielle du site
         active_opacity   = 95.0,
         inactive_opacity = 90.0,
         shadow = {
             enabled      = true,
-            range        = 4,
-            render_power = 3,
-            color        = 0xee1a1a1a,
+            range        = 4,        -- Valeur officielle du site
+            render_power = 3,        -- Valeur officielle du site
+            color        = 0xee1a1a1a, -- Valeur officielle du site
         },
         blur = {
             enabled   = true,
-            size      = 3,
-            passes    = 1,
-            vibrancy  = 0.1696,
+            size      = 3,      -- Valeur officielle du site
+            passes    = 2,      -- Valeur officielle du site
+            vibrancy  = 0.1696, -- Valeur officielle du site
         },
     },
 
@@ -175,33 +175,35 @@ hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
--- IPC Noctalia
+-- IPC Noctalia (Syntaxe révisée selon le site)
 local ipc = "noctalia msg "
-hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
-hl.bind(mainMod .. " + S",     hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
-hl.bind(mainMod .. " + COMMA", hl.dsp.exec_cmd(ipc .. "settings-toggle"))
-hl.bind(mainMod .. " + L", hl.dsp.exec_cmd(ipc .. "session lock"))
-hl.bind("ALT + TAB",           hl.dsp.exec_cmd(ipc .. "window-switcher"))
+hl.bind(mainMod .. "+Space", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
+hl.bind(mainMod .. "+S",     hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
+hl.bind(mainMod .. "+comma", hl.dsp.exec_cmd(ipc .. "settings-toggle"))
+hl.bind(mainMod .. " + L",   hl.dsp.exec_cmd(ipc .. "session lock"))
+hl.bind("ALT + Tab",         hl.dsp.exec_cmd(ipc .. "window-switcher"))
 
 hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd(ipc .. "volume-up"))
 hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd(ipc .. "volume-down"))
 hl.bind("XF86AudioMute",         hl.dsp.exec_cmd(ipc .. "volume-mute"))
 hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd(ipc .. "brightness-up"))
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(ipc .. "brightness-down"))
-hl.bind("XF86PowerOff", hl.dsp.exec_cmd("noctalia msg panel-toggle session"), { locked = true })
-hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
-hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
+hl.bind("XF86PowerOff",          hl.dsp.exec_cmd("noctalia msg panel-toggle session"), { locked = true })
+hl.bind("XF86AudioNext",         hl.dsp.exec_cmd("playerctl next"),       { locked = true })
+hl.bind("XF86AudioPause",        hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+hl.bind("XF86AudioPlay",         hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+hl.bind("XF86AudioPrev",         hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
 --------------------------------
-hl.workspace_rule({ workspace = "1", monitor = "eDP-1", persistent = true })
-hl.workspace_rule({ workspace = "2", monitor = "eDP-1", persistent = true })
-hl.workspace_rule({ workspace = "3", monitor = "eDP-1", persistent = true })
-hl.workspace_rule({ workspace = "4", monitor = "eDP-1", persistent = true })
-hl.workspace_rule({ workspace = "5", monitor = "eDP-1", persistent = true })
+
+-- Workspaces persistants avec noms officiels (Adaptés à ton écran eDP-1)
+hl.workspace_rule({ workspace = "1", monitor = "eDP-1", persistent = true, default_name = "web" })
+hl.workspace_rule({ workspace = "2", monitor = "eDP-1", persistent = true, default_name = "code" })
+hl.workspace_rule({ workspace = "3", monitor = "eDP-1", persistent = true, default_name = "chat" })
+hl.workspace_rule({ workspace = "4", monitor = "eDP-1", persistent = true, default_name = "game" })
+hl.workspace_rule({ workspace = "5", monitor = "eDP-1", persistent = true, default_name = "design" })
 
 hl.window_rule({
     name  = "fix-xwayland-drags",
@@ -219,5 +221,23 @@ hl.window_rule({
 hl.window_rule({ match = { class = "firefox", title = ".*Preferences.*" }, float = true })
 hl.window_rule({ match = { class = "org.keepassxc.KeePassXC" }, float = true })
 hl.window_rule({ match = { class = "discord" }, workspace = 3 })
-hl.window_rule({ match = { class = "dev.noctalia.Noctalia" }, float = true, size = { 1080, 920 } })
+
+-- Règle Noctalia officielle pour le panneau de contrôle
+hl.window_rule({
+    match = { class = "dev.noctalia.Noctalia" },
+    float = true,
+    size = { 1080, 920 },
+})
+
+-- Règle de flou officielle pour l'ensemble des composants Noctalia
+hl.layer_rule({
+    name = "noctalia",
+    match = {
+        namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$",
+    },
+    no_anim = true,
+    ignore_alpha = 0.5,
+    blur = true,
+    blur_popups = true,
+})
 
