@@ -15,9 +15,9 @@ hl.monitor({
 ---------------------
 ---- MY PROGRAMS ----
 ---------------------
-local terminal    = "kitty"
+local terminal    = "alacritty"
 local fileManager = "dolphin"
-local menu        = "hyprlauncher"
+local menu        = ""
 
 -------------------
 ---- AUTOSTART ----
@@ -137,7 +137,7 @@ hl.gesture({
 local mainMod = "SUPER"
 
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown") or hl.dsp.exit())
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
@@ -149,17 +149,24 @@ hl.bind(mainMod .. " + O",      hl.dsp.exec_cmd("firefox"))
 hl.bind(mainMod .. " + F",           hl.dsp.window.fullscreen({ action = "toggle" }))
 hl.bind(mainMod .. " + SHIFT + F",   hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
 
+-- Navigation entre les fenêtres (Focus)
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 
--- AZERTY Workspaces
+-- Déplacement des fenêtres dans le même workspace
+hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "left" }))
+hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.move({ direction = "right" }))
+hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.move({ direction = "up" }))
+hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.move({ direction = "down" }))
+
+-- Navigation et Déplacement (Workspaces AZERTY)
 local keys = { "ampersand", "eacute", "quotedbl", "apostrophe", "parenleft", "minus", "egrave", "underscore", "ccedilla", "agrave" }
 for i, key in ipairs(keys) do
-    hl.bind("SUPER + " .. key, hl.dsp.focus({ workspace = i }))
-    hl.bind("SUPER + ALT + " .. key, hl.dsp.window.move({ workspace = i, follow = false }))
-    hl.bind("SUPER + SHIFT + " .. key, hl.dsp.window.move({ workspace = i, follow = true }))
+    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
+    hl.bind(mainMod .. " + ALT + " .. key,   hl.dsp.window.move({ workspace = i, follow = false }))
+    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i, follow = true }))
 end
 
 hl.bind(mainMod .. " + G",         hl.dsp.workspace.toggle_special("magic"))
@@ -215,3 +222,4 @@ hl.window_rule({ match = { class = "firefox", title = ".*Preferences.*" }, float
 hl.window_rule({ match = { class = "org.keepassxc.KeePassXC" }, float = true })
 hl.window_rule({ match = { class = "discord" }, workspace = 3 })
 hl.window_rule({ match = { class = "dev.noctalia.Noctalia" }, float = true, size = { 1080, 920 } })
+

@@ -116,6 +116,7 @@ settings_show_advanced = false
     open_near_click_clipboard = true
     open_near_click_launcher = true
     open_near_click_wallpaper = true
+    transparency_mode = "glass"
 
     [shell.screen_corners]
     enabled = true
