@@ -25,22 +25,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Application FreeSMLauncher (épinglé sur une release taguée pour matcher leur cache Cachix ;
-    # se met à jour normalement via `nix flake update`, comme les autres inputs)
-    freesmlauncher = {
-      url = "github:FreesmTeam/FreesmLauncher/2.2.2";
+    freesmlauncher.url = "github:FreesmTeam/FreesmLauncher/develop";
+
+    noctalia-greeter = {
+      url = "github:noctalia-dev/noctalia-greeter";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-     noctalia-greeter = {
-       url = "github:noctalia-dev/noctalia-greeter";
-       inputs.nixpkgs.follows = "nixpkgs";
-     };
-
-    # Kernel CachyOS + BORE, précompilé (Chaotic-Nyx est archivé, ce fork le remplace)
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
-    # Extensions Firefox packagées pour Nix (fournit l'extension Pywalfox)
     firefox-addons = {
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";

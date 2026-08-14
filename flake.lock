@@ -60,21 +60,19 @@
       "inputs": {
         "libnbtplusplus": "libnbtplusplus",
         "nix-filter": "nix-filter",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
+        "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1783942025,
-        "narHash": "sha256-FPBifWh/1hOhUpEl+eoB685T9lP5lSA9FQHQeFBJu24=",
+        "lastModified": 1786356406,
+        "narHash": "sha256-JMT52vDwrvpebB+DL/ZTEa62fPmKcKSR7b15RJVu3Yo=",
         "owner": "FreesmTeam",
         "repo": "FreesmLauncher",
-        "rev": "6d415912b11792ff0bf8c966bf8b819585862bed",
+        "rev": "4d8858540acd04fcf3fca20f6286d090279cba51",
         "type": "github"
       },
       "original": {
         "owner": "FreesmTeam",
-        "ref": "2.2.2",
+        "ref": "develop",
         "repo": "FreesmLauncher",
         "type": "github"
       }
@@ -120,7 +118,7 @@
       "inputs": {
         "flake-compat": "flake-compat",
         "flake-parts": "flake-parts",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs_2"
       },
       "locked": {
         "lastModified": 1785870829,
@@ -154,16 +152,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1785859399,
-        "narHash": "sha256-pY4X50au95QrTpAbEm08pURmeU3/Ud2oa0s2XzpDdz8=",
+        "lastModified": 1786106723,
+        "narHash": "sha256-zDSUbpoeo/9ZmD2+wXnzxoo1+uhL8vxc0b8yuYMKYq0=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "85f62611fa3f3eacbcfe3bc7a6d6518b443ca442",
+        "rev": "f13ff45afd1bb73e640eaa08a7066dbed07e3238",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable-small",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -184,6 +182,22 @@
       }
     },
     "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1785859399,
+        "narHash": "sha256-pY4X50au95QrTpAbEm08pURmeU3/Ud2oa0s2XzpDdz8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "85f62611fa3f3eacbcfe3bc7a6d6518b443ca442",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable-small",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
       "locked": {
         "lastModified": 1786384358,
         "narHash": "sha256-RzPPiWeUtuvymnpuEWsdtzli5w4kjZs49FqEs3/1u+I=",
@@ -225,7 +239,7 @@
         "freesmlauncher": "freesmlauncher",
         "home-manager": "home-manager",
         "nix-cachyos-kernel": "nix-cachyos-kernel",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "noctalia-greeter": "noctalia-greeter"
       }
     }
