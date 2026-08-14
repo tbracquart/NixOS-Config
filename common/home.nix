@@ -68,6 +68,12 @@
     interactiveShellInit = ''
       fastfetch
       echo
+
+      # Charge le token Cachix (écriture) depuis un fichier hors dépôt Git,
+      # pour ne jamais committer de secret dans le repo public.
+      if test -f ~/.config/cachix/token.fish
+        source ~/.config/cachix/token.fish
+      end
     '';
 
     functions = {
@@ -101,6 +107,17 @@
         sudo nixos-rebuild switch --flake ~/nixos-config#ZenBook-13
         and begin
           echo "✅ Fini !"
+
+          # Alimente le cache Cachix perso avec le résultat construit
+          # localement, indépendamment du CI (qui ne tourne que sur push).
+          if type -q cachix; and set -q CACHIX_AUTH_TOKEN
+            echo "📦 Envoi vers le cache tbracquart..."
+            nix path-info --derivation /run/current-system | cachix push tbracquart
+            or echo "⚠️  Push Cachix échoué (non bloquant)."
+          else
+            echo "ℹ️  cachix ou CACHIX_AUTH_TOKEN absent, pas de push vers le cache."
+          end
+
           cd ~/nixos-config
           if test -z (git status --porcelain)
             echo "ℹ️  Rien à commit, pas de push."
