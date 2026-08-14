@@ -157,8 +157,9 @@ hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 -- AZERTY Workspaces
 local keys = { "ampersand", "eacute", "quotedbl", "apostrophe", "parenleft", "minus", "egrave", "underscore", "ccedilla", "agrave" }
 for i, key in ipairs(keys) do
-    hl.bind("SUPER + " .. key,         hl.dsp.focus({ workspace = i }))
-    hl.bind("SUPER + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+    hl.bind("SUPER + " .. key, hl.dsp.focus({ workspace = i }))
+    hl.bind("SUPER + ALT + " .. key, hl.dsp.window.move({ workspace = i, follow = false }))
+    hl.bind("SUPER + SHIFT + " .. key, hl.dsp.window.move({ workspace = i, follow = true }))
 end
 
 hl.bind(mainMod .. " + G",         hl.dsp.workspace.toggle_special("magic"))
