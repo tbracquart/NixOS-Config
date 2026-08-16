@@ -9,7 +9,7 @@ Ce dépôt centralise la configuration système et utilisateur de mes machines, 
 
 | Hôte | Description |
 |---|---|
-| **ZenBook-13** | Poste principal (ASUS ZenBook 13) — NixOS unstable, Hyprland + KDE Plasma 6, Noctalia Shell |
+| **ZenBook-13** | Poste principal (ASUS ZenBook 13) — NixOS unstable, Hyprland + KDE Plasma 6, Noctalia |
 | **V145-15AST** | Lenovo V145-15AST — configuration dédiée, indépendante de la base commune |
 
 ## 📁 Structure
