@@ -19,7 +19,7 @@ Ce dépôt centralise la configuration système et utilisateur de mes machines, 
 ├── common/                     # Configuration partagée (utilisée par ZenBook-13)
 │   ├── configuration.nix       # Config système (boot, réseau, sessions graphiques, sécurité...)
 │   ├── home.nix                # Config Home Manager (paquets, shell, apps utilisateur)
-│   ├── hyprland.lua             # Config Hyprland (syntaxe Lua, chargée hors du store Nix)
+│   ├── hyprland.lua            # Config Hyprland (syntaxe Lua, chargée hors du store Nix)
 │   └── noctalia-settings.toml  # Réglages Noctalia Shell (symlinkés hors du store)
 ├── hosts/
 │   ├── ZenBook-13/
