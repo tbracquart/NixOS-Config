@@ -1,4 +1,4 @@
-[![Check flake](https://github.com/tbracquart/nixos-config/actions/workflows/check.yml/badge.svg)](https://github.com/tbracquart/nixos-config/actions/workflows/check.yml)
+[![Check flake](https://github.com/tbracquart/nixos-config/actions/workflows/check.yml/badge.svg)](https://github.com/tbracquart/nixos-config/actions/workflows/check.yml) [![Check flake](https://github.com/tbracquart/nixos-config/actions/workflows/check.yml/badge.svg)](https://github.com/tbracquart/nixos-config/actions/workflows/update.yml)
 
 # ❄️ nixos-config
 
