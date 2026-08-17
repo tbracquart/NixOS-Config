@@ -1,4 +1,4 @@
-name: Check flake
+name: NixOS CI
 
 on:
   push:
