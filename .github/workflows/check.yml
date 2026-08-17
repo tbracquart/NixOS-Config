@@ -5,7 +5,6 @@ on:
     branches: [main]
   pull_request:
 
-# Annule les builds devenus inutiles si tu push plusieurs commits d'affilée ⚡
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -16,6 +15,7 @@ jobs:
     outputs:
       v145: ${{ steps.filter.outputs.v145 }}
       zenbook: ${{ steps.filter.outputs.zenbook }}
+      flake: ${{ steps.filter.outputs.flake }}
     steps:
       - uses: actions/checkout@v7.0.1
 
@@ -32,9 +32,15 @@ jobs:
               - 'common/**'
               - 'flake.nix'
               - 'flake.lock'
+            flake:
+              - 'hosts/**'
+              - 'common/**'
+              - 'flake.nix'
+              - 'flake.lock'
 
   flake-check:
     needs: changes
+    if: needs.changes.outputs.flake == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
@@ -57,7 +63,10 @@ jobs:
 
   build-zenbook:
     needs: [changes, flake-check]
-    if: needs.changes.outputs.zenbook == 'true'
+    if: |
+      always() &&
+      needs.changes.outputs.zenbook == 'true' &&
+      (needs.flake-check.result == 'success' || needs.flake-check.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
@@ -80,7 +89,10 @@ jobs:
 
   build-v145:
     needs: [changes, flake-check]
-    if: needs.changes.outputs.v145 == 'true'
+    if: |
+      always() &&
+      needs.changes.outputs.v145 == 'true' &&
+      (needs.flake-check.result == 'success' || needs.flake-check.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
