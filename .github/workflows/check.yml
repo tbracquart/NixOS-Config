@@ -13,8 +13,8 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      v145: ${{ steps.filter.outputs.v145 }}
-      zenbook: ${{ steps.filter.outputs.zenbook }}
+      V145-15AST: ${{ steps.filter.outputs.V145-15AST }}
+      ZenBook-13: ${{ steps.filter.outputs.ZenBook-13 }}
       flake: ${{ steps.filter.outputs.flake }}
     steps:
       - uses: actions/checkout@v7.0.1
@@ -23,11 +23,11 @@ jobs:
         id: filter
         with:
           filters: |
-            v145:
+            V145-15AST:
               - 'hosts/V145-15AST/**'
               - 'flake.nix'
               - 'flake.lock'
-            zenbook:
+            ZenBook-13:
               - 'hosts/ZenBook-13/**'
               - 'common/**'
               - 'flake.nix'
@@ -52,11 +52,11 @@ jobs:
       - name: Vérification rapide (évaluation seule, pas de build)
         run: nix flake check --no-build --accept-flake-config
 
-  build-zenbook:
+  build-ZenBook-13:
     needs: [changes, flake-check]
     if: |
       always() &&
-      needs.changes.outputs.zenbook == 'true' &&
+      needs.changes.outputs.ZenBook-13 == 'true' &&
       (needs.flake-check.result == 'success' || needs.flake-check.result == 'skipped')
     uses: ./.github/workflows/build-host.yml
     with:
@@ -64,11 +64,11 @@ jobs:
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-  build-v145:
+  build-V145-15AST:
     needs: [changes, flake-check]
     if: |
       always() &&
-      needs.changes.outputs.v145 == 'true' &&
+      needs.changes.outputs.V145-15AST == 'true' &&
       (needs.flake-check.result == 'success' || needs.flake-check.result == 'skipped')
     uses: ./.github/workflows/build-host.yml
     with:
