@@ -36,15 +36,25 @@ jobs:
           purge-primary-key: never
 
       - name: Mettre à jour flake.lock
-        run: nix flake update --accept-flake-config
+        id: update
+        run: |
+          nix flake update --accept-flake-config
+          if git diff --quiet flake.lock; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build ZenBook-13
+        if: steps.update.outputs.changed == 'true'
         run: nix build .#nixosConfigurations.ZenBook-13.config.system.build.toplevel --print-build-logs --accept-flake-config
 
       - name: Build V145-15AST
+        if: steps.update.outputs.changed == 'true'
         run: nix build .#nixosConfigurations.V145-15AST.config.system.build.toplevel --print-build-logs --accept-flake-config
 
       - name: Ouvrir une PR si flake.lock a changé
+        if: steps.update.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
           commit-message: "chore: nix flake update (auto)"
