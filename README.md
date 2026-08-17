@@ -9,7 +9,7 @@ Ce dépôt centralise la configuration système et utilisateur de mes machines, 
 
 | Hôte | Description |
 |---|---|
-| **ZenBook-13** | Poste principal (ASUS ZenBook 13) — NixOS unstable, Hyprland + KDE Plasma 6, Noctalia |
+| **ZenBook-13** | Poste principal (ASUS ZenBook 13) — NixOS unstable, Hyprland + Niri, Noctalia |
 | **V145-15AST** | Lenovo V145-15AST — configuration dédiée, indépendante de la base commune |
 
 ## 📁 Structure
@@ -36,8 +36,8 @@ Ce dépôt centralise la configuration système et utilisateur de mes machines, 
 - **Distribution** : NixOS `nixos-unstable`
 - **Bootloader** : Limine
 - **Noyau** : CachyOS BORE (via [`nix-cachyos-kernel`](https://github.com/xddxdd/nix-cachyos-kernel))
-- **Sessions graphiques** : Hyprland (config Lua) + KDE Plasma 6
-- **Shell desktop** : [Noctalia Shell](https://github.com/noctalia-dev) + Noctalia Greeter
+- **Sessions graphiques** : Hyprland (config Lua) + Niri
+- **Shell desktop** : [Noctalia](https://github.com/noctalia-dev) + Noctalia Greeter
 - **Shell** : Fish
 - **Terminal** : Kitty / Alacritty
 - **Auth** : Howdy (reconnaissance faciale, PAM)
