@@ -1,0 +1,47 @@
+name: Update flake
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # tous les jours à 4h UTC
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: ./.github/actions/setup-nix-cachix
+
+      - name: Mettre à jour flake.lock
+        run: nix flake update --accept-flake-config
+
+      - name: Build ZenBook-13
+        run: nix build .#nixosConfigurations.ZenBook-13.config.system.build.toplevel --print-build-logs --accept-flake-config
+
+      - name: Build V145-15AST
+        run: nix build .#nixosConfigurations.V145-15AST.config.system.build.toplevel --print-build-logs --accept-flake-config
+
+      - name: Ouvrir une PR si flake.lock a changé
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: nix flake update (auto)"
+          title: "chore: nix flake update (auto)"
+          body: |
+            Mise à jour automatique quotidienne de `flake.lock`.
+
+            Les deux hosts (ZenBook-13, V145-15AST) ont déjà été buildés
+            et poussés vers Cachix par ce workflow — merger cette PR ne
+            devrait déclencher aucune recompilation.
+          branch: auto/flake-update
+          delete-branch: true
