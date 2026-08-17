@@ -58,16 +58,11 @@ jobs:
       always() &&
       needs.changes.outputs.zenbook == 'true' &&
       (needs.flake-check.result == 'success' || needs.flake-check.result == 'skipped')
-    runs-on: ubuntu-latest
-    env:
-      CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    steps:
-      - uses: actions/checkout@v7.0.1
-
-      - uses: ./.github/actions/setup-nix-cachix
-
-      - name: Build ZenBook-13
-        run: nix build .#nixosConfigurations.ZenBook-13.config.system.build.toplevel --print-build-logs --accept-flake-config
+    uses: ./.github/workflows/build-host.yml
+    with:
+      host: ZenBook-13
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
   build-v145:
     needs: [changes, flake-check]
@@ -75,13 +70,8 @@ jobs:
       always() &&
       needs.changes.outputs.v145 == 'true' &&
       (needs.flake-check.result == 'success' || needs.flake-check.result == 'skipped')
-    runs-on: ubuntu-latest
-    env:
-      CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    steps:
-      - uses: actions/checkout@v7.0.1
-
-      - uses: ./.github/actions/setup-nix-cachix
-
-      - name: Build V145-15AST
-        run: nix build .#nixosConfigurations.V145-15AST.config.system.build.toplevel --print-build-logs --accept-flake-config
+    uses: ./.github/workflows/build-host.yml
+    with:
+      host: V145-15AST
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
