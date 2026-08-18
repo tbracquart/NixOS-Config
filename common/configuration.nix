@@ -33,11 +33,32 @@
         "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
         "tbracquart.cachix.org-1:eTT16nwdreuvu4yagVFB1p+PeRg8ZCZsCA8648IJCZU="
       ];
+
+      # Token GitHub (déchiffré via sops-nix) pour éviter le rate-limit
+      # anonyme de l'API GitHub lors du fetch des flake inputs.
+      netrc-file = "/run/secrets/github-netrc";
     };
     gc = {
       automatic = true;
       dates = "weekly";
       options = "--delete-older-than 7d";
+    };
+  };
+
+  # ============================================================================
+  # 1bis. SECRETS (SOPS-NIX)
+  # ============================================================================
+  sops = {
+    defaultSopsFile = ../secrets/secrets.yaml;
+
+    # Réutilise la clé hôte SSH ed25519 existante, convertie en clé age.
+    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+
+    secrets."github-netrc" = {
+      # Rend le secret déchiffré lisible par Nix (root uniquement) avant
+      # que nixos-rebuild ne lise nix.conf.
+      path = "/run/secrets/github-netrc";
+      mode = "0400";
     };
   };
 

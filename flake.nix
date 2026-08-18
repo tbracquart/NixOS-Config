@@ -40,15 +40,21 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, freesmlauncher, nix-cachyos-kernel, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, freesmlauncher, nix-cachyos-kernel, sops-nix, ... }@inputs: {
     nixosConfigurations.ZenBook-13 = nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [
         { nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ]; }
         ./hosts/ZenBook-13/hardware-configuration.nix
         ./common/configuration.nix
+        sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
@@ -63,8 +69,8 @@
       specialArgs = { inherit inputs; };
       modules = [
         ./hosts/V145-15AST/configuration.nix
+        sops-nix.nixosModules.sops
       ];
     };
   };
 }
-
