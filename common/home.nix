@@ -89,9 +89,16 @@
         git diff --cached
         git status
         read -l -P "Message de commit : " commit_msg
+
+        if test -z "$commit_msg"
+          echo "❌ Message de commit vide, annulation (rien commité, rien poussé)."
+          return 1
+        end
+
         git commit -m "$commit_msg"
-        git push
-        echo "✅ Push terminé !"
+        and git push
+        and echo "✅ Push terminé !"
+        or echo "❌ Commit ou push échoué, arrêt (rien poussé)."
       '';
 
       update = ''
