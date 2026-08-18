@@ -45,6 +45,13 @@ jobs:
     env:
       CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: ./.github/actions/setup-nix-cachix
+
+      - name: Vérification rapide (évaluation seule, pas de build)
+        run: nix flake check --no-build --accept-flake-config
 
   build-ZenBook-13:
     needs: [changes, flake-check]
