@@ -14,11 +14,11 @@ permissions:
   pull-requests: write
   actions: write
 
-jobs:
   update:
     runs-on: ubuntu-latest
     env:
       CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     outputs:
       changed: ${{ steps.update.outputs.changed }}
     steps:

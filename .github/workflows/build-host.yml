@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     steps:
       - uses: actions/checkout@v7.0.1
 
