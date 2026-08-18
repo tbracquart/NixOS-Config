@@ -58,6 +58,13 @@
     };
   };
 
+  programs.gh = {
+    enable = true;
+    extensions = with pkgs; [
+      github-copilot-cli
+    ];
+  };
+
   # 2. Terminal Kitty
   programs.kitty.enable = true;
 
