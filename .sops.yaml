@@ -1,0 +1,8 @@
+keys:
+  - &zenbook-13 age1jthp2xn8kkx3jv7q9mf28en0ug0naqvp22awex4ujprqxetz0pssdznjhy
+
+creation_rules:
+  - path_regex: secrets/secrets\.yaml$
+    key_groups:
+      - age:
+          - *zenbook-13
