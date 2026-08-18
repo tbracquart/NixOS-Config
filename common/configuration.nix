@@ -11,27 +11,27 @@
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
-      
+
       # Autorise root et thibaut à faire confiance aux substituts des Flakes
       trusted-users = [ "root" "thibaut" ];
 
       # Serveurs de cache binaire pour éviter de tout recompiler
       substituters = [
+        "https://tbracquart.cachix.org"
         "https://cache.nixos.org"
         "https://nix-community.cachix.org"
         "https://attic.xuyh0120.win/lantian"
         "https://freesmlauncher.cachix.org"
         "https://noctalia.cachix.org"
-        "https://tbracquart.cachix.org"
       ];
 
       # Clés de sécurité publiques
       trusted-public-keys = [
+        "tbracquart.cachix.org-1:eTT16nwdreuvu4yagVFB1p+PeRg8ZCZsCA8648IJCZU="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
         "freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs="
         "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
-        "tbracquart.cachix.org-1:eTT16nwdreuvu4yagVFB1p+PeRg8ZCZsCA8648IJCZU="
       ];
 
       # Token GitHub (déchiffré via sops-nix) pour éviter le rate-limit
@@ -102,7 +102,7 @@
       kernelModules = [ "xe" ];
       systemd.enable = true;
       verbose = false;
-      
+
       # Déverrouillage de la partition SWAP chiffrée lors du boot/initrd
       luks.devices."luks-a0f369c9-319a-4e22-ac5f-7b5a191b22e8".device = "/dev/disk/by-uuid/a0f369c9-319a-4e22-ac5f-7b5a191b22e8";
     };
@@ -289,6 +289,7 @@
     vim = { enable = true; defaultEditor = true; };
     kdeconnect.enable = true;
     noctalia-greeter = { enable = true; settings = { keyboard.layout = "fr"; output.scale = 1; }; };
+    nix-ld.enable = true;
   };
 
   # ============================================================================
