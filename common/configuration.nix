@@ -250,6 +250,8 @@
       adw-gtk3
       qt6Packages.qt6ct
       cachix
+      sops
+      ssh-to-age
     ];
   };
 
