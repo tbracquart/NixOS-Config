@@ -51,4 +51,24 @@ jobs:
           purge-primary-key: never
 
       - name: Build ${{ inputs.host }}
-        run: nix build .#nixosConfigurations.${{ inputs.host }}.config.system.build.toplevel --print-build-logs --accept-flake-config
+        run: |
+          set -eux
+          nix build .#nixosConfigurations.${{ inputs.host }}.config.system.build.toplevel -o result --print-build-logs --accept-flake-config
+
+      - name: Ensure cachix CLI is available
+        run: |
+          set -eux
+          if ! command -v cachix >/dev/null 2>&1; then
+            echo "Installing cachix CLI via nix profile..."
+            nix profile install nixpkgs#cachix
+          else
+            echo "cachix already installed"
+          fi
+
+      - name: Push build to Cachix (obligatoire)
+        env:
+          CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        run: |
+          set -eux
+          echo "Pushing build outputs to cachix tbracquart"
+          cachix push tbracquart result
