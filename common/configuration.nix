@@ -11,7 +11,7 @@
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
-
+      
       # Autorise root et thibaut à faire confiance aux substituts des Flakes
       trusted-users = [ "root" "thibaut" ];
 
@@ -60,6 +60,25 @@
       path = "/run/secrets/github-netrc";
       mode = "0400";
     };
+
+    # Token Cachix (chiffré dans ../secrets/secrets.yaml)
+    secrets."cachix-auth-token" = {
+      path = "/run/secrets/cachix-auth-token";
+      mode = "0400";
+    };
+  };
+
+  # Activation script : enregistre le token avec cachix authtoken (thibaut)
+  system.activationScripts.cachixAuthtoken = {
+    text = ''
+      if [ -f /run/secrets/cachix-auth-token ]; then
+        if id -u thibaut >/dev/null 2>&1; then
+          mkdir -p /home/thibaut/.config/cachix
+          cat /run/secrets/cachix-auth-token | runuser -u thibaut -- ${pkgs.cachix}/bin/cachix authtoken --stdin || true
+          chown -R thibaut:users /home/thibaut/.config/cachix
+        fi
+      fi
+    '';
   };
 
   # ============================================================================
@@ -102,7 +121,7 @@
       kernelModules = [ "xe" ];
       systemd.enable = true;
       verbose = false;
-
+      
       # Déverrouillage de la partition SWAP chiffrée lors du boot/initrd
       luks.devices."luks-a0f369c9-319a-4e22-ac5f-7b5a191b22e8".device = "/dev/disk/by-uuid/a0f369c9-319a-4e22-ac5f-7b5a191b22e8";
     };
