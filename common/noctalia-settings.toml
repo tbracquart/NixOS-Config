@@ -1,4 +1,4 @@
-config_version = 8
+config_version = 12
 
 [audio]
 enable_overdrive = true
@@ -6,7 +6,7 @@ enable_sounds = true
 sound_volume = 0.99999997764825821
 
 [bar.default]
-background_opacity = 0.4999999888241291
+background_opacity = 0.79999998211860657
 capsule = true
 center = [ "notifications", "clock", "media", "clipboard" ]
 end = [ "tray", "group:g1", "session" ]
@@ -117,7 +117,7 @@ settings_show_advanced = false
     open_near_click_clipboard = true
     open_near_click_launcher = true
     open_near_click_wallpaper = true
-    transparency_mode = "glass"
+    transparency_mode = "soft"
 
     [shell.screen_corners]
     enabled = true
