@@ -103,9 +103,40 @@
         end
 
         git commit -m "$commit_msg"
-        and git push
-        and echo "✅ Push terminé !"
-        or echo "❌ Commit ou push échoué, arrêt (rien poussé)."
+        and begin
+          set -l current_branch (git rev-parse --abbrev-ref HEAD)
+
+          echo ""
+          echo "🌿 Branches locales :"
+          git branch --format='  %(refname:short)'
+
+          echo ""
+          echo "🌐 Branches distantes :"
+          git branch -r --format='  %(refname:short)' | grep -v 'HEAD ->'
+
+          echo ""
+          read -l -P "Branche de push [$current_branch] : " target_branch
+          if test -z "$target_branch"
+            set target_branch $current_branch
+          end
+
+          # Si la branche n'existe ni en local ni en distant, on propose de la créer
+          if not git show-ref --verify --quiet refs/heads/$target_branch
+            and not git ls-remote --exit-code --heads origin $target_branch >/dev/null 2>&1
+            read -l -P "🌱 La branche '$target_branch' n'existe pas, la créer ? [y/N] " create_branch
+            if test "$create_branch" = "y" -o "$create_branch" = "Y"
+              git checkout -b $target_branch
+            else
+              echo "❌ Push annulé (branche inexistante)."
+              return 1
+            end
+          end
+
+          git push origin $target_branch
+          and echo "✅ Push terminé sur $target_branch !"
+          or echo "❌ Push échoué, arrêt (commit local conservé)."
+        end
+        or echo "❌ Commit échoué, arrêt (rien poussé)."
       '';
 
       update = ''
@@ -124,19 +155,28 @@
 
           # Alimente le cache Cachix perso avec le résultat construit
           # localement, indépendamment du CI (qui ne tourne que sur push).
-          if type -q cachix; and set -q CACHIX_AUTH_TOKEN
-            echo "📦 Envoi vers le cache tbracquart..."
-            nix path-info --derivation /run/current-system | cachix push tbracquart
-            or echo "⚠️  Push Cachix échoué (non bloquant)."
+          if type -q cachix; and test -f ~/.config/cachix/cachix.dhall
+            read -l -P "📦 Pousser vers le cache tbracquart ? [y/N] " confirm_cachix
+            if test "$confirm_cachix" = "y" -o "$confirm_cachix" = "Y"
+              nix path-info --derivation /run/current-system | cachix push tbracquart
+              or echo "⚠️  Push Cachix échoué (non bloquant)."
+            else
+              echo "⏸️  Push Cachix annulé."
+            end
           else
-            echo "ℹ️  cachix ou CACHIX_AUTH_TOKEN absent, pas de push vers le cache."
+            echo "ℹ️  cachix absent ou non authentifié, pas de push vers le cache."
           end
 
           cd ~/nixos-config
-          if test -z (git status --porcelain)
+          if test -z "$(git status --porcelain)"
             echo "ℹ️  Rien à commit, pas de push."
           else
-            push
+            read -l -P "🔼 Des changements sont détectés, pousser vers le dépôt ? [y/N] " confirm
+            if test "$confirm" = "y" -o "$confirm" = "Y"
+              push
+            else
+              echo "⏸️  Push annulé, changements laissés en local."
+            end
           end
         end
         or echo "❌ Rebuild échoué, pas de push."
