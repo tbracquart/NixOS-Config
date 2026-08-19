@@ -284,6 +284,7 @@
       cachix
       sops
       ssh-to-age
+      thunar
     ];
   };
 
