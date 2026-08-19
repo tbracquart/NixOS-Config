@@ -37,7 +37,6 @@
     klavaro
     scrcpy
     vinegar
-    noctalia
   ]) ++ [ inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
   # --- SERVICES UTILISATEUR ---
@@ -231,7 +230,7 @@
     };
   };
 
-  # 4. Noctalia Shell — le fichier réellement écrit par l'UI (settings.toml dans
+  # 4. Noctalia — le fichier réellement écrit par l'UI (settings.toml dans
   # ~/.local/state/) est symlinké hors du store, directement vers le repo. Chaque
   # réglage fait depuis l'UI Noctalia est donc automatiquement versionné, sans
   # étape manuelle (`noctalia config export`) à répéter.
