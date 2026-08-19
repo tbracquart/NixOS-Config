@@ -103,9 +103,55 @@
         end
 
         git commit -m "$commit_msg"
-        and git push
-        and echo "✅ Push terminé !"
-        or echo "❌ Commit ou push échoué, arrêt (rien poussé)."
+        and begin
+          set -l current_branch (git rev-parse --abbrev-ref HEAD)
+
+          echo ""
+          echo "🌿 Branches locales :"
+          git branch --format='  %(refname:short)'
+
+          echo ""
+          echo "🌐 Branches distantes :"
+          git branch -r --format='  %(refname:short)' | grep -v 'HEAD ->'
+
+          echo ""
+          read -l -P "Branche de push [$current_branch] : " target_branch
+          if test -z "$target_branch"
+            set target_branch $current_branch
+          end
+
+          # Si la branche n'existe ni en local ni en distant, on propose de la créer
+          if not git show-ref --verify --quiet refs/heads/$target_branch
+            and not git ls-remote --exit-code --heads origin $target_branch >/dev/null 2>&1
+            read -l -P "🌱 La branche '$target_branch' n'existe pas, la créer ? [y/N] " create_branch
+            if test "$create_branch" = "y" -o "$create_branch" = "Y"
+              git checkout -b $target_branch
+            else
+              echo "❌ Push annulé (branche inexistante)."
+              return 1
+            end
+          end
+
+          git push origin $target_branch
+          and begin
+            echo "✅ Push terminé sur $target_branch !"
+
+            # Laisse la CI builder et pousser vers Cachix avant de rebuild
+            # en local, pour profiter du cache au lieu de recompiler.
+            if type -q gh
+              echo ""
+              echo "⏳ Attente du run CI sur $target_branch..."
+              sleep 5
+              gh run watch (gh run list --branch $target_branch --workflow "NixOS CI" --limit 1 --json databaseId --jq '.[0].databaseId') --exit-status
+              and echo "✅ CI terminée et poussée vers Cachix."
+              or echo "⚠️  CI échouée ou non trouvée — un rebuild pourrait compiler en local."
+            else
+              echo "ℹ️  gh absent, impossible d'attendre la CI automatiquement."
+            end
+          end
+          or echo "❌ Push échoué, arrêt (commit local conservé)."
+        end
+        or echo "❌ Commit échoué, arrêt (rien poussé)."
       '';
 
       update = ''
@@ -125,15 +171,19 @@
           # Alimente le cache Cachix perso avec le résultat construit
           # localement, indépendamment du CI (qui ne tourne que sur push).
           if type -q cachix; and test -f ~/.config/cachix/cachix.dhall
-            echo "📦 Envoi vers le cache tbracquart..."
-            nix path-info --derivation /run/current-system | cachix push tbracquart
-            or echo "⚠️  Push Cachix échoué (non bloquant)."
+            read -l -P "📦 Pousser vers le cache tbracquart ? [y/N] " confirm_cachix
+            if test "$confirm_cachix" = "y" -o "$confirm_cachix" = "Y"
+              nix path-info --derivation /run/current-system | cachix push tbracquart
+              or echo "⚠️  Push Cachix échoué (non bloquant)."
+            else
+              echo "⏸️  Push Cachix annulé."
+            end
           else
             echo "ℹ️  cachix absent ou non authentifié, pas de push vers le cache."
           end
 
           cd ~/nixos-config
-          if test -z (git status --porcelain)
+          if test -z "$(git status --porcelain)"
             echo "ℹ️  Rien à commit, pas de push."
           else
             read -l -P "🔼 Des changements sont détectés, pousser vers le dépôt ? [y/N] " confirm
@@ -149,7 +199,11 @@
 
       upgrade = ''
         echo "🌟 Mise à jour complète du système 🌟"
-        update
+        echo "ℹ️  Le flake.lock est déjà mis à jour chaque nuit par la CI (update.yml),"
+        echo "   qui build et pousse aussi vers Cachix. Un simple 'git pull' + 'rebuild'"
+        echo "   suffit donc la plupart du temps, sans passer par 'update' en local."
+        echo ""
+        git -C ~/nixos-config pull
         and rebuild
         and echo "🎉 Terminé !"
         or echo "❌ Upgrade interrompu."
