@@ -142,7 +142,7 @@
               echo ""
               echo "⏳ Attente du run CI sur $target_branch..."
               sleep 5
-              gh run watch (gh run list --branch $target_branch --limit 1 --json databaseId --jq '.[0].databaseId') --exit-status
+              gh run watch (gh run list --branch $target_branch --workflow "NixOS CI" --limit 1 --json databaseId --jq '.[0].databaseId') --exit-status
               and echo "✅ CI terminée et poussée vers Cachix."
               or echo "⚠️  CI échouée ou non trouvée — un rebuild pourrait compiler en local."
             else
