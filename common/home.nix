@@ -24,8 +24,8 @@
   # --- VARIABLES D'ENVIRONNEMENT ---
   home.sessionVariables = {
     EDITOR = "vim";
-    NIXFLK = "/etc/nixos";
-    NIXCFG = "/etc/nixos/common";
+    NIXCFG = "~/nixos-config";
+    NIXDEV = "~/nixos-config--dev";
   };
 
   # --- PAQUETS UTILISATEUR ---
