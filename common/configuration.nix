@@ -226,14 +226,6 @@
   # ============================================================================
   # 5. SESSIONS GRAPHIQUES (KDE PLASMA 6, HYPRLAND & NOCTALIA)
   # ============================================================================
-  services.xserver = {
-    enable = true;
-    xkb = {
-      layout = "fr";
-      variant = "";
-    };
-  };
-
   services.libinput.enable = true;
 
   programs.hyprland.enable = true;
