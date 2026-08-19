@@ -300,6 +300,7 @@
     fish.enable = true;
     vim = { enable = true; defaultEditor = true; };
     kdeconnect.enable = true;
+    noctalia = { enable = true; recommendedServices.enable = true; };
     noctalia-greeter = { enable = true; settings = { keyboard.layout = "fr"; output.scale = 1; }; };
     nix-ld.enable = true;
   };
