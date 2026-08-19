@@ -66,7 +66,6 @@ auto_locate = true
 
 [lockscreen]
 allow_empty_password = true
-fingerprint = false
 
 [lockscreen_widgets]
 enabled = true
