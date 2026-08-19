@@ -237,7 +237,7 @@
   services.libinput.enable = true;
 
   programs.hyprland.enable = true;
-  programs.niri.enable = false;
+  programs.niri.enable = true;
 
   xdg.portal = {
     enable = true;
