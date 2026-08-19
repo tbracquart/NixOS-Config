@@ -133,7 +133,22 @@
           end
 
           git push origin $target_branch
-          and echo "✅ Push terminé sur $target_branch !"
+          and begin
+            echo "✅ Push terminé sur $target_branch !"
+
+            # Laisse la CI builder et pousser vers Cachix avant de rebuild
+            # en local, pour profiter du cache au lieu de recompiler.
+            if type -q gh
+              echo ""
+              echo "⏳ Attente du run CI sur $target_branch..."
+              sleep 5
+              gh run watch (gh run list --branch $target_branch --limit 1 --json databaseId --jq '.[0].databaseId') --exit-status
+              and echo "✅ CI terminée et poussée vers Cachix."
+              or echo "⚠️  CI échouée ou non trouvée — un rebuild pourrait compiler en local."
+            else
+              echo "ℹ️  gh absent, impossible d'attendre la CI automatiquement."
+            end
+          end
           or echo "❌ Push échoué, arrêt (commit local conservé)."
         end
         or echo "❌ Commit échoué, arrêt (rien poussé)."
@@ -184,7 +199,11 @@
 
       upgrade = ''
         echo "🌟 Mise à jour complète du système 🌟"
-        update
+        echo "ℹ️  Le flake.lock est déjà mis à jour chaque nuit par la CI (update.yml),"
+        echo "   qui build et pousse aussi vers Cachix. Un simple 'git pull' + 'rebuild'"
+        echo "   suffit donc la plupart du temps, sans passer par 'update' en local."
+        echo ""
+        git -C ~/nixos-config pull
         and rebuild
         and echo "🎉 Terminé !"
         or echo "❌ Upgrade interrompu."
