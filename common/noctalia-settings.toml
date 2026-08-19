@@ -9,7 +9,7 @@ sound_volume = 0.99999997764825821
 background_opacity = 0.79999998211860657
 capsule = true
 center = [ "notifications", "clock", "media", "clipboard" ]
-end = [ "tray", "group:g1", "session" ]
+end = [ "tray", "group:g1", "battery", "session" ]
 start = [ "launcher", "workspaces" ]
 
     [bar.default.dead_zone.actions]
@@ -21,7 +21,7 @@ start = [ "launcher", "workspaces" ]
     enabled = true
     fill = "surface_variant"
     id = "g1"
-    members = [ "network", "bluetooth", "volume", "brightness", "battery" ]
+    members = [ "network", "bluetooth", "volume", "brightness" ]
     opacity = 1.0
     padding = 6.0
 
