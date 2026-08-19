@@ -125,15 +125,19 @@
           # Alimente le cache Cachix perso avec le résultat construit
           # localement, indépendamment du CI (qui ne tourne que sur push).
           if type -q cachix; and test -f ~/.config/cachix/cachix.dhall
-            echo "📦 Envoi vers le cache tbracquart..."
-            nix path-info --derivation /run/current-system | cachix push tbracquart
-            or echo "⚠️  Push Cachix échoué (non bloquant)."
+            read -l -P "📦 Pousser vers le cache tbracquart ? [y/N] " confirm_cachix
+            if test "$confirm_cachix" = "y" -o "$confirm_cachix" = "Y"
+              nix path-info --derivation /run/current-system | cachix push tbracquart
+              or echo "⚠️  Push Cachix échoué (non bloquant)."
+            else
+              echo "⏸️  Push Cachix annulé."
+            end
           else
             echo "ℹ️  cachix absent ou non authentifié, pas de push vers le cache."
           end
 
           cd ~/nixos-config
-          if test -z (git status --porcelain)
+          if test -z "$(git status --porcelain)"
             echo "ℹ️  Rien à commit, pas de push."
           else
             read -l -P "🔼 Des changements sont détectés, pousser vers le dépôt ? [y/N] " confirm
