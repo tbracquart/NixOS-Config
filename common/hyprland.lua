@@ -16,7 +16,7 @@ hl.monitor({
 ---- MY PROGRAMS ----
 ---------------------
 local terminal    = "alacritty"
-local fileManager = "dolphin"
+local fileManager = "thunar"
 local menu        = ""
 
 -------------------
