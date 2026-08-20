@@ -6,6 +6,7 @@
     generateCompletions = false;
 
     interactiveShellInit = ''
+      fish_config theme choose "default-rgb"
       fastfetch
       echo
 
