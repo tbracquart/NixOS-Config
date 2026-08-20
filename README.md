@@ -16,19 +16,37 @@ Ce dépôt centralise la configuration système et utilisateur de mes machines, 
 
 ```
 .
-├── common/                     # Configuration partagée (utilisée par ZenBook-13)
-│   ├── configuration.nix       # Config système (boot, réseau, sessions graphiques, sécurité...)
-│   ├── home.nix                # Config Home Manager (paquets, shell, apps utilisateur)
-│   ├── hyprland.lua            # Config Hyprland (syntaxe Lua, chargée hors du store Nix)
-│   └── noctalia-settings.toml  # Réglages Noctalia Shell (symlinkés hors du store)
-├── hosts/
-│   ├── ZenBook-13/
-│   │   └── hardware-configuration.nix
-│   └── V145-15AST/
-│       ├── configuration.nix
-│       └── hardware-configuration.nix
+├── README.md
+├── common                                              │   ├── configuration.nix
+│   ├── home.nix
+│   └── modules
+│       ├── home
+│       │   ├── 00-options.nix
+│       │   ├── 01-packages.nix
+│       │   ├── 02-git.nix                              │       │   ├── 03-fish.nix
+│       │   ├── 04-firefox.nix
+│       │   ├── 05-hyprland-noctalia.nix                │       │   ├── 06-session.nix
+│       │   └── mutable-configs                         │       │       ├── hyprland.lua
+│       │       └── noctalia-settings.toml
+│       └── system
+│           ├── 01-nix.nix                              │           ├── 02-boot.nix
+│           ├── 03-hardware.nix
+│           ├── 04-networking.nix
+│           ├── 05-desktop.nix
+│           ├── 06-users.nix
+│           ├── 07-packages.nix                         │           └── 08-virtualisation.nix
+├── flake.lock
 ├── flake.nix
-└── flake.lock
+├── hosts
+│   ├── V145-15AST
+│   │   ├── configuration.nix
+│   │   └── hardware-configuration.nix
+│   └── ZenBook-13
+│       └── hardware-configuration.nix
+└── secrets
+    └── secrets.yaml
+
+10 directories, 26 files
 ```
 
 ## ⚙️ Stack (ZenBook-13)
