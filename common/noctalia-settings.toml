@@ -9,7 +9,7 @@ sound_volume = 0.99999997764825821
 background_opacity = 0.79999998211860657
 capsule = true
 center = [ "notifications", "clock", "media", "clipboard" ]
-end = [ "tray", "group:g1", "battery", "session" ]
+end = [ "tray", "group:g1", "session" ]
 start = [ "launcher", "workspaces" ]
 
     [bar.default.dead_zone.actions]
@@ -21,7 +21,7 @@ start = [ "launcher", "workspaces" ]
     enabled = true
     fill = "surface_variant"
     id = "g1"
-    members = [ "network", "bluetooth", "volume", "brightness" ]
+    members = [ "network", "bluetooth", "volume", "brightness", "battery" ]
     opacity = 1.0
     padding = 6.0
 
@@ -42,6 +42,15 @@ pinned = [ "firefox", "org.kde.dolphin", "Alacritty", "org.kde.kate" ]
 reserve_space = false
 show_dots = true
 smart_auto_hide = true
+
+[hot_corners]
+enabled = true
+
+    [hot_corners.top_left]
+    action = "launcher"
+
+    [hot_corners.top_right]
+    action = "window_switcher"
 
 [idle]
 behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
@@ -141,6 +150,7 @@ settings_show_advanced = false
     clipboard_placement = "attached"
     launcher_placement = "attached"
     open_near_click_clipboard = true
+    open_near_click_control_center = true
     open_near_click_launcher = true
     open_near_click_wallpaper = true
     transparency_mode = "soft"
