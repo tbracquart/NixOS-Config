@@ -11,7 +11,7 @@
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
-      
+
       # Autorise root et thibaut à faire confiance aux substituts des Flakes
       trusted-users = [ "root" "thibaut" ];
 
@@ -121,7 +121,7 @@
       kernelModules = [ "xe" ];
       systemd.enable = true;
       verbose = false;
-      
+
       # Déverrouillage de la partition SWAP chiffrée lors du boot/initrd
       luks.devices."luks-a0f369c9-319a-4e22-ac5f-7b5a191b22e8".device = "/dev/disk/by-uuid/a0f369c9-319a-4e22-ac5f-7b5a191b22e8";
     };
@@ -201,7 +201,6 @@
     greetd.enable = true;
     udisks2.enable = true; # montage bas-niveau de périphériques
     gvfs.enable = true;    # montage, corbeille, mtp/gphoto2, etc.
-    tumbler.enable = true; # miniatures (images/vidéos dans Thunar)
   };
 
   location.provider = "geoclue2";
@@ -288,6 +287,7 @@
       sops
       ssh-to-age
       usbutils
+      nemo-with-extensions
     ];
   };
 
@@ -306,11 +306,6 @@
     noctalia = { enable = true; recommendedServices.enable = true; };
     noctalia-greeter = { enable = true; settings = { keyboard.layout = "fr"; output.scale = 1; }; };
     nix-ld.enable = true;
-    thunar.enable = true;
-    thunar.plugins = with pkgs; [
-      thunar-archive-plugin  # nécessite un gestionnaire d'archives (ark, file-roller...)
-      thunar-volman          # gère le comportement au branchement d'un périphérique
-    ];
   };
 
   # ============================================================================
