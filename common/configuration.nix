@@ -199,6 +199,9 @@
       geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
     };
     greetd.enable = true;
+    udisks2.enable = true; # montage bas-niveau de périphériques
+    gvfs.enable = true;    # montage, corbeille, mtp/gphoto2, etc.
+    tumbler.enable = true; # miniatures (images/vidéos dans Thunar)
   };
 
   location.provider = "geoclue2";
@@ -284,7 +287,7 @@
       cachix
       sops
       ssh-to-age
-      thunar
+      usbutils
     ];
   };
 
@@ -303,6 +306,11 @@
     noctalia = { enable = true; recommendedServices.enable = true; };
     noctalia-greeter = { enable = true; settings = { keyboard.layout = "fr"; output.scale = 1; }; };
     nix-ld.enable = true;
+    thunar.enable = true;
+    thunar.plugins = with pkgs; [
+      thunar-archive-plugin  # nécessite un gestionnaire d'archives (ark, file-roller...)
+      thunar-volman          # gère le comportement au branchement d'un périphérique
+    ];
   };
 
   # ============================================================================
