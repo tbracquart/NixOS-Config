@@ -1,11 +1,16 @@
 { config, pkgs, inputs, ... }:
 
 {
-  # --- INFORMATIONS UTILISATEUR & ÉTAT ---
+  # ==========================================================================
+  # 1. ÉTAT HOME-MANAGER
+  # ==========================================================================
   home.stateVersion = "26.05";
   programs.home-manager.enable = true;
   home.enableNixpkgsReleaseCheck = false;
 
+  # ==========================================================================
+  # 2. SERVICES UTILISATEUR
+  # ==========================================================================
   systemd.user.services.hyprland-power-inhibit = {
     Unit = {
       Description = "Inhibit logind power key handling for Hyprland session";
@@ -21,29 +26,33 @@
     };
   };
 
-  # --- VARIABLES D'ENVIRONNEMENT ---
+  # ==========================================================================
+  # 3. VARIABLES D'ENVIRONNEMENT
+  # ==========================================================================
   home.sessionVariables = {
     EDITOR = "vim";
     NIXCFG = "~/nixos-config";
-    NIXDEV = "~/nixos-config--dev";
   };
 
-  # --- PAQUETS UTILISATEUR ---
+  # ==========================================================================
+  # 4. PAQUETS UTILISATEUR
+  # ==========================================================================
   home.packages = (with pkgs; [
     kdePackages.kate
-    kdePackages.kdeconnect-kde
     netflix
     ytmdesktop
     klavaro
     scrcpy
     vinegar
-  ]) ++ [ inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+  ]) ++ [
+    inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default
+  ];
 
-  # --- SERVICES UTILISATEUR ---
+  # ==========================================================================
+  # 5. APPLICATIONS & CONFIGURATIONS
+  # ==========================================================================
 
-  # --- APPLICATIONS & CONFIGURATIONS ---
-
-  # 1. Git
+  # --- Git & GitHub CLI ---
   programs.git = {
     enable = true;
     settings = {
@@ -51,32 +60,25 @@
         name = "Thibaut Bracquart";
         email = "202062783+tbracquart@users.noreply.github.com";
       };
-      init = {
-        defaultBranch = "main";
-      };
+      init.defaultBranch = "main";
     };
   };
 
   programs.gh = {
     enable = true;
-    extensions = with pkgs; [
-      github-copilot-cli
-    ];
+    extensions = with pkgs; [ github-copilot-cli ];
   };
 
-  # 2. Terminal Kitty
-  programs.kitty.enable = true;
-
-  # 3. Shell Fish
+  # --- Shell Fish ---
   programs.fish = {
     enable = true;
     generateCompletions = false;
+
     interactiveShellInit = ''
       fastfetch
       echo
 
-      # Charge le token Cachix (écriture) depuis un fichier hors dépôt Git,
-      # pour ne jamais committer de secret dans le repo public.
+      # Token Cachix (hors dépôt)
       if test -f ~/.config/cachix/token.fish
         source ~/.config/cachix/token.fish
       end
@@ -89,6 +91,25 @@
         echo
       '';
 
+      # Attente de la CI (utilisée par push)
+      wait-ci = ''
+        if type -q gh
+          echo ""
+          echo "⏳ Attente du run CI sur $argv[1]..."
+          sleep 5
+          set -l run_id (gh run list --branch $argv[1] --workflow "NixOS CI" --limit 1 --json databaseId --jq '.[0].databaseId')
+          if test -n "$run_id"
+            gh run watch $run_id --exit-status
+            and echo "✅ CI terminée et poussée vers Cachix."
+            or echo "⚠️  CI échouée — un rebuild pourrait compiler en local."
+          else
+            echo "⚠️  Aucun run CI trouvé."
+          end
+        else
+          echo "ℹ️  gh absent, impossible d'attendre la CI automatiquement."
+        end
+      '';
+
       push = ''
         cd ~/nixos-config
         git add .
@@ -97,7 +118,7 @@
         read -l -P "Message de commit : " commit_msg
 
         if test -z "$commit_msg"
-          echo "❌ Message de commit vide, annulation (rien commité, rien poussé)."
+          echo "❌ Message de commit vide, annulation."
           return 1
         end
 
@@ -119,14 +140,13 @@
             set target_branch $current_branch
           end
 
-          # Si la branche n'existe ni en local ni en distant, on propose de la créer
           if not git show-ref --verify --quiet refs/heads/$target_branch
             and not git ls-remote --exit-code --heads origin $target_branch >/dev/null 2>&1
             read -l -P "🌱 La branche '$target_branch' n'existe pas, la créer ? [y/N] " create_branch
             if test "$create_branch" = "y" -o "$create_branch" = "Y"
               git checkout -b $target_branch
             else
-              echo "❌ Push annulé (branche inexistante)."
+              echo "❌ Push annulé."
               return 1
             end
           end
@@ -134,23 +154,11 @@
           git push origin $target_branch
           and begin
             echo "✅ Push terminé sur $target_branch !"
-
-            # Laisse la CI builder et pousser vers Cachix avant de rebuild
-            # en local, pour profiter du cache au lieu de recompiler.
-            if type -q gh
-              echo ""
-              echo "⏳ Attente du run CI sur $target_branch..."
-              sleep 5
-              gh run watch (gh run list --branch $target_branch --workflow "NixOS CI" --limit 1 --json databaseId --jq '.[0].databaseId') --exit-status
-              and echo "✅ CI terminée et poussée vers Cachix."
-              or echo "⚠️  CI échouée ou non trouvée — un rebuild pourrait compiler en local."
-            else
-              echo "ℹ️  gh absent, impossible d'attendre la CI automatiquement."
-            end
+            wait-ci $target_branch
           end
-          or echo "❌ Push échoué, arrêt (commit local conservé)."
+          or echo "❌ Push échoué (commit local conservé)."
         end
-        or echo "❌ Commit échoué, arrêt (rien poussé)."
+        or echo "❌ Commit échoué."
       '';
 
       update = ''
@@ -167,8 +175,6 @@
         and begin
           echo "✅ Fini !"
 
-          # Alimente le cache Cachix perso avec le résultat construit
-          # localement, indépendamment du CI (qui ne tourne que sur push).
           if type -q cachix; and test -f ~/.config/cachix/cachix.dhall
             read -l -P "📦 Pousser vers le cache tbracquart ? [y/N] " confirm_cachix
             if test "$confirm_cachix" = "y" -o "$confirm_cachix" = "Y"
@@ -178,29 +184,27 @@
               echo "⏸️  Push Cachix annulé."
             end
           else
-            echo "ℹ️  cachix absent ou non authentifié, pas de push vers le cache."
+            echo "ℹ️  cachix absent ou non authentifié."
           end
 
           cd ~/nixos-config
           if test -z "$(git status --porcelain)"
-            echo "ℹ️  Rien à commit, pas de push."
+            echo "ℹ️  Rien à commit."
           else
             read -l -P "🔼 Des changements sont détectés, pousser vers le dépôt ? [y/N] " confirm
             if test "$confirm" = "y" -o "$confirm" = "Y"
               push
             else
-              echo "⏸️  Push annulé, changements laissés en local."
+              echo "⏸️  Push annulé."
             end
           end
         end
-        or echo "❌ Rebuild échoué, pas de push."
+        or echo "❌ Rebuild échoué."
       '';
 
       upgrade = ''
         echo "🌟 Mise à jour complète du système 🌟"
-        echo "ℹ️  Le flake.lock est déjà mis à jour chaque nuit par la CI (update.yml),"
-        echo "   qui build et pousse aussi vers Cachix. Un simple 'git pull' + 'rebuild'"
-        echo "   suffit donc la plupart du temps, sans passer par 'update' en local."
+        echo "ℹ️  Le flake.lock est déjà mis à jour chaque nuit par la CI."
         echo ""
         git -C ~/nixos-config pull
         and rebuild
@@ -210,13 +214,7 @@
     };
   };
 
-  # 3bis. Firefox — extension Pywalfox pour suivre le thème Noctalia.
-  # Le paquet pywalfox-native est déclaré ici (pas via un "pywalfox start" à
-  # la main) car nativeMessagingHosts.packages est le mécanisme officiel
-  # Home Manager qui écrit le manifeste JSON au bon endroit
-  # (~/.mozilla/native-messaging-hosts/) sans toucher au store Nix — la
-  # commande `pywalfox install` casse sur NixOS car elle essaie de chmod un
-  # fichier dans le store, qui est en lecture seule.
+  # --- Firefox + Pywalfox ---
   programs.firefox = {
     enable = true;
     nativeMessagingHosts = [ pkgs.pywalfox-native ];
@@ -230,26 +228,12 @@
     };
   };
 
-  # 4. Noctalia — le fichier réellement écrit par l'UI (settings.toml dans
-  # ~/.local/state/) est symlinké hors du store, directement vers le repo. Chaque
-  # réglage fait depuis l'UI Noctalia est donc automatiquement versionné, sans
-  # étape manuelle (`noctalia config export`) à répéter.
+  # --- Noctalia (symlink hors store) ---
   home.file.".local/state/noctalia/settings.toml".source =
     config.lib.file.mkOutOfStoreSymlink
       "/home/thibaut/nixos-config/common/noctalia-settings.toml";
 
-  # 5. Compositeur Hyprland (Config Lua)
-  # Même logique que le settings.toml de Noctalia plus haut : le fichier .lua
-  # est un mkOutOfStoreSymlink vers le repo, pas une copie figée dans le
-  # store. Toute édition de hyprland.lua est donc reprise par Hyprland au
-  # simple rechargement de la config (hyprctl reload), sans passer par un
-  # nixos-rebuild switch complet.
-  #
-  # Note : extraLuaFiles.<name>.content copie le CONTENU dans le store (donc
-  # figé, pas de rechargement à chaud) même si on lui passe un
-  # mkOutOfStoreSymlink en valeur. Pour un vrai symlink hors-store, il faut
-  # passer par home.file directement, puis charger le fichier avec un
-  # require() explicite dans extraConfig.
+  # --- Hyprland (config Lua hors store) ---
   home.file.".config/hypr/init.lua".source =
     config.lib.file.mkOutOfStoreSymlink
       "/home/thibaut/nixos-config/common/hyprland.lua";
@@ -258,7 +242,6 @@
     enable = true;
     configType = "lua";
     systemd.enable = true;
-
     extraConfig = ''require("init")'';
   };
 }
