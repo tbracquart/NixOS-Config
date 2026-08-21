@@ -1,4 +1,4 @@
-name-template: 'Draft $RESOLVED_VERSION'
+name-template: 'Version $RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 
 # La version CalVer (YY.MM.DD, avec suffixe -N si plusieurs merges le même
@@ -37,6 +37,7 @@ exclude-labels:
 
 change-template: '- $TITLE (#$NUMBER)'
 change-title-escapes: '\<*_&'
+no-changes-template: '- Aucun changement'
 
 template: |
   ## Changements
