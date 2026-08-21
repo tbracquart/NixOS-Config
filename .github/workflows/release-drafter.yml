@@ -1,0 +1,44 @@
+name: Release Drafter
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  update_release_draft:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Calcule la version CalVer du jour : YY.MM.DD, avec un compteur
+      # séparé par "-" qui s'incrémente s'il y a déjà un tag pour aujourd'hui.
+      # 1er merge du jour -> 26.08.21
+      # 2e merge du jour  -> 26.08.21-2
+      - name: Compute CalVer
+        id: calver
+        run: |
+          BASE=$(date +'%y.%m.%d')
+          COUNT=$(git tag -l "v${BASE}" "v${BASE}-*" | wc -l)
+          if [ "$COUNT" -eq 0 ]; then
+            VERSION="$BASE"
+          else
+            VERSION="${BASE}-$((COUNT + 1))"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - uses: release-drafter/release-drafter@v6
+        with:
+          version: ${{ steps.calver.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
