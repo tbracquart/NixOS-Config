@@ -37,9 +37,6 @@ jobs:
           echo "Computed version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Debug version output
-        run: echo "Version passed to release-drafter -> '${{ steps.calver.outputs.version }}'"
-
       - uses: release-drafter/release-drafter@v6
         with:
           version: ${{ steps.calver.outputs.version }}
