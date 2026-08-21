@@ -1,0 +1,54 @@
+name-template: 'Draft $RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+# La version CalVer (YY.MM.DD, avec suffixe -N si plusieurs merges le même
+# jour) est calculée directement dans le workflow .github/workflows/release-drafter.yml
+# et transmise via l'input "version". Pas de version-template/version-resolver
+# ici : Release Drafter ne doit pas recalculer la version lui-même.
+
+categories:
+  - title: '🚀 Fonctionnalités'
+    labels:
+      - 'feature'
+      - 'enhancement'
+  - title: '🐛 Corrections'
+    labels:
+      - 'bug'
+      - 'fix'
+  - title: '🔧 CI / Tooling'
+    labels:
+      - 'ci-please'
+      - 'ci'
+  - title: '📦 Dépendances'
+    labels:
+      - 'dependencies'
+      - 'flake-update'
+  - title: '🖥️ Config hosts'
+    labels:
+      - 'zenbook-13'
+      - 'v145-15ast'
+  - title: '📝 Autres'
+    labels:
+      - '*'
+
+exclude-labels:
+  - 'ignore-for-release'
+  - 'skip-changelog'
+
+change-template: '- $TITLE (#$NUMBER)'
+change-title-escapes: '\<*_&'
+
+template: |
+  ## Changements
+
+  $CHANGES
+
+autolabeler:
+  - label: 'ci-please'
+    files:
+      - '.github/workflows/*'
+  - label: 'flake-update'
+    branch:
+      - '/^update\/.+/'
+    title:
+      - '/flake.lock/i'
