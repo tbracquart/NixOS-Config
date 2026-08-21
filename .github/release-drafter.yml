@@ -1,4 +1,4 @@
-name-template: 'Release $RESOLVED_VERSION'
+name-template: 'Version $RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 
 # La version CalVer (YY.MM.DD, avec suffixe -N si plusieurs merges le même
