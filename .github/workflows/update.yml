@@ -50,7 +50,6 @@ jobs:
     uses: ./.github/workflows/build-host.yml
     with:
       host: ZenBook-13
-      use-nix-store-cache: true
       flake-lock-artifact: flake-lock
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -61,7 +60,6 @@ jobs:
     uses: ./.github/workflows/build-host.yml
     with:
       host: V145-15AST
-      use-nix-store-cache: true
       flake-lock-artifact: flake-lock
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}

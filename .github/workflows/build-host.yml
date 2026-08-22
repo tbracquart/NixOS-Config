@@ -1,3 +1,4 @@
+
 name: Build host (reusable)
 
 on:
@@ -7,11 +8,6 @@ on:
         description: 'Nom du host NixOS à build (ex. ZenBook-13)'
         required: true
         type: string
-      use-nix-store-cache:
-        description: 'Activer le cache GitHub du store Nix (utile pour les runs lourds comme update.yml)'
-        required: false
-        type: boolean
-        default: false
       flake-lock-artifact:
         description: "Nom d'un artifact contenant un flake.lock à appliquer avant build (optionnel)"
         required: false
@@ -24,6 +20,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
       CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -37,18 +34,6 @@ jobs:
           name: ${{ inputs.flake-lock-artifact }}
 
       - uses: ./.github/actions/setup-nix-cachix
-
-      - name: Restaurer/sauver le store Nix
-        if: inputs.use-nix-store-cache
-        uses: nix-community/cache-nix-action@v7
-        with:
-          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
-          restore-prefixes-first-match: nix-${{ runner.os }}-
-          gc-max-store-size-linux: 5G
-          purge: true
-          purge-prefixes: nix-${{ runner.os }}-
-          purge-created: 0
-          purge-primary-key: never
 
       - name: Build ${{ inputs.host }}
         run: |
