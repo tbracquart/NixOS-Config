@@ -9,24 +9,24 @@ tag-template: 'v$RESOLVED_VERSION'
 categories:
   - title: '🚀 Fonctionnalités'
     labels:
-      - 'feature'
-      - 'enhancement'
+      - 'type: enhancement'
   - title: '🐛 Corrections'
     labels:
-      - 'bug'
-      - 'fix'
+      - 'type: bug'
   - title: '🔧 CI / Tooling'
     labels:
       - 'ci-please'
-      - 'ci'
+      - 'area: ci'
+  - title: '🧹 Maintenance'
+    labels:
+      - 'type: chore'
   - title: '📦 Dépendances'
     labels:
-      - 'dependencies'
-      - 'flake-update'
+      - 'area: nix-config'
   - title: '🖥️ Config hosts'
     labels:
-      - 'zenbook-13'
-      - 'v145-15ast'
+      - 'host: zenbook-13'
+      - 'host: v145-15ast'
   - title: '📝 Autres'
     labels:
       - '*'
@@ -34,6 +34,10 @@ categories:
 exclude-labels:
   - 'ignore-for-release'
   - 'skip-changelog'
+  - 'duplicate'
+  - 'invalid'
+  - 'wontfix'
+  - 'question'
 
 change-template: '- $TITLE (#$NUMBER)'
 change-title-escapes: '\<*_&'
@@ -48,7 +52,7 @@ autolabeler:
   - label: 'ci-please'
     files:
       - '.github/workflows/*'
-  - label: 'flake-update'
+  - label: 'area: nix-config'
     branch:
       - '/^update\/.+/'
     title:
