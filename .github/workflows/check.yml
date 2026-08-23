@@ -13,9 +13,15 @@ concurrency:
 jobs:
   changes:
     runs-on: ubuntu-latest
+    # Sur pull_request, ignore les événements 'labeled' qui ne concernent pas
+    # ci-please : gh pr create --label X --label Y --label Z envoie un
+    # événement 'labeled' par label ajouté, ce qui déclenchait un run par
+    # label (donc du bruit et des runs annulés) même quand ci-please était
+    # déjà présent depuis le premier événement 'opened'.
     if: |
       github.event_name != 'pull_request' ||
-      contains(github.event.pull_request.labels.*.name, 'ci-please')
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'ci-please')) ||
+      (github.event.action == 'labeled' && github.event.label.name == 'ci-please')
     outputs:
       V145-15AST: ${{ steps.filter.outputs.V145-15AST }}
       ZenBook-13: ${{ steps.filter.outputs.ZenBook-13 }}
