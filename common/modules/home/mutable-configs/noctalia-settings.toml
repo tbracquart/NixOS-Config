@@ -1,4 +1,4 @@
-config_version = 12
+config_version = 13
 
 [audio]
 enable_overdrive = true
@@ -92,6 +92,8 @@ widget_order = [ "lockscreen-login-box@winit", "lockscreen-login-box@eDP-1" ]
     cx = 960.0
     cy = 898.0
     output = "eDP-1"
+    placement_height = 1080.0
+    placement_width = 1920.0
     rotation = 0.0
     type = "login_box"
 
@@ -117,6 +119,8 @@ widget_order = [ "lockscreen-login-box@winit", "lockscreen-login-box@eDP-1" ]
     cx = 471.0
     cy = 322.0
     output = "winit"
+    placement_height = 0.0
+    placement_width = 0.0
     rotation = 0.0
     type = "login_box"
 
