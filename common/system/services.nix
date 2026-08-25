@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   services = {
@@ -21,15 +21,8 @@
 
     openssh.enable = true;
     flatpak.enable = true;
-    geoclue2 = {
-      enable = true;
-      geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
-    };
-    greetd.enable = true;
     udisks2.enable = true;
     gvfs.enable = true;
     fwupd.enable = true;
   };
-
-  location.provider = "geoclue2";
 }
