@@ -20,7 +20,5 @@
   systemd.tpm2.enable = false;
   boot.initrd.systemd.tpm2.enable = false;
 
-  programs.firefox.enable = true;
-
   system.stateVersion = "26.05";
 }
