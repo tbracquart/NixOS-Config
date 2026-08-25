@@ -7,9 +7,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    mpv
     ripgrep
-    adw-gtk3
   ];
 
   qt = {
