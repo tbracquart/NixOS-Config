@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ./variables.nix
     ./users.nix
+    ./boot.nix
 
     ../../common/system/nix.nix
     ../../common/system/networking.nix
