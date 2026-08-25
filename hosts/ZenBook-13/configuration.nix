@@ -6,6 +6,7 @@
     ./variables.nix
     ./users.nix
     ./boot.nix
+    ./services.nix
 
     ../../common/system/nix.nix
     ../../common/system/networking.nix
