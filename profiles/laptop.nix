@@ -7,23 +7,11 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    htop
-    btop
-    pciutils
-    tree
-    file
-    bat
     mpv
     ripgrep
     dnsmasq
-    alacritty
     adw-gtk3
     qt6Packages.qt6ct
-    cachix
-    sops
-    ssh-to-age
-    usbutils
-    nemo-with-extensions
   ];
 
   qt = {
