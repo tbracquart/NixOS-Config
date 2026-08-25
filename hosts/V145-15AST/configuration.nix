@@ -12,6 +12,7 @@
     ../../common/system/networking.nix
     ../../common/system/locale.nix
     ../../common/system/services.nix
+    ../../common/system/shell.nix
     ../../profiles/plasma.nix
   ];
 
