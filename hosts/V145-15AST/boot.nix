@@ -6,7 +6,6 @@
   boot.loader.timeout = 1;
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelParams = [ ];
 
   systemd.tpm2.enable = false;
   boot.initrd.systemd.tpm2.enable = false;
