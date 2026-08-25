@@ -11,6 +11,6 @@
     ./02-git.nix
     ./03-fish.nix
     ./04-firefox.nix
-    ./05-terminal-file-manager.nix
+    ./05-programs.nix
   ];
 }
