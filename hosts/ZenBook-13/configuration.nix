@@ -10,6 +10,7 @@
     ../../common/system/boot.nix
     ../../common/system/networking.nix
     ../../common/system/locale.nix
+    ../../common/system/keyboard.nix
     ../../common/system/services.nix
     ../../profiles/laptop.nix
     ../../modules/power/options.nix
