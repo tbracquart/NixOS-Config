@@ -6,6 +6,7 @@
     ./variables.nix
     ./users.nix
     ./boot.nix
+    ./audio.nix
 
     ../../common/system/nix.nix
     ../../common/system/networking.nix
@@ -16,9 +17,6 @@
 
   systemd.tpm2.enable = false;
   boot.initrd.systemd.tpm2.enable = false;
-
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
 
   programs.firefox.enable = true;
   nixpkgs.config.allowUnfree = true;
