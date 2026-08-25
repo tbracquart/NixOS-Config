@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       github.event_name != 'pull_request' ||
+      startsWith(github.event.pull_request.head.ref, 'auto/') ||
       contains(github.event.pull_request.labels.*.name, 'ci-please')
     outputs:
       V145-15AST: ${{ steps.filter.outputs.V145-15AST }}
