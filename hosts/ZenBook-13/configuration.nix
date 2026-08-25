@@ -11,6 +11,9 @@
     ../../common/system/networking.nix
     ../../common/system/locale.nix
     ../../common/system/services.nix
+    ../../common/system/shell.nix
+    ../../common/system/programs.nix
+    ../../common/system/users.nix
     ../../profiles/laptop.nix
     ../../modules/power/options.nix
     ../../modules/power/module.nix
