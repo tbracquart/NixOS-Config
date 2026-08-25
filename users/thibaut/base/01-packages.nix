@@ -9,6 +9,7 @@
     klavaro
     scrcpy
     vinegar
+    nemo-with-extensions
   ]) ++ [
     inputs.freesmlauncher.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
