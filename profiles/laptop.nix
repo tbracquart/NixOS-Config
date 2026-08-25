@@ -6,10 +6,6 @@
     ../modules/virtualisation/module.nix
   ];
 
-  environment.systemPackages = with pkgs; [
-    ripgrep
-  ];
-
   qt = {
     enable = true;
     platformTheme = "qt5ct";
