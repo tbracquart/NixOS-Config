@@ -10,7 +10,6 @@
     };
 
     htop.enable = true;
-    btop.enable = true;
     bat.enable = true;
   };
 }
