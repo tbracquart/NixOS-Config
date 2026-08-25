@@ -4,7 +4,6 @@
   imports = [
     ../modules/desktop/module.nix
     ../modules/virtualisation/module.nix
-    ../common/system/security.nix
   ];
 
   environment.systemPackages = with pkgs; [
