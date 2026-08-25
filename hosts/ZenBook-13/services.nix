@@ -1,0 +1,12 @@
+{ ... }:
+
+{
+  services.greetd.enable = true;
+
+  services.geoclue2 = {
+    enable = true;
+    geoProviderUrl = "https://api.beacondb.net/v1/geolocate";
+  };
+
+  location.provider = "geoclue2";
+}
