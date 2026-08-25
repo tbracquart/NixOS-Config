@@ -13,6 +13,7 @@
     ../../common/system/locale.nix
     ../../common/system/services.nix
     ../../common/system/shell.nix
+    ../../common/system/programs.nix
     ../../profiles/plasma.nix
   ];
 
@@ -20,9 +21,6 @@
   boot.initrd.systemd.tpm2.enable = false;
 
   programs.firefox.enable = true;
-  nixpkgs.config.allowUnfree = true;
-
-  environment.systemPackages = [ ];
 
   system.stateVersion = "26.05";
 }
