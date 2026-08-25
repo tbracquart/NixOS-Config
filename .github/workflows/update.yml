@@ -44,7 +44,7 @@ jobs:
       # Compare les inputs de premier niveau (déclarés dans flake.nix, via
       # nodes.root.inputs) entre l'ancien et le nouveau flake.lock, et
       # calcule l'écart en jours pour chacun de ceux qui ont changé. Sert à
-      # donner un titre de PR informatif ("nixpkgs (+3j), niri (+12j)")
+      # donner un titre de PR informatif ("nixpkgs (+3j), home-manager (+2j)")
       # plutôt que le générique "chore: nix flake update (auto)" qui ne
       # dit rien du contenu réel une fois repris dans le changelog de
       # release publiée par release-drafter.
