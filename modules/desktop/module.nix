@@ -18,7 +18,6 @@
   services.howdy.enable = true;
 
   security = {
-    rtkit.enable = true;
     pam.howdy = {
       enable = true;
       control = "sufficient";
