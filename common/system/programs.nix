@@ -1,10 +1,17 @@
 { ... }:
 
 {
-  programs.kdeconnect.enable = true;
+  programs = {
+    kdeconnect.enable = true;
 
-  programs.vim = {
-    enable = true;
-    defaultEditor = true;
+    vim = {
+      enable = true;
+      defaultEditor = true;
+    };
+
+    htop.enable = true;
+    btop.enable = true;
+    bat.enable = true;
+    alacritty.enable = true;
   };
 }
