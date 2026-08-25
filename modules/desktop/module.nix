@@ -21,7 +21,8 @@
       enable = true;
       control = "sufficient";
     };
-    pam.services.polkit-1.howdy.enable = false;
+    # Désactivation de Howdy pour Polkit conservée temporairement pour test.
+    # pam.services.polkit-1.howdy.enable = false;
   };
 
   programs.noctalia = {
