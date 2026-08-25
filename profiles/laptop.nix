@@ -11,11 +11,5 @@
     platformTheme = "qt5ct";
   };
 
-  programs = {
-    vim = {
-      enable = true;
-      defaultEditor = true;
-    };
-    nix-ld.enable = true;
-  };
+  programs.nix-ld.enable = true;
 }
