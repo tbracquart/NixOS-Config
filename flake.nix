@@ -1,7 +1,6 @@
 {
   description = "NixOS + Home Manager Flake pour ZenBook 13";
 
-  # Configuration automatique des caches binaires (Cachix) pour éviter la compilation
   nixConfig = {
     extra-substituters = [
       "https://tbracquart.cachix.org"
@@ -52,15 +51,14 @@
       specialArgs = { inherit inputs; };
       modules = [
         { nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ]; }
-        ./hosts/ZenBook-13/hardware-configuration.nix
-        ./common/configuration.nix
+        ./hosts/ZenBook-13/configuration.nix
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users.thibaut = import ./common/home.nix;
+          home-manager.users.thibaut = import ./common/home/home-manager.nix;
         }
       ];
     };
