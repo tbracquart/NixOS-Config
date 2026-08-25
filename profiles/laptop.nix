@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../modules/desktop/module.nix
+    ./desktop.nix
     ../modules/virtualisation/module.nix
   ];
 
