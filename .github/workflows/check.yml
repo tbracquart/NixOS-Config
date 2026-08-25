@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     if: |
       github.event_name != 'pull_request' ||
+      startsWith(github.event.pull_request.head.ref, 'auto/') ||
       contains(github.event.pull_request.labels.*.name, 'ci-please')
     outputs:
       V145-15AST: ${{ steps.filter.outputs.V145-15AST }}
@@ -34,11 +35,18 @@ jobs:
             ZenBook-13:
               - 'hosts/ZenBook-13/**'
               - 'common/**'
+              - 'profiles/**'
+              - 'modules/**'
+              - 'users/**'
               - 'flake.nix'
               - 'flake.lock'
             flake:
               - 'hosts/**'
               - 'common/**'
+              - 'profiles/**'
+              - 'modules/**'
+              - 'users/**'
+              - 'secrets/**'
               - 'flake.nix'
               - 'flake.lock'
 
