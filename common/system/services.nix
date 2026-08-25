@@ -1,6 +1,8 @@
 { pkgs, ... }:
 
 {
+  services.pulseaudio.enable = false;
+
   services = {
     avahi = {
       enable = true;
