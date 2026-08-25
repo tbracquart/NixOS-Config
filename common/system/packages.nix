@@ -10,6 +10,5 @@
     sops
     ssh-to-age
     usbutils
-    nemo-with-extensions
   ];
 }
