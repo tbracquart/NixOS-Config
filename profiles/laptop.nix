@@ -9,7 +9,6 @@
   environment.systemPackages = with pkgs; [
     htop
     btop
-    fastfetch
     pciutils
     tree
     file
