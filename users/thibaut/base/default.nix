@@ -11,7 +11,5 @@
     ./02-git.nix
     ./03-fish.nix
     ./04-firefox.nix
-    ./05-hyprland-noctalia.nix
-    ./06-session.nix
   ];
 }
