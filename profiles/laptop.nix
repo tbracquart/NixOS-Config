@@ -1,6 +1,12 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
+  imports = [
+    ../modules/desktop/module.nix
+    ../modules/virtualisation/module.nix
+    ../common/system/security.nix
+  ];
+
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
