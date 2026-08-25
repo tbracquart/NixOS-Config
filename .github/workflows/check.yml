@@ -30,6 +30,11 @@ jobs:
           filters: |
             V145-15AST:
               - 'hosts/V145-15AST/**'
+              - 'common/**'
+              - 'profiles/**'
+              - 'modules/**'
+              - 'users/**'
+              - 'secrets/**'
               - 'flake.nix'
               - 'flake.lock'
             ZenBook-13:
@@ -38,6 +43,7 @@ jobs:
               - 'profiles/**'
               - 'modules/**'
               - 'users/**'
+              - 'secrets/**'
               - 'flake.nix'
               - 'flake.lock'
             flake:
