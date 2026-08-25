@@ -7,8 +7,6 @@
     ../common/system/security.nix
   ];
 
-  nixpkgs.config.allowUnfree = true;
-
   environment.systemPackages = with pkgs; [
     htop
     btop
@@ -36,12 +34,10 @@
   };
 
   programs = {
-    fish.enable = true;
     vim = {
       enable = true;
       defaultEditor = true;
     };
-    kdeconnect.enable = true;
     nix-ld.enable = true;
   };
 }
