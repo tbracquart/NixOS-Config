@@ -16,6 +16,7 @@
     ../../common/system/shell.nix
     ../../common/system/programs.nix
     ../../common/system/users.nix
+    ../../common/system/packages.nix
     ../../profiles/plasma.nix
   ];
 
