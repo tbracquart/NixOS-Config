@@ -117,8 +117,8 @@ hl.config({
 ---------------
 hl.config({
     input = {
-        kb_layout  = "fr",
-        kb_variant = "latin9",
+        kb_layout  = "global",
+        kb_variant = "",
         follow_mouse = 1,
         sensitivity = 0,
         touchpad = { natural_scroll = false },

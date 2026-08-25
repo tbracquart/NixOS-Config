@@ -33,7 +33,7 @@
   programs.noctalia-greeter = {
     enable = true;
     settings = {
-      keyboard.layout = "fr";
+      keyboard.layout = "global";
       output.scale = 1;
     };
   };
