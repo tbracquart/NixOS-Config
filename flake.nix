@@ -1,5 +1,5 @@
 {
-  description = "NixOS + Home Manager Flake pour ZenBook 13";
+  description = "NixOS + Home Manager Flake pour ZenBook 13 et V145-15AST";
 
   nixConfig = {
     extra-substituters = [
@@ -14,7 +14,7 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
       "freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs="
-      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+      "noctalia.cachix.org-1:pCOR47nnMEo5thNDtzWpOxNFQsBRglJzxWPp3dkU4="
     ];
   };
 
@@ -58,7 +58,12 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users.thibaut = import ./common/home/home-manager.nix;
+          home-manager.users.thibaut = {
+            imports = [
+              ./users/thibaut/base
+              ./users/thibaut/variants/zenbook.nix
+            ];
+          };
         }
       ];
     };
@@ -68,6 +73,13 @@
       modules = [
         ./hosts/V145-15AST/configuration.nix
         sops-nix.nixosModules.sops
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.users.thibaut = import ./users/thibaut/base;
+        }
       ];
     };
   };
