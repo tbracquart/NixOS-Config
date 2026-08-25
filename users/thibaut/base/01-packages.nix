@@ -3,7 +3,7 @@
 {
   home.packages = (with pkgs; [
     fastfetch
-    kdePackages.kate
+    geany
     netflix
     ytmdesktop
     klavaro
