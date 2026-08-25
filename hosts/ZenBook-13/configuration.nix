@@ -5,9 +5,9 @@
     ./hardware-configuration.nix
     ./variables.nix
     ./users.nix
+    ./boot.nix
 
     ../../common/system/nix.nix
-    ../../common/system/boot.nix
     ../../common/system/networking.nix
     ../../common/system/locale.nix
     ../../common/system/services.nix
