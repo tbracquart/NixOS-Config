@@ -12,6 +12,7 @@
     ../../common/system/networking.nix
     ../../common/system/locale.nix
     ../../common/system/services.nix
+    ../../common/system/security.nix
     ../../common/system/shell.nix
     ../../common/system/programs.nix
     ../../common/system/users.nix
