@@ -2,6 +2,6 @@
 
 {
   imports = [
-    ../modules/virtualisation/module.nix
+    ../../modules/virtualisation/module.nix
   ];
 }
