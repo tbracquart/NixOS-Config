@@ -20,17 +20,18 @@
     ../../common/users/thibaut.nix
     ../../common/system/packages.nix
 
-    ../../modules/location/geoclue2.nix
-    ../../modules/virtualisation/module.nix
-    ../../modules/desktop/hyprland.nix
-    ../../modules/authentication/howdy-ir.nix
-    ../../modules/compatibility/nix-ld.nix
-
+    ../../modules
     ../../profiles/laptop.nix
   ];
 
   networking.hostName = "ZenBook-13";
+
+  my.authentication.howdy.ir.enable = true;
+  my.compatibility.nix-ld.enable = true;
+  my.desktop.hyprland.enable = true;
+  my.location.geoclue2.enable = true;
   my.power.batteryChargeLimit = 80;
+  my.virtualisation.libvirt.enable = true;
 
   hardware.graphics = {
     enable = true;
