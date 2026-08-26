@@ -21,7 +21,6 @@
 
     openssh.enable = true;
     flatpak.enable = true;
-    udisks2.enable = true;
     gvfs.enable = true;
     fwupd.enable = true;
   };
