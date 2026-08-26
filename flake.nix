@@ -56,7 +56,7 @@
           home-manager.users.thibaut = {
             imports = [
               ./users/thibaut/base
-              ./profiles/home/hyprland-noctalia.nix
+              ./users/thibaut/variants/zenbook.nix
             ];
           };
         }
