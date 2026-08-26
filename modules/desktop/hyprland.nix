@@ -4,14 +4,14 @@ let
   cfg = config.my.desktop.hyprland;
 in
 {
+  imports = [
+    inputs.noctalia-greeter.nixosModules.default
+  ];
+
   options.my.desktop.hyprland.enable = lib.mkEnableOption
     "l'environnement de bureau Hyprland";
 
   config = lib.mkIf cfg.enable {
-    imports = [
-      inputs.noctalia-greeter.nixosModules.default
-    ];
-
     services.libinput.enable = true;
 
     programs.hyprland.enable = true;
