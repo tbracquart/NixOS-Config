@@ -20,7 +20,11 @@
     ../../common/users/thibaut.nix
     ../../common/system/packages.nix
 
-    ../../modules
+    ../../modules/authentication
+    ../../modules/compatibility
+    ../../modules/desktop
+    ../../modules/location
+    ../../modules/virtualisation
     ../../profiles/laptop.nix
   ];
 
