@@ -19,11 +19,11 @@
     ../../common/system/users.nix
     ../../common/system/packages.nix
 
-    ../../profiles/laptop.nix
-    ../../profiles/virtualisation.nix
-    ../../profiles/hyprland.nix
-    ../../profiles/howdy-ir.nix
-    ../../profiles/nix-ld.nix
+    ../../profiles/system/laptop.nix
+    ../../profiles/system/virtualisation.nix
+    ../../profiles/system/hyprland.nix
+    ../../profiles/system/howdy-ir.nix
+    ../../profiles/system/nix-ld.nix
 
     inputs.noctalia-greeter.nixosModules.default
   ];

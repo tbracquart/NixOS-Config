@@ -17,9 +17,9 @@
     ../../common/system/users.nix
     ../../common/system/packages.nix
 
-    ../../profiles/laptop.nix
-    ../../profiles/plasma.nix
-    ../../profiles/howdy.nix
+    ../../profiles/system/laptop.nix
+    ../../profiles/system/plasma.nix
+    ../../profiles/system/howdy.nix
   ];
 
   system.stateVersion = "26.05";
