@@ -1,6 +1,10 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 {
+  imports = [
+    inputs.noctalia-greeter.nixosModules.default
+  ];
+
   services.libinput.enable = true;
 
   programs.hyprland.enable = true;
