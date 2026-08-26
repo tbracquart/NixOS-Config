@@ -19,7 +19,8 @@
     ../../common/users/thibaut.nix
     ../../common/system/packages.nix
 
-    ../../modules
+    ../../modules/authentication
+    ../../modules/desktop
     ../../profiles/laptop.nix
   ];
 
