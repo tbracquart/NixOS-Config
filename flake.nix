@@ -73,8 +73,16 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users.thibaut = import ./users/thibaut/base;
-          home-manager.users.quentin = import ./users/quentin/base.nix;
+          home-manager.users.thibaut = {
+            imports = [
+              ./users/thibaut/base
+            ];
+          };
+          home-manager.users.quentin = {
+            imports = [
+              ./users/quentin/base.nix
+            ];
+          };
         }
       ];
     };
