@@ -2,6 +2,6 @@
 
 {
   imports = [
-    ../modules/authentication/howdy.nix
+    ../../modules/authentication/howdy.nix
   ];
 }
