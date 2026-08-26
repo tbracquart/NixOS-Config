@@ -2,6 +2,6 @@
 
 {
   imports = [
-    ../modules/desktop/hyprland.nix
+    ../../modules/desktop/hyprland.nix
   ];
 }
