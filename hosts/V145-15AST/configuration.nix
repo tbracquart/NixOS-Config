@@ -18,9 +18,9 @@
     ../../common/users/thibaut.nix
     ../../common/system/packages.nix
 
-    ../../profiles/system/laptop.nix
-    ../../profiles/system/plasma.nix
-    ../../profiles/system/howdy.nix
+    ../../modules/desktop/plasma.nix
+    ../../modules/authentication/howdy.nix
+    ../../profiles/laptop.nix
   ];
 
   system.stateVersion = "26.05";
