@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   programs.git = {
@@ -14,6 +14,6 @@
 
   programs.gh = {
     enable = true;
-    extensions = [ "github-copilot-cli" ];
+    extensions = with pkgs; [ github-copilot-cli ];
   };
 }
