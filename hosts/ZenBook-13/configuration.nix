@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -24,8 +24,6 @@
     ../../profiles/system/hyprland.nix
     ../../profiles/system/howdy-ir.nix
     ../../profiles/system/nix-ld.nix
-
-    inputs.noctalia-greeter.nixosModules.default
   ];
 
   hardware.graphics = {
