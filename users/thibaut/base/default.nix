@@ -9,7 +9,6 @@
     ./01-packages.nix
     ./02-git.nix
     ./03-fish.nix
-    ./04-firefox.nix
-    ./05-programs.nix
+    ./programs.nix
   ];
 }
