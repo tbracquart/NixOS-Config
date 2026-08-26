@@ -10,5 +10,6 @@
     sops
     ssh-to-age
     usbutils
+    fastfetch
   ];
 }
