@@ -2,7 +2,6 @@
 
 {
   home.packages = (with pkgs; [
-    fastfetch
     geany
     netflix
     ytmdesktop
