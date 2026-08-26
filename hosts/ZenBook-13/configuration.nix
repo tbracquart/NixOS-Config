@@ -6,7 +6,6 @@
     ./variables.nix
     ./users.nix
     ./boot.nix
-    ./services.nix
 
     ../../common/system/nix.nix
     ../../common/system/networking.nix
@@ -18,6 +17,8 @@
     ../../common/system/programs.nix
     ../../common/system/users.nix
     ../../common/system/packages.nix
+
+    ../../modules/location/geoclue2.nix
 
     ../../profiles/system/laptop.nix
     ../../profiles/system/virtualisation.nix
