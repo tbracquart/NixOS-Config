@@ -18,9 +18,12 @@
     ../../common/system/programs.nix
     ../../common/system/users.nix
     ../../common/system/packages.nix
+
     ../../profiles/laptop.nix
-    ../../modules/power/options.nix
-    ../../modules/power/module.nix
+    ../../profiles/virtualisation.nix
+    ../../profiles/hyprland.nix
+    ../../profiles/howdy-ir.nix
+    ../../profiles/nix-ld.nix
 
     inputs.noctalia-greeter.nixosModules.default
   ];

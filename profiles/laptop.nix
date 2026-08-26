@@ -2,9 +2,7 @@
 
 {
   imports = [
-    ./desktop.nix
-    ../modules/virtualisation/module.nix
+    ../modules/power/options.nix
+    ../modules/power/module.nix
   ];
-
-  programs.nix-ld.enable = true;
 }
