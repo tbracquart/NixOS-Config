@@ -1,9 +1,10 @@
-{ ... }:
+{
+  ...
+}:
 
 {
   imports = [
     ./hardware-configuration.nix
-    ./variables.nix
     ./users.nix
     ./boot.nix
 
@@ -22,6 +23,8 @@
     ../../modules/authentication/howdy.nix
     ../../profiles/laptop.nix
   ];
+
+  networking.hostName = "V145-15AST";
 
   system.stateVersion = "26.05";
 }
