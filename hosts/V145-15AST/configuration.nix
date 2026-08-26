@@ -10,6 +10,7 @@
     ../../common/system/nix.nix
     ../../common/system/networking.nix
     ../../common/system/locale.nix
+    ../../common/system/keyboard.nix
     ../../common/system/services.nix
     ../../common/system/security.nix
     ../../common/system/shell.nix
