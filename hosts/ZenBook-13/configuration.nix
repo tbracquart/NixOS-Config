@@ -1,9 +1,11 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 
 {
   imports = [
     ./hardware-configuration.nix
-    ./variables.nix
     ./users.nix
     ./boot.nix
 
@@ -26,6 +28,9 @@
 
     ../../profiles/laptop.nix
   ];
+
+  networking.hostName = "ZenBook-13";
+  my.power.batteryChargeLimit = 80;
 
   hardware.graphics = {
     enable = true;
