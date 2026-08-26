@@ -19,12 +19,12 @@
     ../../common/system/packages.nix
 
     ../../modules/location/geoclue2.nix
+    ../../modules/virtualisation/module.nix
+    ../../modules/desktop/hyprland.nix
+    ../../modules/authentication/howdy-ir.nix
+    ../../modules/compatibility/nix-ld.nix
 
-    ../../profiles/system/laptop.nix
-    ../../profiles/system/virtualisation.nix
-    ../../profiles/system/hyprland.nix
-    ../../profiles/system/howdy-ir.nix
-    ../../profiles/system/nix-ld.nix
+    ../../profiles/laptop.nix
   ];
 
   hardware.graphics = {
