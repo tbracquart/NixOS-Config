@@ -2,6 +2,9 @@
 
 {
   home.packages = (with pkgs; [
+    alacritty
+    btop
+    firefox
     geany
     netflix
     ytmdesktop
