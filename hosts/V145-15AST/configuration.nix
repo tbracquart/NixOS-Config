@@ -15,7 +15,7 @@
     ../../common/system/security.nix
     ../../common/system/shell.nix
     ../../common/system/programs.nix
-    ../../common/system/users.nix
+    ../../common/users/thibaut.nix
     ../../common/system/packages.nix
 
     ../../profiles/system/laptop.nix
