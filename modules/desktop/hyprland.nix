@@ -33,8 +33,9 @@ in
     programs.noctalia-greeter = {
       enable = true;
       settings = {
-        keyboard.layout = config.services.xserver.xkb.layout;
         output.scale = 1;
+      } // lib.optionalAttrs (config.my.keyboard.layout != null) {
+        keyboard.layout = config.my.keyboard.layout;
       };
     };
   };
