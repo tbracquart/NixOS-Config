@@ -4,7 +4,6 @@
     ./bluetooth
     ./compatibility
     ./desktop
-    ./firmware
     ./graphics
     ./keyboard
     ./location
