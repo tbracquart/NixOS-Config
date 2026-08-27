@@ -2,6 +2,27 @@
 
 let
   cfg = config.my.power;
+  setChargeThreshold = pkgs.writeShellScript "set-battery-charge-threshold" ''
+    set -eu
+
+    found=0
+
+    for battery in /sys/class/power_supply/*; do
+      [ -f "$battery/type" ] || continue
+      [ "$(cat "$battery/type")" = "Battery" ] || continue
+
+      threshold="$battery/charge_control_end_threshold"
+      [ -e "$threshold" ] || continue
+
+      echo ${toString cfg.batteryChargeLimit} > "$threshold"
+      found=1
+    done
+
+    if [ "$found" -eq 0 ]; then
+      echo "Aucune interface de seuil de charge compatible n'a été trouvée." >&2
+      exit 1
+    fi
+  '';
 in
 {
   options.my.power.batteryChargeLimit = lib.mkOption {
@@ -17,9 +38,7 @@ in
       after = [ "multi-user.target" ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${pkgs.writeShellScript "set-charge-threshold" ''
-          echo ${toString cfg.batteryChargeLimit} > /sys/class/power_supply/BAT0/charge_control_end_threshold
-        ''}";
+        ExecStart = setChargeThreshold;
         RemainAfterExit = true;
       };
     };
