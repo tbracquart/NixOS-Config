@@ -157,7 +157,6 @@ settings_show_advanced = false
     open_near_click_control_center = true
     open_near_click_launcher = true
     open_near_click_wallpaper = true
-    transparency_mode = "soft"
 
     [shell.screen_corners]
     enabled = true
@@ -169,7 +168,7 @@ settings_show_advanced = false
 builtin = "Noctalia"
 community_palette = "Oxocarbon"
 custom_palette = "wp12329556-nixos-wallpapers-vib"
-mode = "auto"
+mode = "dark"
 source = "wallpaper"
 wallpaper_scheme = "vibrant"
 
