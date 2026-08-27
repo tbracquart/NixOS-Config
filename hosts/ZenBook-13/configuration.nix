@@ -9,22 +9,8 @@
     ./users.nix
     ./boot.nix
 
-    ../../common/system/nix.nix
-    ../../common/system/networking.nix
-    ../../common/system/locale.nix
-    ../../common/system/keyboard.nix
-    ../../common/system/services.nix
-    ../../common/system/security.nix
-    ../../common/system/shell.nix
-    ../../common/system/programs.nix
-    ../../common/users/thibaut.nix
-    ../../common/system/packages.nix
-
-    ../../modules/authentication
-    ../../modules/compatibility
-    ../../modules/desktop
-    ../../modules/location
-    ../../modules/virtualisation
+    ../../common
+    ../../modules
     ../../profiles/laptop.nix
   ];
 
