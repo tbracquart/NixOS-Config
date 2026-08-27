@@ -1,5 +1,9 @@
-{ ... }:
+{ config, lib, ... }:
 
 {
-  # Laptop profile: host-specific laptop configuration belongs here.
+  config = lib.mkIf (config.my.profile == "laptop") {
+    my.bluetooth.enable = true;
+    my.bluetooth.powerOnBoot = true;
+    my.keyboard.global.enable = true;
+  };
 }
