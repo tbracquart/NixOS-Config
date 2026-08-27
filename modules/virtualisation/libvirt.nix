@@ -14,12 +14,14 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    virtualisation.libvirtd.enable = true;
-    programs.virt-manager.enable = true;
+  config = lib.mkMerge [
+    (lib.mkIf cfg.enable {
+      virtualisation.libvirtd.enable = true;
+      programs.virt-manager.enable = true;
+    })
 
-    users.users.${cfg.user}.extraGroups = lib.mkIf (cfg.user != null) [
-      "libvirtd"
-    ];
-  };
+    (lib.mkIf (cfg.enable && cfg.user != null) {
+      users.users.${cfg.user}.extraGroups = [ "libvirtd" ];
+    })
+  ];
 }
