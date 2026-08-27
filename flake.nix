@@ -52,6 +52,7 @@
       hostModules = host: [
         ./hosts/${host}/hardware-configuration.nix
         ./hosts/${host}/boot.nix
+        ./hosts/${host}/users.nix
         ./hosts/${host}/configuration.nix
       ];
 
