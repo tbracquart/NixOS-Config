@@ -5,7 +5,7 @@ let
   xkbDir = pkgs.runCommand "azerty-global-xkb" { } ''
     mkdir -p "$out"
     cp -rL --no-preserve=mode "${pkgs.xkeyboard_config}/etc/X11/xkb/." "$out/"
-    cp ${../../common/system/azerty_global} "$out/symbols/global"
+    cp ${./azerty_global} "$out/symbols/global"
   '';
 in
 {
