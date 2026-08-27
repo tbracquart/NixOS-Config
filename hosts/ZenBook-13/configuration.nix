@@ -4,7 +4,6 @@
   my.authentication.howdy.ir.enable = true;
   my.compatibility.nix-ld.enable = true;
   my.desktop.hyprland.enable = true;
-  my.firmware.redistributable.enable = true;
   my.graphics.intel.enable = true;
   my.location.geoclue2.enable = true;
   my.power.batteryChargeLimit = 80;
