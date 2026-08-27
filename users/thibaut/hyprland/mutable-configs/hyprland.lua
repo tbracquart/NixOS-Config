@@ -23,25 +23,17 @@ local menu        = ""
 ---- AUTOSTART ----
 -------------------
 hl.on("hyprland.start", function()
-  hl.exec_cmd("noctalia") -- Inclus selon la documentation officielle
+  hl.exec_cmd("noctalia")
   hl.exec_cmd("kdeconnect-indicator")
 end)
-
--------------------------------
----- ENVIRONMENT VARIABLES ----
--------------------------------
-hl.env("XCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_SIZE", "24")
-hl.env("XCURSOR_THEME", "Adwaita")
-hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 
 -----------------------
 ---- LOOK AND FEEL ----
 -----------------------
 hl.config({
     general = {
-        gaps_in  = 5,  -- Valeur officielle du site
-        gaps_out = 10, -- Valeur officielle du site
+        gaps_in  = 5,
+        gaps_out = 10,
         border_size = 2,
         col = {
             active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
@@ -53,21 +45,21 @@ hl.config({
     },
 
     decoration = {
-        rounding       = 20, -- Valeur officielle du site
-        rounding_power = 2,  -- Valeur officielle du site
+        rounding       = 20,
+        rounding_power = 2,
         active_opacity   = 95.0,
         inactive_opacity = 90.0,
         shadow = {
             enabled      = true,
-            range        = 4,        -- Valeur officielle du site
-            render_power = 3,        -- Valeur officielle du site
-            color        = 0xee1a1a1a, -- Valeur officielle du site
+            range        = 4,
+            render_power = 3,
+            color        = 0xee1a1a1a,
         },
         blur = {
             enabled   = true,
-            size      = 3,      -- Valeur officielle du site
-            passes    = 2,      -- Valeur officielle du site
-            vibrancy  = 0.1696, -- Valeur officielle du site
+            size      = 3,
+            passes    = 2,
+            vibrancy  = 0.1696,
         },
     },
 
@@ -117,7 +109,9 @@ hl.config({
 ---------------
 hl.config({
     input = {
-        kb_layout  = "global",
+        -- An empty layout makes Hyprland inherit XKB_DEFAULT_LAYOUT,
+        -- which is provided by the host's keyboard module.
+        kb_layout  = "",
         kb_variant = "",
         follow_mouse = 1,
         sensitivity = 0,
@@ -175,7 +169,7 @@ hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
--- IPC Noctalia (Syntaxe révisée selon le site)
+-- IPC Noctalia
 local ipc = "noctalia msg "
 hl.bind(mainMod .. "+Space", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
 hl.bind(mainMod .. "+S",     hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
@@ -198,7 +192,6 @@ hl.bind("XF86AudioPrev",         hl.dsp.exec_cmd("playerctl previous"),   { lock
 ---- WINDOWS AND WORKSPACES ----
 --------------------------------
 
--- Workspaces persistants avec noms officiels (Adaptés à ton écran eDP-1)
 hl.workspace_rule({ workspace = "1", monitor = "eDP-1", persistent = true, default_name = "web" })
 hl.workspace_rule({ workspace = "2", monitor = "eDP-1", persistent = true, default_name = "code" })
 hl.workspace_rule({ workspace = "3", monitor = "eDP-1", persistent = true, default_name = "chat" })
@@ -222,14 +215,12 @@ hl.window_rule({ match = { class = "firefox", title = ".*Preferences.*" }, float
 hl.window_rule({ match = { class = "org.keepassxc.KeePassXC" }, float = true })
 hl.window_rule({ match = { class = "discord" }, workspace = 3 })
 
--- Règle Noctalia officielle pour le panneau de contrôle
 hl.window_rule({
     match = { class = "dev.noctalia.Noctalia" },
     float = true,
     size = { 1080, 920 },
 })
 
--- Règle de flou officielle pour l'ensemble des composants Noctalia
 hl.layer_rule({
     name = "noctalia",
     match = {
@@ -240,4 +231,3 @@ hl.layer_rule({
     blur = true,
     blur_popups = true,
 })
-

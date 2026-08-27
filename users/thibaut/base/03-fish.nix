@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   programs.fish = {
@@ -6,7 +6,6 @@
     generateCompletions = false;
 
     interactiveShellInit = ''
-      fish_config theme choose "default-rgb"
       fastfetch
       echo
 
@@ -101,8 +100,9 @@
       '';
 
       rebuild = ''
-        echo "🚀 Reconstruction du système NixOS + Home Manager..."
-        sudo nixos-rebuild switch --flake ~/nixos-config#ZenBook-13
+        set -l host (hostname)
+        echo "🚀 Reconstruction de NixOS + Home Manager pour $host..."
+        sudo nixos-rebuild switch --flake ~/nixos-config#$host
         and begin
           echo "✅ Fini !"
 

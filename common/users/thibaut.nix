@@ -1,9 +1,9 @@
 { pkgs, ... }:
 
 {
-  users.users.quentin = {
+  users.users.thibaut = {
     isNormalUser = true;
-    description = "Quentin Bracquart";
+    description = "Thibaut Bracquart";
     extraGroups = [ "networkmanager" "wheel" ];
     shell = pkgs.fish;
   };

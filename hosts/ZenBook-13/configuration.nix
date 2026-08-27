@@ -1,39 +1,14 @@
-{ pkgs, inputs, ... }:
-
 {
-  imports = [
-    ./hardware-configuration.nix
-    ./variables.nix
-    ./users.nix
+  my.profile = "laptop";
 
-    ../../common/system/nix.nix
-    ../../common/system/boot.nix
-    ../../common/system/networking.nix
-    ../../common/system/locale.nix
-    ../../common/system/keyboard.nix
-    ../../common/system/services.nix
-    ../../profiles/laptop.nix
-    ../../modules/power/options.nix
-    ../../modules/power/module.nix
-
-    inputs.noctalia-greeter.nixosModules.default
-  ];
-
-  hardware.graphics = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver
-      vpl-gpu-rt
-    ];
-  };
-
-  environment.sessionVariables.LIBVA_DRIVER_NAME = "iHD";
-  hardware.enableRedistributableFirmware = true;
-
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
-
-  system.stateVersion = "26.05";
+  my.authentication.howdy.ir.enable = true;
+  my.bluetooth.powerOnBoot = true;
+  my.compatibility.nix-ld.enable = true;
+  my.desktop.hyprland.enable = true;
+  my.graphics.intel.enable = true;
+  my.keyboard.global.enable = true;
+  my.location.geoclue2.enable = true;
+  my.power.batteryChargeLimit = 80;
+  my.virtualisation.libvirt.enable = true;
+  my.virtualisation.libvirt.user = "thibaut";
 }

@@ -1,6 +1,8 @@
-{ config, pkgs, lib, inputs, ... }:
+{ pkgs, ... }:
 
 {
+  nixpkgs.config.allowUnfree = true;
+
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];

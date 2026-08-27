@@ -2,98 +2,112 @@
 
 # ❄️ nixos-config
 
-Configuration NixOS personnelle, gérée via **Nix Flakes** et **Home Manager**.
-Ce dépôt centralise la configuration système et utilisateur de mes machines, avec une base commune partagée et des configurations spécifiques par hôte.
+Configuration personnelle NixOS gérée avec **Nix Flakes** et **Home Manager**.
+Le dépôt sépare la configuration système commune, les types de machines, les fonctionnalités réutilisables, les particularités des machines et les environnements utilisateurs.
 
 ## 🖥️ Hôtes
 
-| Hôte | Description |
+| Hôte | Configuration |
 |---|---|
-| **ZenBook-13** | Poste principal (ASUS ZenBook 13) — NixOS unstable, Hyprland + Niri (pas encore configuré) , Noctalia |
-| **V145-15AST** | Lenovo V145-15AST — configuration dédiée, indépendante de la base commune |
+| **ZenBook-13** | ASUS ZenBook 13 — NixOS unstable, Limine, noyau CachyOS BORE, Hyprland + Noctalia |
+| **V145-15AST** | Lenovo V145-15AST — NixOS unstable, systemd-boot, Plasma 6 |
+
+Home Manager est intégré aux deux configurations. Thibaut est configuré sur les deux machines et Quentin sur le V145.
 
 ## 📁 Structure
 
-```
+```text
 .
-├── README.md
-├── common                                              │   ├── configuration.nix
-│   ├── home.nix
-│   └── modules
-│       ├── home
-│       │   ├── 00-options.nix
-│       │   ├── 01-packages.nix
-│       │   ├── 02-git.nix                              │       │   ├── 03-fish.nix
-│       │   ├── 04-firefox.nix
-│       │   ├── 05-hyprland-noctalia.nix                │       │   ├── 06-session.nix
-│       │   └── mutable-configs                         │       │       ├── hyprland.lua
-│       │       └── noctalia-settings.toml
-│       └── system
-│           ├── 01-nix.nix                              │           ├── 02-boot.nix
-│           ├── 03-hardware.nix
-│           ├── 04-networking.nix
-│           ├── 05-desktop.nix
-│           ├── 06-users.nix
-│           ├── 07-packages.nix                         │           └── 08-virtualisation.nix
-├── flake.lock
+├── common/
+│   ├── system/              # Configuration NixOS réellement commune
+│   └── users/               # Comptes Unix communs aux machines
+├── hosts/
+│   ├── ZenBook-13/          # Particularités matérielles et système du ZenBook
+│   └── V145-15AST/          # Particularités matérielles et système du V145
+├── profiles/                # Types de machines, composés uniquement de modules
+├── modules/                 # Fonctionnalités NixOS réutilisables
+├── users/
+│   ├── thibaut/             # Configuration Home Manager de Thibaut
+│   └── quentin/             # Configuration Home Manager de Quentin
 ├── flake.nix
-├── hosts
-│   ├── V145-15AST
-│   │   ├── configuration.nix
-│   │   └── hardware-configuration.nix
-│   └── ZenBook-13
-│       └── hardware-configuration.nix
-└── secrets
-    └── secrets.yaml
-
-10 directories, 26 files
+├── flake.lock
+└── secrets/
 ```
 
-## ⚙️ Stack (ZenBook-13)
+La règle générale est de placer chaque élément là où se trouve sa responsabilité :
 
-- **Distribution** : NixOS `nixos-unstable`
-- **Bootloader** : Limine
-- **Noyau** : CachyOS BORE (via [`nix-cachyos-kernel`](https://github.com/xddxdd/nix-cachyos-kernel))
-- **Sessions graphiques** : Hyprland (config Lua) + Niri (Niri pas encore configuré)
-- **Shell desktop** : [Noctalia](https://github.com/noctalia-dev) + Noctalia Greeter
+- `common/` pour ce qui doit réellement s'appliquer à toutes les machines ;
+- `profiles/` pour représenter un type de machine et composer les modules qui lui correspondent ;
+- `modules/` pour encapsuler une fonctionnalité réutilisable ;
+- `hosts/` pour les différences propres à une machine ;
+- `users/` pour la configuration Home Manager d'un utilisateur.
+
+Un profil ne contient pas l'implémentation des fonctionnalités qu'il sélectionne : il sert uniquement à regrouper des modules. Par exemple, le profil `laptop` sélectionne les fonctionnalités communes aux ordinateurs portables sans imposer leurs paramètres spécifiques à chaque machine.
+
+## 🧩 Principes de configuration
+
+Les programmes sont configurés avec un module NixOS ou Home Manager lorsqu'il apporte une configuration ou un comportement supplémentaire pertinent. Un paquet reste dans `environment.systemPackages` ou `home.packages` lorsqu'aucun module utile n'est nécessaire.
+
+La présence d'un module est donc évaluée sur ses **effets réels**, pas seulement sur le fait qu'il installe le même paquet.
+
+Les outils d'administration système communs restent dans `common/system` lorsque leur présence est utile sur les différentes machines. Les applications de bureau personnelles, comme le terminal ou le gestionnaire de fichiers, restent dans Home Manager.
+
+## 🖥️ Environnement utilisateur de Thibaut
+
 - **Shell** : Fish
-- **Terminal** : Kitty / Alacritty
-- **Auth** : Howdy (reconnaissance faciale, PAM)
-- **Gestion des paquets utilisateur** : Home Manager (module NixOS)
+- **Terminal** : Alacritty
+- **Gestionnaire de fichiers** : Nemo
+- **Éditeur** : Geany
+- **Monitoring** : btop
+- **Informations système** : Fastfetch
+- **Navigateur** : Firefox, installé sans personnalisation déclarative
 
-### Particularités notables
+Les extensions, thèmes et profils personnels de Firefox ne sont pas gérés par le dépôt. La connexion au compte Firefox reste une opération personnelle après une réinstallation.
 
-- Les fichiers de config Hyprland et Noctalia sont liés au dépôt via `mkOutOfStoreSymlink` : toute modification faite depuis l'UI ou en édition directe est donc automatiquement versionnée, sans étape d'export manuelle.
-- Firefox est thémé automatiquement en clair/sombre via `xdg-desktop-portal-gtk` + l'extension **Pywalfox**, déclarée nativement en Nix (pas d'installation manuelle, incompatible avec le store en lecture seule).
-- Seuil de charge batterie limité à 80 % via un service `systemd` dédié.
-- Caches binaires **Cachix** configurés pour éviter la recompilation locale.
+## 🔐 Authentification faciale
+
+Le dépôt utilise **Howdy** pour l'authentification faciale via PAM sur les configurations qui l'activent. Le module de base est commun aux machines compatibles, tandis que la configuration liée au capteur infrarouge est sélectionnée séparément pour le ZenBook.
+
+## 🔊 Services système communs
+
+La base commune configure notamment :
+
+- PipeWire pour l'audio ;
+- Avahi ;
+- CUPS et HPLIP pour l'impression ;
+- OpenSSH ;
+- Flatpak ;
+- GVFS ;
+- fwupd ;
+- KDE Connect ;
+- Fish comme shell système disponible pour les utilisateurs.
+
+## 🔑 Secrets et reproductibilité
+
+Les secrets sont gérés avec **sops-nix** et ne doivent pas être stockés en clair dans Git.
+
+Une réinstallation complète doit permettre de reconstruire la configuration NixOS et Home Manager à partir du dépôt. Les éléments qui constituent un état personnel ou une authentification de session — par exemple la connexion à un compte Firefox — sont volontairement exclus de cette reproductibilité.
+
+Les fichiers `hardware-configuration.nix` sont générés à partir du matériel et du partitionnement de chaque machine et peuvent donc être régénérés lors d'une réinstallation.
 
 ## 🚀 Utilisation
 
 ### Prérequis
 
-- NixOS avec les flakes activés (`experimental-features = nix-command flakes`)
-- Le dépôt cloné dans `~/nixos-config`
+- NixOS avec les flakes activés ;
+- le dépôt cloné dans `~/nixos-config`.
 
-### Commandes (alias Fish)
-
-Le dépôt définit plusieurs fonctions Fish pratiques (déclarées dans `home.nix`) :
-
-```fish
-rebuild   # nixos-rebuild switch --flake ~/nixos-config#ZenBook-13
-update    # nix flake update
-upgrade   # update && rebuild
-push      # git add/commit/push interactif du dépôt
-```
+Le flake suit `nixos-unstable` pour NixOS et `master` pour Home Manager.
 
 ### Build manuel
 
 ```bash
 sudo nixos-rebuild switch --flake ~/nixos-config#ZenBook-13
-# ou
 sudo nixos-rebuild switch --flake ~/nixos-config#V145-15AST
 ```
 
+Les fonctions Fish fournies par Home Manager incluent notamment `rebuild`, `update`, `upgrade`, `push` et `wait-ci`.
+
 ## ⚠️ Avertissement
 
-Ce dépôt contient du matériel et des identifiants propres à mes machines (UUID LUKS, hostname, utilisateur `thibaut`, etc.). Il n'est **pas conçu comme un template clé en main** — libre à vous de vous en inspirer, mais adaptez `hardware-configuration.nix` et les identifiants à votre propre matériel avant de builder.
+Ce dépôt contient des éléments propres aux machines et aux utilisateurs, notamment des identifiants de systèmes de fichiers, des noms d'hôtes et des secrets chiffrés. Il n'est pas conçu comme un template universel : adaptez les fichiers matériels et les paramètres propres à votre installation avant toute réutilisation.

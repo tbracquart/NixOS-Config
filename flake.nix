@@ -1,5 +1,5 @@
 {
-  description = "NixOS + Home Manager Flake pour ZenBook 13";
+  description = "NixOS + Home Manager Flake pour ZenBook 13 et V145-15AST";
 
   nixConfig = {
     extra-substituters = [
@@ -35,40 +35,80 @@
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
-    firefox-addons = {
-      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, freesmlauncher, nix-cachyos-kernel, sops-nix, ... }@inputs: {
-    nixosConfigurations.ZenBook-13 = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs; };
-      modules = [
-        { nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ]; }
-        ./hosts/ZenBook-13/configuration.nix
-        sops-nix.nixosModules.sops
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; };
-          home-manager.users.thibaut = import ./common/home/home-manager.nix;
-        }
+  outputs = { self, nixpkgs, home-manager, freesmlauncher, nix-cachyos-kernel, sops-nix, ... }@inputs:
+    let
+      commonModules = [
+        ./common
+        ./modules
+        ./profiles
       ];
-    };
 
-    nixosConfigurations.V145-15AST = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs; };
-      modules = [
-        ./hosts/V145-15AST/configuration.nix
-        sops-nix.nixosModules.sops
+      hostModules = host: [
+        ./hosts/${host}/hardware-configuration.nix
+        ./hosts/${host}/boot.nix
+        ./hosts/${host}/users.nix
+        ./hosts/${host}/configuration.nix
       ];
+
+      hostMetadata = host: stateVersion: {
+        networking.hostName = host;
+        system.stateVersion = stateVersion;
+      };
+    in
+    {
+      nixosConfigurations.ZenBook-13 = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = commonModules
+          ++ hostModules "ZenBook-13"
+          ++ [
+            (hostMetadata "ZenBook-13" "26.05")
+            { nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ]; }
+            sops-nix.nixosModules.sops
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = { inherit inputs; };
+              home-manager.users.thibaut = {
+                imports = [
+                  ./users/thibaut/base
+                  ./users/thibaut/variants/zenbook.nix
+                ];
+              };
+            }
+          ];
+      };
+
+      nixosConfigurations.V145-15AST = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = commonModules
+          ++ hostModules "V145-15AST"
+          ++ [
+            (hostMetadata "V145-15AST" "26.05")
+            sops-nix.nixosModules.sops
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.extraSpecialArgs = { inherit inputs; };
+              home-manager.users.thibaut = {
+                imports = [
+                  ./users/thibaut/base
+                ];
+              };
+              home-manager.users.quentin = {
+                imports = [
+                  ./users/quentin/base.nix
+                ];
+              };
+            }
+          ];
+      };
     };
-  };
 }
