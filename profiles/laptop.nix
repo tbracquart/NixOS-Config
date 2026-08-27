@@ -1,7 +1,5 @@
 { ... }:
 
 {
-  imports = [
-    ../modules/power
-  ];
+  # Laptop profile: host-specific laptop configuration belongs here.
 }
