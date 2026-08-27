@@ -9,7 +9,7 @@ in
   ];
 
   options.my.desktop.hyprland.enable = lib.mkEnableOption
-    "l'environnement de bureau Hyprland";
+    "le gestionnaire de fenêtres Hyprland";
 
   config = lib.mkIf cfg.enable {
     services.libinput.enable = true;
@@ -33,7 +33,7 @@ in
     programs.noctalia-greeter = {
       enable = true;
       settings = {
-        keyboard.layout = "global";
+        keyboard.layout = config.services.xserver.xkb.layout;
         output.scale = 1;
       };
     };
