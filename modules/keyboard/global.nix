@@ -14,6 +14,7 @@ in
 
   config = lib.mkIf cfg.enable {
     my.keyboard.layout = "global";
+    my.keyboard.xkbConfigRoot = xkbDir;
 
     services.xserver.xkb = {
       dir = xkbDir;
