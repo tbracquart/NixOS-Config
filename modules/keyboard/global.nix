@@ -13,6 +13,8 @@ in
     "le clavier AZERTY Global";
 
   config = lib.mkIf cfg.enable {
+    my.keyboard.layout = "global";
+
     services.xserver.xkb = {
       dir = xkbDir;
       layout = "global";
