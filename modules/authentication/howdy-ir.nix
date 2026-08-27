@@ -1,9 +1,14 @@
-{ ... }:
+{ config, lib, ... }:
 
+let
+  cfg = config.my.authentication.howdy.ir;
+in
 {
-  imports = [
-    ./howdy.nix
-  ];
+  options.my.authentication.howdy.ir.enable = lib.mkEnableOption
+    "le support infrarouge pour Howdy";
 
-  services.linux-enable-ir-emitter.enable = true;
+  config = lib.mkIf cfg.enable {
+    my.authentication.howdy.enable = true;
+    services.linux-enable-ir-emitter.enable = true;
+  };
 }

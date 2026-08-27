@@ -1,8 +1,7 @@
-{ ... }:
+{ config, lib, ... }:
 
 {
-  imports = [
-    ../modules/power/options.nix
-    ../modules/power/module.nix
-  ];
+  config = lib.mkIf (config.my.profile == "laptop") {
+    my.bluetooth.enable = true;
+  };
 }
