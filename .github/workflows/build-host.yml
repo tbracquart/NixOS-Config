@@ -28,7 +28,7 @@ jobs:
 
       - name: Restaurer le flake.lock mis à jour
         if: inputs.flake-lock-artifact != ''
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ inputs.flake-lock-artifact }}
 

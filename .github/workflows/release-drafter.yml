@@ -19,7 +19,7 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -41,7 +41,7 @@ jobs:
           echo "Computed version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - uses: release-drafter/release-drafter@v6
+      - uses: release-drafter/release-drafter@v7.3.1
         with:
           tag: v${{ steps.calver.outputs.version }}
           name: v${{ steps.calver.outputs.version }}
