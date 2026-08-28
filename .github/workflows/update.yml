@@ -92,7 +92,7 @@ jobs:
 
       - name: Sauver flake.lock mis à jour
         if: steps.update.outputs.changed == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: flake-lock
           path: flake.lock
@@ -130,12 +130,12 @@ jobs:
           token: ${{ secrets.GH_PAT }}
 
       - name: Récupérer le flake.lock mis à jour
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: flake-lock
 
       - name: Ouvrir une PR
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GH_PAT }}
           commit-message: ${{ needs.update.outputs.pr-title }}
