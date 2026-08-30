@@ -20,7 +20,6 @@
     };
 
     openssh.enable = true;
-    flatpak.enable = true;
     gvfs.enable = true;
     fwupd.enable = true;
   };
