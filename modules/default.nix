@@ -9,5 +9,6 @@
     ./location
     ./power
     ./virtualisation
+    ./flatpak
   ];
 }
