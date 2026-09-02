@@ -108,9 +108,7 @@ hl.config({
 ---------------
 hl.config({
     input = {
-        -- An empty layout makes Hyprland inherit XKB_DEFAULT_LAYOUT,
-        -- which is provided by the host's keyboard module.
-        kb_layout  = "",
+        kb_layout  = "fr",
         kb_variant = "",
         follow_mouse = 1,
         sensitivity = 0,

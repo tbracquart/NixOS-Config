@@ -33,15 +33,7 @@ in
 
     programs.noctalia-greeter = {
       enable = true;
-      settings = {
-        output.scale = 1;
-      } // lib.mkIf (config.my.keyboard.layout != null) {
-        keyboard.layout = config.my.keyboard.layout;
-      };
+      settings.output.scale = 1;
     };
-
-    services.greetd.settings.default_session.command = lib.mkIf
-      (config.my.keyboard.xkbConfigRoot != null)
-      (lib.mkForce "env XKB_CONFIG_ROOT=${config.my.keyboard.xkbConfigRoot} ${config.programs.noctalia-greeter.package}/bin/noctalia-greeter-session -- ${config.programs.noctalia-greeter.greeter-args}");
   };
 }
