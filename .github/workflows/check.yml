@@ -27,6 +27,7 @@ jobs:
       - uses: dorny/paths-filter@v4
         id: filter
         with:
+          base: ${{ github.event_name == 'push' && github.event.before || '' }}
           filters: |
             V145-15AST:
               - 'hosts/V145-15AST/**'
