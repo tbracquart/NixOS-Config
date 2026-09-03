@@ -28,11 +28,6 @@
 
     freesmlauncher.url = "github:FreesmTeam/FreesmLauncher/develop";
 
-    noctalia-greeter = {
-      url = "github:noctalia-dev/noctalia-greeter";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
     sops-nix = {
