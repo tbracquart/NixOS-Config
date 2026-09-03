@@ -4,10 +4,6 @@ let
   cfg = config.my.desktop.hyprland;
 in
 {
-  imports = [
-    inputs.noctalia-greeter.nixosModules.default
-  ];
-
   options.my.desktop.hyprland.enable = lib.mkEnableOption
     "le gestionnaire de fenêtres Hyprland";
 
@@ -31,7 +27,7 @@ in
       recommendedServices.enable = true;
     };
 
-    programs.noctalia-greeter = {
+    services.displayManager.noctalia-greeter = {
       enable = true;
       settings.output.scale = 1;
     };
