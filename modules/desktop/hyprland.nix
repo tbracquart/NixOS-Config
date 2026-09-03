@@ -29,7 +29,10 @@ in
 
     services.displayManager.noctalia-greeter = {
       enable = true;
-      settings.output.scale = 1;
+      settings = {
+        output.scale = 1;
+        keyboard.layout = "fr";
+      };      
     };
   };
 }
