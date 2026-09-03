@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   home.stateVersion = "26.05";
@@ -6,7 +6,7 @@
 
   home.sessionVariables = {
     EDITOR = "vim";
-    NIXCFG = "~/nixos-config";
+    NIXCFG = config.my.flakePath;
   };
 
   imports = [

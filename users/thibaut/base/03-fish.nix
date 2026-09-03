@@ -41,7 +41,7 @@
       '';
 
       push = ''
-        cd ~/nixos-config
+        cd $NIXCFG
         git add .
         git diff --cached
         git status
@@ -93,7 +93,7 @@
 
       update = ''
         echo "🔄 Mise à jour des Flakes..."
-        cd ~/nixos-config
+        cd $NIXCFG
         nix flake update
         and echo "✅ Flakes à jour !"
         or echo "❌ Mise à jour des flakes échouée."
@@ -102,7 +102,7 @@
       rebuild = ''
         set -l host (hostname)
         echo "🚀 Reconstruction de NixOS + Home Manager pour $host..."
-        sudo nixos-rebuild switch --flake ~/nixos-config#$host
+        sudo nixos-rebuild switch --flake $NIXCFG#$host
         and begin
           echo "✅ Fini !"
 
@@ -118,7 +118,7 @@
             echo "ℹ️  cachix absent ou non authentifié."
           end
 
-          cd ~/nixos-config
+          cd $NIXCFG
           if test -z "$(git status --porcelain)"
             echo "ℹ️  Rien à commit."
           else
@@ -137,7 +137,7 @@
         echo "🌟 Mise à jour complète du système 🌟"
         echo "ℹ️  Le flake.lock est déjà mis à jour chaque nuit par la CI."
         echo ""
-        git -C ~/nixos-config pull
+        git -C $NIXCFG pull
         and rebuild
         and echo "🎉 Terminé !"
         or echo "❌ Upgrade interrompu."
