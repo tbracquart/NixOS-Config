@@ -1,7 +1,7 @@
 { config, ... }:
 
 {
-  home.stateVersion = "26.05";
+  home.stateVersion = "26.11";
   programs.home-manager.enable = true;
 
   home.sessionVariables = {

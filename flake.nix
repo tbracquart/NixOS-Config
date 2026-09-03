@@ -62,7 +62,7 @@
         modules = commonModules
           ++ hostModules "ZenBook-13"
           ++ [
-            (hostMetadata "ZenBook-13" "26.05")
+            (hostMetadata "ZenBook-13" "26.11")
             { nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ]; }
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
