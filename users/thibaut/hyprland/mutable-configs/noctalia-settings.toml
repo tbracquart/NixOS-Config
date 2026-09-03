@@ -143,6 +143,9 @@ widget_order = [ "lockscreen-login-box@winit", "lockscreen-login-box@eDP-1" ]
 [notification]
 position = "top_center"
 
+[plugins]
+enabled = []
+
 [shell]
 corner_radius_scale = 1.5000000223517418
 launch_apps_as_systemd_services = true
