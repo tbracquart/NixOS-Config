@@ -21,9 +21,9 @@ jobs:
       ZenBook-13: ${{ steps.filter.outputs.ZenBook-13 }}
       flake: ${{ steps.filter.outputs.flake }}
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be0f245cb558a3372f # v7.0.1
 
-      - uses: dorny/paths-filter@v4
+      - uses: dorny/paths-filter@ceb8a2b8f2ead23fc4d10bbc293b9179afa116e7 # v4.0.3
         id: filter
         with:
           base: ${{ github.event_name == 'push' && github.event.before || '' }}
@@ -70,7 +70,7 @@ jobs:
         if: needs.changes.outputs.flake != 'true'
         run: echo "Aucun changement affectant la flake — vérification ignorée"
 
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be0f245cb558a3372f # v7.0.1
         if: needs.changes.outputs.flake == 'true'
 
       - uses: ./.github/actions/setup-nix-cachix
