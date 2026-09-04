@@ -86,10 +86,8 @@ jobs:
 
           approved="$(curl -fsSL "${api_headers[@]}" \
             "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" \
-            | jq -r --arg sha "$head_sha" '
-                map(select(.user.login == "tbracquart" and .state == "APPROVED" and .commit_id == $sha))
-                | length
-              ')
+            | jq -r --arg sha "$head_sha" 'map(select(.user.login == "tbracquart" and .state == "APPROVED" and .commit_id == $sha)) | length'
+          )"
 
           if [ "$approved" -gt 0 ]; then
             echo "Authorized: @tbracquart approved the current head commit."
