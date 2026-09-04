@@ -7,11 +7,6 @@ on:
         description: 'Nom du host NixOS à build (ex. ZenBook-13)'
         required: true
         type: string
-      should-build:
-        description: 'Indique si ce host doit réellement être buildé'
-        required: false
-        type: boolean
-        default: true
       flake-lock-artifact:
         description: "Nom d'un artifact contenant un flake.lock à appliquer avant build (optionnel)"
         required: false
@@ -32,30 +27,22 @@ jobs:
       CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     steps:
-      - name: Build non nécessaire
-        if: ${{ !inputs.should-build }}
-        run: echo "Build non nécessaire pour ${{ inputs.host }}"
-
       - uses: actions/checkout@v7.0.1
-        if: inputs.should-build
 
       - name: Restaurer le flake.lock mis à jour
-        if: inputs.should-build && inputs.flake-lock-artifact != ''
+        if: inputs.flake-lock-artifact != ''
         uses: actions/download-artifact@v8
         with:
           name: ${{ inputs.flake-lock-artifact }}
 
       - uses: ./.github/actions/setup-nix-cachix
-        if: inputs.should-build
 
       - name: Build ${{ inputs.host }}
-        if: inputs.should-build
         run: |
           set -eux
           nix build .#nixosConfigurations.${{ inputs.host }}.config.system.build.toplevel -o result --print-build-logs --accept-flake-config
 
       - name: Push build to Cachix (obligatoire)
-        if: inputs.should-build
         env:
           CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         run: |
