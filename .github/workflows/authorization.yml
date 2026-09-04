@@ -58,7 +58,7 @@ jobs:
           # Only Quentin gets the delegated path exception. Inspect every
           # results page: GitHub returns at most 100 changed files per request.
           if [ "$author" = "qbracquart" ]; then
-            unauthorized=""
+            unauthorized_files=()
             page=1
 
             while :; do
@@ -77,49 +77,23 @@ jobs:
               done)"
 
               if [ -n "$page_unauthorized" ]; then
-                unauthorized+="${unauthorized:+
-
-            if [ -z "$unauthorized" ]; then
-              echo "Authorized: all changed paths are delegated to @qbracquart."
-              exit 0
-            fi
-
-            echo "Unauthorized paths for @qbracquart:"
-            printf '%s\n' "$unauthorized"
-          else
-            echo "The PR author is not an authorized collaborator for delegated paths."
-          fi
-
-          echo
-          echo "An approval from @tbracquart is required."
-
-          approved="$(curl -fsSL "${api_headers[@]}" \
-            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" \
-            | jq -r --arg sha "$head_sha" 'map(select(.user.login == "tbracquart" and .state == "APPROVED" and .commit_id == $sha)) | length'
-          )"
-
-          if [ "$approved" -gt 0 ]; then
-            echo "Authorized: @tbracquart approved the current head commit."
-            exit 0
-          fi
-
-          echo "Blocked: no approval from @tbracquart for the current head commit."
-          exit 1
-\n'}$page_unauthorized"
+                while IFS= read -r file; do
+                  unauthorized_files+=("$file")
+                done <<< "$page_unauthorized"
               fi
 
               [ "$file_count" -lt 100 ] && break
               page=$((page + 1))
             done
 
-            if [ -z "$unauthorized" ]; then
+            if [ "${#unauthorized_files[@]}" -eq 0 ]; then
               echo "Authorized: all changed paths are delegated to @qbracquart."
               exit 0
             fi
 
             echo "Unauthorized paths for @qbracquart:"
-            printf '%s\n' "$unauthorized"
-          else
+            printf '%s\n' "${unauthorized_files[@]}"
+                    else
             echo "The PR author is not an authorized collaborator for delegated paths."
           fi
 
