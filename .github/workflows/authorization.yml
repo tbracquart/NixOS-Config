@@ -39,6 +39,29 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28"
           )
 
+          fetch_all_pages() {
+            local endpoint="$1"
+            local page=1
+            local page_data
+            local count
+            local result='[]'
+
+            while :; do
+              page_data="$(curl -fsSL "${api_headers[@]}" \
+                "https://api.github.com/repos/$REPOSITORY/$endpoint?per_page=100&page=$page")"
+              count="$(jq 'length' <<<"$page_data")"
+              result="$(jq -c --argjson page "$page_data" '. + $page' <<<"$result")"
+
+              if [ "$count" -lt 100 ]; then
+                break
+              fi
+
+              page=$((page + 1))
+            done
+
+            printf '%s\n' "$result"
+          }
+
           pr_json="$(curl -fsSL "${api_headers[@]}" \
             "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER")"
 
@@ -55,8 +78,7 @@ jobs:
             exit 0
           fi
 
-          files="$(curl -fsSL "${api_headers[@]}" \
-            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100")"
+          files="$(fetch_all_pages "pulls/$PR_NUMBER/files")"
 
           # Only Quentin gets the delegated path exception.
           if [ "$author" = "qbracquart" ]; then
@@ -84,8 +106,7 @@ jobs:
           echo
           echo "An approval from @tbracquart is required."
 
-          approved="$(curl -fsSL "${api_headers[@]}" \
-            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" \
+          approved="$(fetch_all_pages "pulls/$PR_NUMBER/reviews" \
             | jq -r --arg sha "$head_sha" 'map(select(.user.login == "tbracquart" and .state == "APPROVED" and .commit_id == $sha)) | length'
           )"
 
