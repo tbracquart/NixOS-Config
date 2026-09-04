@@ -56,22 +56,28 @@ jobs:
               - 'flake.nix'
               - 'flake.lock'
 
-  # On pull requests, always evaluate the flake so configuration errors are
-  # caught before merge. On main, only run it when flake-related files changed.
+  # Keep this job unconditional because the check is required by the ruleset.
+  # Only perform the Nix evaluation when flake-related files changed.
   flake-check:
     needs: changes
-    if: github.event_name == 'pull_request' || needs.changes.outputs.flake == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
       CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     steps:
+      - name: Vérification non nécessaire
+        if: needs.changes.outputs.flake != 'true'
+        run: echo "Aucun changement affectant la flake — vérification ignorée"
+
       - uses: actions/checkout@v7.0.1
+        if: needs.changes.outputs.flake == 'true'
 
       - uses: ./.github/actions/setup-nix-cachix
+        if: needs.changes.outputs.flake == 'true'
 
       - name: Vérification de la flake (évaluation seule, pas de build)
+        if: needs.changes.outputs.flake == 'true'
         run: nix flake check --no-build --accept-flake-config
 
   build-ZenBook-13:
