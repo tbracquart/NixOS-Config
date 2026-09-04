@@ -1,8 +1,24 @@
-# By default, the repository owner reviews all changes.
-# The following two paths are intentionally unowned: they are the explicit
-# whitelist for the collaborator and therefore do not require owner approval.
+# Code ownership is explicit per top-level area.
+# Directory ownership is recursive.
 
-* @tbracquart
+# Repository configuration
+/.github/ @tbracquart
+/common/ @tbracquart
+/modules/ @tbracquart
+/profiles/ @tbracquart
+/secrets/ @tbracquart
 
-/hosts/V145-15AST/
-/users/quentin/
+# Hosts
+/hosts/V145-15AST/ @qbracquart
+/hosts/ZenBook-13/ @tbracquart
+
+# Users
+/users/quentin/ @qbracquart
+/users/thibaut/ @tbracquart
+
+# Root files
+/.gitignore @tbracquart
+/.sops.yaml @tbracquart
+/README.md @tbracquart
+/flake.nix @tbracquart
+/flake.lock @tbracquart
