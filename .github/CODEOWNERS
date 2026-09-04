@@ -1,0 +1,17 @@
+# Protected paths: changes to these areas require approval from the repository owner.
+# The collaborator is intentionally not a code owner here, so their PRs need
+# @tbracquart's approval before merging into main.
+
+/.github/ @tbracquart
+/common/ @tbracquart
+/hosts/ZenBook-13/ @tbracquart
+/modules/ @tbracquart
+/profiles/ @tbracquart
+/secrets/ @tbracquart
+/users/thibaut/ @tbracquart
+
+/.gitignore @tbracquart
+/.sops.yaml @tbracquart
+/README.md @tbracquart
+/flake.nix @tbracquart
+/flake.lock @tbracquart
