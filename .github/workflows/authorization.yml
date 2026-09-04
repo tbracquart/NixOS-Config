@@ -93,7 +93,7 @@ jobs:
 
             echo "Unauthorized paths for @qbracquart:"
             printf '%s\n' "${unauthorized_files[@]}"
-                    else
+          else
             echo "The PR author is not an authorized collaborator for delegated paths."
           fi
 
