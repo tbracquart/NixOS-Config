@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+      - uses: dorny/paths-filter@ceb8a2b8d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
         with:
           base: ${{ github.event_name == 'push' && github.event.before || '' }}
@@ -56,8 +56,8 @@ jobs:
               - 'flake.nix'
               - 'flake.lock'
 
-  # Keep this job unconditional because the check is required by the ruleset.
-  # Only perform the Nix evaluation when flake-related files changed.
+  # Required check: keep this caller unconditional so GitHub always reports
+  # `flake-check`. The actual Nix evaluation is skipped when unnecessary.
   flake-check:
     needs: changes
     runs-on: ubuntu-latest
@@ -80,6 +80,9 @@ jobs:
         if: needs.changes.outputs.flake == 'true'
         run: nix flake check --no-build --accept-flake-config
 
+  # Required checks `build-<host> / build` must remain visible. Therefore the
+  # caller stays unconditional; `build-host.yml` decides at job level whether
+  # a runner is needed, avoiding a runner when the host is unaffected.
   build-ZenBook-13:
     needs: changes
     uses: ./.github/workflows/build-host.yml
