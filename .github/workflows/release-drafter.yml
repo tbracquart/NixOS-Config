@@ -41,7 +41,7 @@ jobs:
           echo "Computed version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - uses: release-drafter/release-drafter@v7.3.1
+      - uses: release-drafter/release-drafter@v7.7.0
         with:
           tag: v${{ steps.calver.outputs.version }}
           name: v${{ steps.calver.outputs.version }}
