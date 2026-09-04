@@ -55,20 +55,62 @@ jobs:
             exit 0
           fi
 
-          files="$(curl -fsSL "${api_headers[@]}" \
-            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100")"
-
-          # Only Quentin gets the delegated path exception.
+          # Only Quentin gets the delegated path exception. Inspect every
+          # results page: GitHub returns at most 100 changed files per request.
           if [ "$author" = "qbracquart" ]; then
-            unauthorized="$(jq -r '.[] | .filename' <<<"$files" | while IFS= read -r file; do
-              case "$file" in
-                hosts/V145-15AST/*|users/quentin/*)
-                  ;;
-                *)
-                  printf '%s\n' "$file"
-                  ;;
-              esac
-            done)"
+            unauthorized=""
+            page=1
+
+            while :; do
+              files="$(curl -fsSL "${api_headers[@]}" \
+                "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100&page=$page")"
+              file_count="$(jq 'length' <<<"$files")"
+
+              page_unauthorized="$(jq -r '.[] | .filename' <<<"$files" | while IFS= read -r file; do
+                case "$file" in
+                  hosts/V145-15AST/*|users/quentin/*)
+                    ;;
+                  *)
+                    printf '%s\n' "$file"
+                    ;;
+                esac
+              done)"
+
+              if [ -n "$page_unauthorized" ]; then
+                unauthorized+="${unauthorized:+
+
+            if [ -z "$unauthorized" ]; then
+              echo "Authorized: all changed paths are delegated to @qbracquart."
+              exit 0
+            fi
+
+            echo "Unauthorized paths for @qbracquart:"
+            printf '%s\n' "$unauthorized"
+          else
+            echo "The PR author is not an authorized collaborator for delegated paths."
+          fi
+
+          echo
+          echo "An approval from @tbracquart is required."
+
+          approved="$(curl -fsSL "${api_headers[@]}" \
+            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" \
+            | jq -r --arg sha "$head_sha" 'map(select(.user.login == "tbracquart" and .state == "APPROVED" and .commit_id == $sha)) | length'
+          )"
+
+          if [ "$approved" -gt 0 ]; then
+            echo "Authorized: @tbracquart approved the current head commit."
+            exit 0
+          fi
+
+          echo "Blocked: no approval from @tbracquart for the current head commit."
+          exit 1
+\n'}$page_unauthorized"
+              fi
+
+              [ "$file_count" -lt 100 ] && break
+              page=$((page + 1))
+            done
 
             if [ -z "$unauthorized" ]; then
               echo "Authorized: all changed paths are delegated to @qbracquart."
