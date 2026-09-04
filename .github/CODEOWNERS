@@ -1,24 +1,6 @@
-# Code ownership is explicit per top-level area.
-# Directory ownership is recursive.
+# Default owner for all repository content.
+* @tbracquart
 
-# Repository configuration
-/.github/ @tbracquart
-/common/ @tbracquart
-/modules/ @tbracquart
-/profiles/ @tbracquart
-/secrets/ @tbracquart
-
-# Hosts
+# Explicitly delegated areas.
 /hosts/V145-15AST/ @qbracquart
-/hosts/ZenBook-13/ @tbracquart
-
-# Users
 /users/quentin/ @qbracquart
-/users/thibaut/ @tbracquart
-
-# Root files
-/.gitignore @tbracquart
-/.sops.yaml @tbracquart
-/README.md @tbracquart
-/flake.nix @tbracquart
-/flake.lock @tbracquart
