@@ -1,17 +1,8 @@
-# Protected paths: changes to these areas require approval from the repository owner.
-# The collaborator is intentionally not a code owner here, so their PRs need
-# @tbracquart's approval before merging into main.
+# By default, the repository owner reviews all changes.
+# The following two paths are intentionally unowned: they are the explicit
+# whitelist for the collaborator and therefore do not require owner approval.
 
-/.github/ @tbracquart
-/common/ @tbracquart
-/hosts/ZenBook-13/ @tbracquart
-/modules/ @tbracquart
-/profiles/ @tbracquart
-/secrets/ @tbracquart
-/users/thibaut/ @tbracquart
+* @tbracquart
 
-/.gitignore @tbracquart
-/.sops.yaml @tbracquart
-/README.md @tbracquart
-/flake.nix @tbracquart
-/flake.lock @tbracquart
+/hosts/V145-15AST/
+/users/quentin/
