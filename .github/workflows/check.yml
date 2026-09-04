@@ -82,18 +82,18 @@ jobs:
 
   build-ZenBook-13:
     needs: changes
-    if: needs.changes.outputs.ZenBook-13 == 'true'
     uses: ./.github/workflows/build-host.yml
     with:
       host: ZenBook-13
+      should-build: ${{ needs.changes.outputs.ZenBook-13 == 'true' }}
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
   build-V145-15AST:
     needs: changes
-    if: needs.changes.outputs.V145-15AST == 'true'
     uses: ./.github/workflows/build-host.yml
     with:
       host: V145-15AST
+      should-build: ${{ needs.changes.outputs.V145-15AST == 'true' }}
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
