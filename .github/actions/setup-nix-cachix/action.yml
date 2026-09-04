@@ -4,14 +4,14 @@ description: 'Installe Nix et active le cache Cachix tbracquart'
 runs:
   using: 'composite'
   steps:
-    - uses: cachix/install-nix-action@v31.11.1
+    - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
       with:
         github_access_token: '${{ env.GITHUB_TOKEN }}'
         extra_nix_config: |
           experimental-features = nix-command flakes
 
     - name: Activer le cache Cachix 📦
-      uses: cachix/cachix-action@v17
+      uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866 # v17
       with:
         name: tbracquart
         authToken: '${{ env.CACHIX_AUTH_TOKEN }}'
