@@ -1,3 +1,122 @@
+name: Update flake
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # tous les jours à 3h UTC (5h en France en heure d'été)
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+    outputs:
+      changed: ${{ steps.update.outputs.changed }}
+      pr-title: ${{ steps.diff.outputs.title }}
+      pr-body: ${{ steps.diff.outputs.body }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: ./.github/actions/setup-nix-cachix
+
+      - name: Sauver flake.lock avant mise à jour
+        run: cp flake.lock /tmp/flake.lock.before
+
+      - name: Mettre à jour flake.lock
+        id: update
+        run: |
+          nix flake update --accept-flake-config
+          if git diff --quiet flake.lock; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Compare les inputs de premier niveau (déclarés dans flake.nix, via
+      # nodes.root.inputs) entre l'ancien et le nouveau flake.lock, et
+      # calcule l'écart en jours pour chacun de ceux qui ont changé. Sert à
+      # donner un titre de PR informatif ("nixpkgs (+3j), home-manager (+2j)")
+      # plutôt que le générique "chore: nix flake update (auto)" qui ne
+      # dit rien du contenu réel une fois repris dans le changelog de
+      # release publiée par release-drafter.
+      - name: Calculer le diff des inputs
+        id: diff
+        if: steps.update.outputs.changed == 'true'
+        run: |
+          python3 <<'EOF' >> "$GITHUB_OUTPUT"
+          import json
+
+          with open("/tmp/flake.lock.before") as f:
+              before = json.load(f)
+          with open("flake.lock") as f:
+              after = json.load(f)
+
+          def resolve(data, name):
+              ref = data["nodes"]["root"]["inputs"].get(name)
+              if ref is None:
+                  return None
+              node_name = ref if isinstance(ref, str) else ref[-1]
+              return data["nodes"].get(node_name, {}).get("locked", {}).get("lastModified")
+
+          root_inputs = sorted(before["nodes"]["root"]["inputs"].keys())
+          changed = []
+          for name in root_inputs:
+              lm_before = resolve(before, name)
+              lm_after = resolve(after, name)
+              if lm_before is not None and lm_after is not None and lm_before != lm_after:
+                  delta_days = round((lm_after - lm_before) / 86400)
+                  sign = "+" if delta_days >= 0 else ""
+                  changed.append(f"{name} ({sign}{delta_days}j)")
+
+          if changed:
+              title = "chore: nix flake update — " + ", ".join(changed)
+              body_lines = "\n".join(f"- {c}" for c in changed)
+          else:
+              title = "chore: nix flake update (auto)"
+              body_lines = "- Aucun changement détecté dans les inputs de premier niveau"
+
+          print(f"title={title}")
+          print("body<<BODY_EOF")
+          print(body_lines)
+          print("BODY_EOF")
+          EOF
+
+      - name: Sauver flake.lock mis à jour
+        if: steps.update.outputs.changed == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: flake-lock
+          path: flake.lock
+
+  build-ZenBook-13:
+    needs: update
+    if: needs.update.outputs.changed == 'true'
+    uses: ./.github/workflows/build-host.yml
+    with:
+      host: ZenBook-13
+      flake-lock-artifact: flake-lock
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+  build-V145-15AST:
+    needs: update
+    if: needs.update.outputs.changed == 'true'
+    uses: ./.github/workflows/build-host.yml
+    with:
+      host: V145-15AST
+      flake-lock-artifact: flake-lock
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
   open-pr:
     needs: [update, build-ZenBook-13, build-V145-15AST]
     if: needs.update.outputs.changed == 'true'
@@ -29,3 +148,4 @@
 
             Les deux hosts ont déjà été buildés et poussés vers Cachix ; les checks de PR devraient donc pouvoir réutiliser ces résultats.
           branch: auto/flake-update
+          delete-branch: true
