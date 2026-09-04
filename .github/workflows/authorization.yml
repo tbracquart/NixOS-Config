@@ -1,0 +1,100 @@
+name: PR authorization
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  authorization:
+    name: authorization
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR authorization
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.review.pull_request_url && github.event.review.pull_request_url || '' }}
+        run: |
+          set -euo pipefail
+
+          # pull_request_review events expose the PR through review.pull_request_url.
+          if [[ "$PR_NUMBER" == https://api.github.com/repos/*/pulls/* ]]; then
+            PR_NUMBER="${PR_NUMBER##*/}"
+          fi
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Unable to determine pull request number."
+            exit 1
+          fi
+
+          api_headers=(
+            -H "Authorization: Bearer $GH_TOKEN"
+            -H "Accept: application/vnd.github+json"
+            -H "X-GitHub-Api-Version: 2022-11-28"
+          )
+
+          pr_json="$(curl -fsSL "${api_headers[@]}" \
+            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER")"
+
+          author="$(jq -r '.user.login' <<<"$pr_json")"
+          head_sha="$(jq -r '.head.sha' <<<"$pr_json")"
+
+          echo "PR #$PR_NUMBER"
+          echo "Author: $author"
+          echo "Head: $head_sha"
+
+          # Repository owner is always authorized to merge their own PRs.
+          if [ "$author" = "tbracquart" ]; then
+            echo "Authorized: repository owner."
+            exit 0
+          fi
+
+          files="$(curl -fsSL "${api_headers[@]}" \
+            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100")"
+
+          # Only Quentin gets the delegated path exception.
+          if [ "$author" = "qbracquart" ]; then
+            unauthorized="$(jq -r '.[] | .filename' <<<"$files" | while IFS= read -r file; do
+              case "$file" in
+                hosts/V145-15AST/*|users/quentin/*)
+                  ;;
+                *)
+                  printf '%s\n' "$file"
+                  ;;
+              esac
+            done)"
+
+            if [ -z "$unauthorized" ]; then
+              echo "Authorized: all changed paths are delegated to @qbracquart."
+              exit 0
+            fi
+
+            echo "Unauthorized paths for @qbracquart:"
+            printf '%s\n' "$unauthorized"
+          else
+            echo "The PR author is not an authorized collaborator for delegated paths."
+          fi
+
+          echo
+          echo "An approval from @tbracquart is required."
+
+          approved="$(curl -fsSL "${api_headers[@]}" \
+            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" \
+            | jq -r --arg sha "$head_sha" '
+                map(select(.user.login == "tbracquart" and .state == "APPROVED" and .commit_id == $sha))
+                | length
+              ')
+
+          if [ "$approved" -gt 0 ]; then
+            echo "Authorized: @tbracquart approved the current head commit."
+            exit 0
+          fi
+
+          echo "Blocked: no approval from @tbracquart for the current head commit."
+          exit 1

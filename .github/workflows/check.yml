@@ -13,10 +13,6 @@ concurrency:
 jobs:
   changes:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name != 'pull_request' ||
-      startsWith(github.event.pull_request.head.ref, 'auto/') ||
-      contains(github.event.pull_request.labels.*.name, 'ci-please')
     outputs:
       V145-15AST: ${{ steps.filter.outputs.V145-15AST }}
       ZenBook-13: ${{ steps.filter.outputs.ZenBook-13 }}
@@ -57,13 +53,11 @@ jobs:
               - 'flake.nix'
               - 'flake.lock'
 
-  # Garde-fou léger uniquement sur push direct vers main (pas sur PR : le
-  # build ciblé qui suit réévalue de toute façon la dérivation concernée,
-  # donc faire tourner flake-check en plus sur chaque PR ne faisait que
-  # dupliquer l'évaluation complète de la flake pour rien).
+  # On pull requests, always evaluate the flake so configuration errors are
+  # caught before merge. On main, only run it when flake-related files changed.
   flake-check:
     needs: changes
-    if: needs.changes.outputs.flake == 'true' && github.event_name == 'push'
+    if: github.event_name == 'pull_request' || needs.changes.outputs.flake == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -74,7 +68,7 @@ jobs:
 
       - uses: ./.github/actions/setup-nix-cachix
 
-      - name: Vérification rapide (évaluation seule, pas de build)
+      - name: Vérification de la flake (évaluation seule, pas de build)
         run: nix flake check --no-build --accept-flake-config
 
   build-ZenBook-13:
