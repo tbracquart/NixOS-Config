@@ -42,19 +42,13 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      # Compare les inputs de premier niveau (déclarés dans flake.nix, via
-      # nodes.root.inputs) entre l'ancien et le nouveau flake.lock, et
-      # calcule l'écart en jours pour chacun de ceux qui ont changé. Sert à
-      # donner un titre de PR informatif ("nixpkgs (+3j), home-manager (+2j)")
-      # plutôt que le générique "chore: nix flake update (auto)" qui ne
-      # dit rien du contenu réel une fois repris dans le changelog de
-      # release publiée par release-drafter.
-      - name: Calculer le diff des inputs
+      - name: Calculer le diff des inputs et l'impact par host
         id: diff
         if: steps.update.outputs.changed == 'true'
         run: |
           python3 <<'EOF' >> "$GITHUB_OUTPUT"
           import json
+          import subprocess
 
           with open("/tmp/flake.lock.before") as f:
               before = json.load(f)
@@ -68,16 +62,15 @@ jobs:
               node_name = ref if isinstance(ref, str) else ref[-1]
               return data["nodes"].get(node_name, {}).get("locked")
 
-          root_inputs = sorted(before["nodes"]["root"]["inputs"].keys())
+          before_names = set(before["nodes"]["root"]["inputs"])
+          after_names = set(after["nodes"]["root"]["inputs"])
           changed = []
-          changed_names = set()
-          for name in root_inputs:
+          for name in sorted(before_names | after_names):
               locked_before = resolve(before, name)
               locked_after = resolve(after, name)
-              if locked_before is not None and locked_after is not None and locked_before != locked_after:
-                  changed_names.add(name)
-                  lm_before = locked_before.get("lastModified")
-                  lm_after = locked_after.get("lastModified")
+              if locked_before != locked_after:
+                  lm_before = locked_before.get("lastModified") if locked_before else None
+                  lm_after = locked_after.get("lastModified") if locked_after else None
                   if lm_before is not None and lm_after is not None:
                       delta_days = round((lm_after - lm_before) / 86400)
                       sign = "+" if delta_days >= 0 else ""
@@ -92,18 +85,41 @@ jobs:
               title = "chore: nix flake update (auto)"
               body_lines = "- Aucun changement détecté dans les inputs de premier niveau"
 
-          # All current root inputs affect both hosts through common modules,
-          # except nix-cachyos-kernel, which is only used by ZenBook-13.
-          # Avoid building V145-15AST when that is the only updated input.
-          build_zenbook = "true"
-          build_v145 = "false" if changed_names == {"nix-cachyos-kernel"} else "true"
+          result = subprocess.run(
+              ["python3", ".github/scripts/analyze-flake-impact.py", 
+               "/tmp/flake.lock.before", "flake.lock", "."],
+              text=True,
+              capture_output=True,
+              check=True,
+          )
+
+          impact = {}
+          for line in result.stdout.splitlines():
+              if "=" in line:
+                  key, value = line.split("=", 1)
+                  impact[key] = value
+
+          hosts = sorted(
+              key.removeprefix("build-")
+              for key in impact
+              if key.startswith("build-")
+          )
+          if not hosts:
+              raise RuntimeError("Aucun host NixOS détecté")
+
+          body_lines += "\n\n## Hosts à builder\n"
+          for host in hosts:
+              if impact[f"build-{host}"] == "true":
+                  body_lines += f"- `{host}` : build\n"
+              else:
+                  body_lines += f"- `{host}` : ignoré (aucune dépendance affectée)\n"
 
           print(f"title={title}")
           print("body<<BODY_EOF")
           print(body_lines)
           print("BODY_EOF")
-          print(f"build-zenbook={build_zenbook}")
-          print(f"build-v145={build_v145}")
+          for host in hosts:
+              print(f"build-{host}={impact[f'build-{host}']}")
           EOF
 
       - name: Sauver flake.lock mis à jour
@@ -115,7 +131,7 @@ jobs:
 
   build-ZenBook-13:
     needs: update
-    if: needs.update.outputs.changed == 'true' && needs.update.outputs.build-zenbook == 'true'
+    if: needs.update.outputs.changed == 'true' && needs.update.outputs.build-ZenBook-13 == 'true'
     uses: ./.github/workflows/build-host.yml
     with:
       host: ZenBook-13
@@ -125,7 +141,7 @@ jobs:
 
   build-V145-15AST:
     needs: update
-    if: needs.update.outputs.changed == 'true' && needs.update.outputs.build-v145 == 'true'
+    if: needs.update.outputs.changed == 'true' && needs.update.outputs.build-V145-15AST == 'true'
     uses: ./.github/workflows/build-host.yml
     with:
       host: V145-15AST
