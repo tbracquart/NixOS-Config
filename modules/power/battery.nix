@@ -26,9 +26,9 @@ let
 in
 {
   options.my.power.batteryChargeLimit = lib.mkOption {
-    type = lib.types.nullOr (lib.types.ints.between 0 100);
+    type = lib.types.nullOr (lib.types.ints.between 1 100);
     default = null;
-    description = "Limite de charge de la batterie en pourcentage.";
+    description = "Limite de charge de la batterie en pourcentage (de 1 à 100).";
   };
 
   config = lib.mkIf (cfg.batteryChargeLimit != null) {
