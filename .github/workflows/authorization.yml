@@ -45,7 +45,7 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28"
           )
 
-          pr_json="$(curl -fsSL "${api_headers[@]}" \
+          pr_json="$(curl -fsSL --retry 3 --retry-delay 1 --retry-all-errors "${api_headers[@]}" \
             "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER")"
 
           author="$(jq -r '.user.login' <<<"$pr_json")"
@@ -61,12 +61,12 @@ jobs:
             exit 0
           fi
 
-          files="$(curl -fsSL "${api_headers[@]}" \
+          files="$(curl -fsSL --retry 3 --retry-delay 1 --retry-all-errors "${api_headers[@]}" \
             "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100&page=1")"
           page=1
           while [ "$(jq 'length' <<<"$files")" -eq 100 ]; do
             page=$((page + 1))
-            next_files="$(curl -fsSL "${api_headers[@]}" \
+            next_files="$(curl -fsSL --retry 3 --retry-delay 1 --retry-all-errors "${api_headers[@]}" \
               "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100&page=$page")"
             files="$(jq -s 'add' <(printf '%s\n' "$files") <(printf '%s\n' "$next_files"))"
           done
@@ -97,12 +97,12 @@ jobs:
           echo
           echo "Une approbation de @tbracquart est requise."
 
-          reviews="$(curl -fsSL "${api_headers[@]}" \
+          reviews="$(curl -fsSL --retry 3 --retry-delay 1 --retry-all-errors "${api_headers[@]}" \
             "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100&page=1")"
           page=1
           while [ "$(jq 'length' <<<"$reviews")" -eq 100 ]; do
             page=$((page + 1))
-            next_reviews="$(curl -fsSL "${api_headers[@]}" \
+            next_reviews="$(curl -fsSL --retry 3 --retry-delay 1 --retry-all-errors "${api_headers[@]}" \
               "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100&page=$page")"
             reviews="$(jq -s 'add' <(printf '%s\n' "$reviews") <(printf '%s\n' "$next_reviews"))"
           done
