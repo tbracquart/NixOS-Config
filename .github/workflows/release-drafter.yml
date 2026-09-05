@@ -9,8 +9,7 @@ concurrency:
   group: release-drafter-${{ github.ref }}
   cancel-in-progress: false
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   update_release_draft:
