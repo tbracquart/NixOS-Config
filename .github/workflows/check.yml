@@ -80,7 +80,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     steps:
       - name: Vérification non nécessaire
@@ -97,36 +96,29 @@ jobs:
         if: needs.changes.outputs.flake == 'true'
         run: nix flake check --no-build --accept-flake-config
 
-  # Required check: always report `analyze` on PRs. The actual analyzer only
-  # runs for flake.lock-only changes; otherwise the check succeeds immediately.
-  # This avoids a permanently skipped required context while preserving the
-  # runner optimization for unrelated PRs.
+  # For a PR changing only flake.lock, use the analyzer to avoid rebuilding
+  # hosts whose configuration does not reference the changed inputs.
   analyze-impact:
     needs: changes
-    if: github.event_name == 'pull_request'
+    if: >-
+      github.event_name == 'pull_request' &&
+      needs.changes.outputs.flake-lock == 'true' &&
+      needs.changes.outputs.flake-definition != 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     outputs:
-      build-hosts: ${{ steps.compute.outputs.build-hosts || steps.init.outputs.build-hosts }}
+      build-hosts: ${{ steps.analyze.outputs.build-hosts }}
     steps:
-      - name: Initialiser l'analyse
-        id: init
-        run: echo 'build-hosts=[]' >> "$GITHUB_OUTPUT"
-
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true'
         with:
           fetch-depth: 0
 
       - name: Préparer les versions de flake.lock
-        if: needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true'
         run: |
           git show '${{ github.event.pull_request.base.sha }}:flake.lock' > /tmp/flake.lock.before
           cp flake.lock /tmp/flake.lock.after
 
       - name: Analyser l'impact de flake.lock
-        id: compute
-        if: needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true'
+        id: analyze
         run: |
           output=$(python3 .github/scripts/analyze-flake-impact.py \
             /tmp/flake.lock.before /tmp/flake.lock.after .)
@@ -148,8 +140,7 @@ jobs:
         ${{ needs.changes.outputs.ZenBook-13 == 'true' ||
             (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '"ZenBook-13"')) ||
             (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
-    secrets:
-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+    # No Cachix secret on PRs: untrusted PR code must not receive credentials.
 
   build-V145-15AST:
     needs: [changes, analyze-impact]
@@ -157,9 +148,4 @@ jobs:
     uses: ./.github/workflows/build-host.yml
     with:
       host: V145-15AST
-      should-build: >-
-        ${{ needs.changes.outputs.V145-15AST == 'true' ||
-            (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '"V145-15AST"')) ||
-            (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
-    secrets:
-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+    # No Cachix secret on PRs: untrusted PR code must not receive credentials.
