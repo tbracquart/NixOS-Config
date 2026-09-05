@@ -57,7 +57,9 @@
       if [ -f /run/secrets/cachix-auth-token ]; then
         if id -u thibaut >/dev/null 2>&1; then
           mkdir -p /home/thibaut/.config/cachix
-          cat /run/secrets/cachix-auth-token | runuser -u thibaut -- ${pkgs.cachix}/bin/cachix authtoken --stdin || true
+          if ! cat /run/secrets/cachix-auth-token | runuser -u thibaut -- ${pkgs.cachix}/bin/cachix authtoken --stdin; then
+            echo "Avertissement : impossible d'activer le token Cachix pour thibaut." >&2
+          fi
           chown -R thibaut:users /home/thibaut/.config/cachix
         fi
       fi
