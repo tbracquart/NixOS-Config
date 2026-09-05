@@ -6,10 +6,6 @@
     ./boot.nix
     ./users.nix
     ../../common
-    ../../modules
-    ../../profiles
-    inputs.home-manager.nixosModules.default
-    inputs.sops-nix.nixosModules.sops
   ];
 
   networking.hostName = "V145-15AST";
