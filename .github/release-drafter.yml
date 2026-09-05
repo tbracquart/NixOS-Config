@@ -47,21 +47,23 @@ categories:
       labels:
         - '*'
 
-autolabeler:
-  - label: 'ci-please'
-    files:
-      - '.github/workflows/*'
-  - label: 'area: nix-config'
-    branch:
-      - '/^update\\/.+/'
-    title:
-      - '/flake.lock/i'
+exclude-labels: []
 
 change-template: '- $TITLE (#$NUMBER)'
-change-title-escapes: '\\<*_&'
+change-title-escapes: '\<*_&'
 no-changes-template: '- Aucun changement'
 
 template: |
   ## Changements
 
   $CHANGES
+
+autolabeler:
+  - label: 'ci-please'
+    files:
+      - '.github/workflows/*'
+  - label: 'area: nix-config'
+    branch:
+      - '/^update\/.+/'
+    title:
+      - '/flake.lock/i'
