@@ -3,41 +3,49 @@ tag-template: 'v$RESOLVED_VERSION'
 
 # La version CalVer (YY.MM.DD, avec suffixe -N si plusieurs merges le même
 # jour) est calculée directement dans le workflow .github/workflows/release-drafter.yml
-# et transmise via l'input "version". Pas de version-template/version-resolver
+# et transmise via les inputs "tag" et "name". Pas de version-template/version-resolver
 # ici : Release Drafter ne doit pas recalculer la version lui-même.
 
 categories:
+  - type: 'pre-exclude'
+    when:
+      labels:
+        - 'ignore-for-release'
+        - 'skip-changelog'
+        - 'duplicate'
+        - 'invalid'
+        - 'wontfix'
+        - 'question'
   - title: '🚀 Fonctionnalités'
-    labels:
-      - 'type: enhancement'
+    when:
+      labels:
+        - 'type: enhancement'
   - title: '🐛 Corrections'
-    labels:
-      - 'type: bug'
+    when:
+      labels:
+        - 'type: bug'
   - title: '🔧 CI / Tooling'
-    labels:
-      - 'ci-please'
-      - 'area: ci'
+    when:
+      labels:
+        - 'ci-please'
+        - 'area: ci'
   - title: '🧹 Maintenance'
-    labels:
-      - 'type: chore'
+    when:
+      labels:
+        - 'type: chore'
   - title: '📦 Dépendances'
-    labels:
-      - 'area: nix-config'
+    when:
+      labels:
+        - 'area: nix-config'
   - title: '🖥️ Config hosts'
-    labels:
-      - 'host: zenbook-13'
-      - 'host: v145-15ast'
+    when:
+      labels:
+        - 'host: zenbook-13'
+        - 'host: v145-15ast'
   - title: '📝 Autres'
-    labels:
-      - '*'
-
-exclude-labels:
-  - 'ignore-for-release'
-  - 'skip-changelog'
-  - 'duplicate'
-  - 'invalid'
-  - 'wontfix'
-  - 'question'
+    when:
+      labels:
+        - '*'
 
 change-template: '- $TITLE (#$NUMBER)'
 change-title-escapes: '\<*_&'
