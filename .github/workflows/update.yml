@@ -22,8 +22,7 @@ jobs:
       changed: ${{ steps.update.outputs.changed }}
       pr-title: ${{ steps.diff.outputs.title }}
       pr-body: ${{ steps.diff.outputs.body }}
-      build-zenbook: ${{ steps.diff.outputs.build-zenbook }}
-      build-v145: ${{ steps.diff.outputs.build-v145 }}
+      build-hosts: ${{ steps.diff.outputs.build-hosts }}
     steps:
       - uses: actions/checkout@v7.0.1
 
@@ -86,7 +85,7 @@ jobs:
               body_lines = "- Aucun changement détecté dans les inputs de premier niveau"
 
           result = subprocess.run(
-              ["python3", ".github/scripts/analyze-flake-impact.py", 
+              ["python3", ".github/scripts/analyze-flake-impact.py",
                "/tmp/flake.lock.before", "flake.lock", "."],
               text=True,
               capture_output=True,
@@ -99,17 +98,10 @@ jobs:
                   key, value = line.split("=", 1)
                   impact[key] = value
 
-          hosts = sorted(
-              key.removeprefix("build-")
-              for key in impact
-              if key.startswith("build-")
-          )
-          if not hosts:
-              raise RuntimeError("Aucun host NixOS détecté")
-
+          build_hosts = json.loads(impact["build-hosts"])
           body_lines += "\n\n## Hosts à builder\n"
-          for host in hosts:
-              if impact[f"build-{host}"] == "true":
+          for host in sorted(key.removeprefix("host-inputs-") for key in impact if key.startswith("host-inputs-")):
+              if host in build_hosts:
                   body_lines += f"- `{host}` : build\n"
               else:
                   body_lines += f"- `{host}` : ignoré (aucune dépendance affectée)\n"
@@ -118,8 +110,7 @@ jobs:
           print("body<<BODY_EOF")
           print(body_lines)
           print("BODY_EOF")
-          for host in hosts:
-              print(f"build-{host}={impact[f'build-{host}']}")
+          print("build-hosts=" + json.dumps(build_hosts, separators=(",", ":")))
           EOF
 
       - name: Sauver flake.lock mis à jour
@@ -129,33 +120,26 @@ jobs:
           name: flake-lock
           path: flake.lock
 
-  build-ZenBook-13:
+  build-hosts:
     needs: update
-    if: needs.update.outputs.changed == 'true' && needs.update.outputs.build-ZenBook-13 == 'true'
+    if: needs.update.outputs.changed == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJSON(needs.update.outputs.build-hosts) }}
     uses: ./.github/workflows/build-host.yml
     with:
-      host: ZenBook-13
-      flake-lock-artifact: flake-lock
-    secrets:
-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
-  build-V145-15AST:
-    needs: update
-    if: needs.update.outputs.changed == 'true' && needs.update.outputs.build-V145-15AST == 'true'
-    uses: ./.github/workflows/build-host.yml
-    with:
-      host: V145-15AST
+      host: ${{ matrix.host }}
       flake-lock-artifact: flake-lock
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
   open-pr:
-    needs: [update, build-ZenBook-13, build-V145-15AST]
+    needs: [update, build-hosts]
     if: >-
       always() &&
       needs.update.outputs.changed == 'true' &&
-      needs.build-ZenBook-13.result == 'success' &&
-      (needs.build-V145-15AST.result == 'success' || needs.build-V145-15AST.result == 'skipped')
+      needs.build-hosts.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
