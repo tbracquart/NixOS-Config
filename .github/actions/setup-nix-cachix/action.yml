@@ -2,6 +2,10 @@ name: 'Setup Nix + Cachix'
 description: 'Installe Nix et active le cache Cachix tbracquart'
 
 inputs:
+  github-access-token:
+    description: 'Jeton GitHub utilisé par Nix pour éviter les limites API'
+    required: false
+    default: ''
   cachix-auth-token:
     description: 'Jeton Cachix utilisé uniquement par les workflows de confiance'
     required: false
@@ -12,7 +16,7 @@ runs:
   steps:
     - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
       with:
-        github_access_token: '${{ env.GITHUB_TOKEN }}'
+        github_access_token: '${{ inputs.github-access-token }}'
         extra_nix_config: |
           experimental-features = nix-command flakes
 
