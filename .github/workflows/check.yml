@@ -10,11 +10,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   changes:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     outputs:
       V145-15AST: ${{ steps.filter.outputs.V145-15AST }}
@@ -79,6 +80,8 @@ jobs:
   # `flake-check`. The actual Nix evaluation is skipped when unnecessary.
   flake-check:
     needs: changes
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -106,7 +109,10 @@ jobs:
       github.event_name == 'pull_request' &&
       needs.changes.outputs.flake-lock == 'true' &&
       needs.changes.outputs.flake-definition != 'true'
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       build-hosts: ${{ steps.analyze.outputs.build-hosts }}
     steps:
@@ -136,6 +142,8 @@ jobs:
   build-ZenBook-13:
     needs: [changes, analyze-impact]
     if: always()
+    permissions:
+      contents: read
     uses: ./.github/workflows/build-host.yml
     with:
       host: ZenBook-13
@@ -147,6 +155,8 @@ jobs:
   build-V145-15AST:
     needs: [changes, analyze-impact]
     if: always()
+    permissions:
+      contents: read
     uses: ./.github/workflows/build-host.yml
     with:
       host: V145-15AST
