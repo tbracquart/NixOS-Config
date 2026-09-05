@@ -26,6 +26,7 @@ jobs:
       flake-definition: ${{ steps.filter.outputs.flake-definition }}
       flake-impact-test: ${{ steps.filter.outputs['flake-impact-test'] }}
       ci: ${{ steps.filter.outputs.ci }}
+      ci-build: ${{ steps.filter.outputs['ci-build'] }}
     steps:
       # paths-filter uses the Git working tree for push events, so checkout is
       # required there. Pull requests use the GitHub REST API and skip it.
@@ -81,6 +82,12 @@ jobs:
               - '.github/workflows/**'
               - '.github/actions/**'
               - '.github/scripts/**'
+            # Only changes to the reusable host build or its Nix/Cachix setup
+            # can alter the actual NixOS build mechanism. Other CI changes are
+            # validated by their dedicated checks without rebuilding hosts.
+            ci-build:
+              - '.github/workflows/build-host.yml'
+              - '.github/actions/setup-nix-cachix/**'
 
       # Regression tests need the repository contents. On pushes the checkout
       # above is shared; on pull requests a separate checkout is needed only
@@ -172,7 +179,7 @@ jobs:
       host: ZenBook-13
       should-build: >-
         ${{ needs.changes.outputs.ZenBook-13 == 'true' ||
-            needs.changes.outputs.ci == 'true' ||
+            needs.changes.outputs['ci-build'] == 'true' ||
             (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '\"ZenBook-13\"')) ||
             (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
 
@@ -186,6 +193,6 @@ jobs:
       host: V145-15AST
       should-build: >-
         ${{ needs.changes.outputs.V145-15AST == 'true' ||
-            needs.changes.outputs.ci == 'true' ||
+            needs.changes.outputs['ci-build'] == 'true' ||
             (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '\"V145-15AST\"')) ||
             (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
