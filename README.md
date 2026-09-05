@@ -79,11 +79,12 @@ La base commune configure notamment :
 - Avahi ;
 - CUPS et HPLIP pour l'impression ;
 - OpenSSH ;
-- Flatpak ;
 - GVFS ;
 - fwupd ;
 - KDE Connect ;
 - Fish comme shell système disponible pour les utilisateurs.
+
+Flatpak est géré par un module réutilisable et n'est activé que sur les hôtes qui le demandent ; il est actuellement activé sur le V145.
 
 ## 🔑 Secrets et reproductibilité
 
