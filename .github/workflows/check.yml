@@ -61,9 +61,12 @@ jobs:
         if: github.event_name == 'pull_request' && steps.filter.outputs.flake == 'true'
         env:
           BASE_REF: ${{ github.base_ref }}
-          FLAKE_CHANGED: ${{ contains(steps.filter.outputs.flake, 'true') && github.event_name == 'pull_request' && '' || '' }}
         run: |
           set -euo pipefail
+
+          tmpdir=$(mktemp -d)
+          trap 'rm -rf "$tmpdir"' EXIT
+          git fetch --no-tags --depth=1 origin "$BASE_REF"
 
           # Une modification de flake.nix peut changer arbitrairement les
           # dépendances d’un hôte : dans ce cas, on conserve le comportement
@@ -74,9 +77,6 @@ jobs:
             exit 0
           fi
 
-          tmpdir=$(mktemp -d)
-          trap 'rm -rf "$tmpdir"' EXIT
-          git fetch --no-tags --depth=1 origin "$BASE_REF"
           git show "origin/${BASE_REF}:flake.lock" > "$tmpdir/before.json"
 
           if ! output=$(python3 .github/scripts/analyze-flake-impact.py \
