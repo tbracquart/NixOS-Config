@@ -16,6 +16,7 @@ permissions:
 jobs:
   changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       V145-15AST: ${{ steps.filter.outputs.V145-15AST }}
       ZenBook-13: ${{ steps.filter.outputs.ZenBook-13 }}
@@ -57,7 +58,6 @@ jobs:
               - 'profiles/**'
               - 'modules/**'
               - 'users/**'
-              - 'secrets/**'
               - 'flake.nix'
               - 'flake.lock'
             flake-lock:
@@ -107,6 +107,7 @@ jobs:
       needs.changes.outputs.flake-lock == 'true' &&
       needs.changes.outputs.flake-definition != 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       build-hosts: ${{ steps.analyze.outputs.build-hosts }}
     steps:
