@@ -47,7 +47,6 @@
       hostModules = host: [
         ./hosts/${host}/hardware-configuration.nix
         ./hosts/${host}/boot.nix
-        ./hosts/${host}/users.nix
         ./hosts/${host}/configuration.nix
       ];
 
@@ -86,6 +85,7 @@
           ++ hostModules "V145-15AST"
           ++ [
             (hostMetadata "V145-15AST" "26.05")
+            ./hosts/V145-15AST/users.nix
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
             {
