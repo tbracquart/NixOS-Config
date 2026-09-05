@@ -37,8 +37,6 @@ jobs:
     if: inputs.should-build
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -58,6 +56,7 @@ jobs:
       - uses: ./.github/actions/setup-nix-cachix
         if: inputs.push-to-cachix
         with:
+          github-access-token: ${{ secrets.GITHUB_TOKEN }}
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Build ${{ inputs.host }}
