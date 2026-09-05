@@ -151,12 +151,21 @@ def analyze_host(
     initial_paths: list[str],
     direct_inputs: set[str],
     file_cache: dict[Path, str],
+    path_cache: dict[tuple[Path, str], Path | None],
+    input_cache: dict[Path, set[str]],
 ) -> tuple[set[str], bool]:
     inputs: set[str] = set()
     seen: set[Path] = set()
     queue: list[Path] = []
+
+    def resolve_cached(source: Path, raw: str) -> Path | None:
+        key = (source, raw)
+        if key not in path_cache:
+            path_cache[key] = resolve_relative(root, source, raw)
+        return path_cache[key]
+
     for raw in initial_paths:
-        path = resolve_relative(root, root / "flake.nix", raw)
+        path = resolve_cached(root / "flake.nix", raw)
         if path:
             queue.append(path)
 
@@ -172,7 +181,13 @@ def analyze_host(
                 file_cache[path] = text
         except (OSError, UnicodeDecodeError):
             return inputs, True
-        inputs.update(INPUT_RE.findall(text))
+
+        parsed_inputs = input_cache.get(path)
+        if parsed_inputs is None:
+            parsed_inputs = set(INPUT_RE.findall(text))
+            input_cache[path] = parsed_inputs
+        inputs.update(parsed_inputs)
+
         # Host definitions in flake.nix receive flake inputs as bare variables
         # (for example `nix-cachyos-kernel.overlays...`), so inspect the host
         # block separately instead of requiring an `inputs.` prefix.
@@ -184,7 +199,7 @@ def analyze_host(
         # a false positive costs a build, while a missed dependency could make
         # the CI accept an unbuilt host configuration.
         for raw in PATH_RE.findall(text):
-            child = resolve_relative(root, path, raw)
+            child = resolve_cached(path, raw)
             if child:
                 queue.append(child)
     return inputs, False
@@ -211,13 +226,22 @@ def main() -> int:
     host_inputs: dict[str, set[str]] = {}
     analysis_failed = False
     file_cache: dict[Path, str] = {root / "flake.nix": flake}
+    path_cache: dict[tuple[Path, str], Path | None] = {}
+    input_cache: dict[Path, set[str]] = {}
     for host in hosts:
         try:
             start = flake.find(f"nixosConfigurations.{host} =")
             block = matching_block(flake, start)
             paths = expand_helper_paths(flake, host)
             paths.extend(PATH_RE.findall(block))
-            found, failed = analyze_host(root, paths, direct_inputs, file_cache)
+            found, failed = analyze_host(
+                root,
+                paths,
+                direct_inputs,
+                file_cache,
+                path_cache,
+                input_cache,
+            )
             found.update(
                 name for name in direct_inputs if re.search(rf"\b{re.escape(name)}\b", block)
             )

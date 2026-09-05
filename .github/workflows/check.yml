@@ -26,11 +26,6 @@ jobs:
       flake-definition: ${{ steps.filter.outputs.flake-definition }}
       flake-impact-test: ${{ steps.filter.outputs['flake-impact-test'] }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: github.event_name == 'push'
-        with:
-          persist-credentials: false
-
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
         with:
@@ -71,8 +66,13 @@ jobs:
               - '.github/scripts/test-analyze-flake-impact.py'
               - 'flake.lock'
 
-      # Keep the regression tests on this existing runner: they are independent
-      # from Nix evaluation and therefore do not need a dedicated runner.
+      # Regression tests need the repository contents, while paths-filter on PRs
+      # deliberately runs without checkout. Keep the checkout only for this case.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: github.event_name == 'push' || steps.filter.outputs['flake-impact-test'] == 'true'
+        with:
+          persist-credentials: false
+
       - name: Vérifier l'analyse automatique de l'impact des inputs
         if: steps.filter.outputs['flake-impact-test'] == 'true'
         run: python3 .github/scripts/test-analyze-flake-impact.py
