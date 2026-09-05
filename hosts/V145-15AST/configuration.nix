@@ -6,6 +6,7 @@
     ./boot.nix
     ./users.nix
     ../../common
+    ../../profiles/laptop.nix
   ];
 
   networking.hostName = "V145-15AST";
@@ -30,7 +31,6 @@
   };
 
   my.authentication.howdy.enable = true;
-  my.bluetooth.enable = true;
   my.desktop.plasma.enable = true;
   my.flatpak.enable = true;
 }
