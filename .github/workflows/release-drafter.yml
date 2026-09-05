@@ -18,6 +18,7 @@ jobs:
       contents: write
       pull-requests: write
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -32,7 +33,7 @@ jobs:
         run: |
           set -euo pipefail
           BASE=$(date +'%y.%m.%d')
-          COUNT=$(git tag -l "v${BASE}*" | wc -l)
+          COUNT=$(git tag -l "v${BASE}" "v${BASE}-*" | wc -l)
           if [ "$COUNT" -eq 0 ]; then
             VERSION="$BASE"
           else
