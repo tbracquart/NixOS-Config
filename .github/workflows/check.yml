@@ -26,6 +26,14 @@ jobs:
       flake-definition: ${{ steps.filter.outputs.flake-definition }}
       flake-impact-test: ${{ steps.filter.outputs['flake-impact-test'] }}
     steps:
+      # paths-filter uses the Git working tree for push events, so checkout is
+      # required there. Pull requests use the GitHub REST API and skip it.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: github.event_name == 'push'
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
         with:
@@ -66,11 +74,11 @@ jobs:
               - '.github/scripts/test-analyze-flake-impact.py'
               - 'flake.lock'
 
-      # Regression tests need the repository contents. On pushes, paths-filter
-      # can still determine the changed paths from the previous commit without
-      # requiring a checkout, so only fetch the repository when the test runs.
+      # Regression tests need the repository contents. On pushes the checkout
+      # above is shared; on pull requests a separate checkout is needed only
+      # when the regression test actually runs.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: steps.filter.outputs['flake-impact-test'] == 'true'
+        if: github.event_name == 'pull_request' && steps.filter.outputs['flake-impact-test'] == 'true'
         with:
           persist-credentials: false
 
