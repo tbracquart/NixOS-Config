@@ -80,8 +80,14 @@ jobs:
         if: needs.changes.outputs.flake == 'true'
         run: nix flake check --no-build --accept-flake-config
 
+  # This test is independent from the Nix evaluation so changes to the
+  # analyzer itself cannot accidentally skip its regression test.
+  flake-impact-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+
       - name: Vérifier l'analyse automatique de l'impact des inputs
-        if: needs.changes.outputs.flake == 'true'
         run: |
           tmpdir=$(mktemp -d)
           cp flake.lock "$tmpdir/before.json"
