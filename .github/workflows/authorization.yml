@@ -6,6 +6,10 @@ on:
   pull_request_review:
     types: [submitted, dismissed]
 
+concurrency:
+  group: authorization-${{ github.event.pull_request.number || github.event.review.pull_request_url || github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
