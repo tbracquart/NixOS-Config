@@ -26,4 +26,4 @@ jobs:
           persist-credentials: false
 
       - name: Lint workflows
-        uses: eifinger/actionlint-action@1fc8964d4e1e37c1f8c8bdbf4d6a1fcd9f0b1c6d # v1.10.2
+        uses: eifinger/actionlint-action@1fc89649be682d16ec5cf65ea16e269eb88d3982 # v1.10.2
