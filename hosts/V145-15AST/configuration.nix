@@ -6,11 +6,12 @@
     ./boot.nix
     ./users.nix
     ../../common
-    ../../profiles/laptop.nix
   ];
 
   networking.hostName = "V145-15AST";
   system.stateVersion = "26.05";
+
+  my.profile = "laptop";
 
   home-manager = {
     useGlobalPkgs = true;
