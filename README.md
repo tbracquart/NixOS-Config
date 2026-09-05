@@ -43,7 +43,7 @@ La règle générale est de placer chaque élément là où se trouve sa respons
 - `hosts/` pour les différences propres à une machine et les choix de configuration exposés par les modules ;
 - `users/` pour la configuration Home Manager d'un utilisateur.
 
-Chaque hôte importe explicitement le profil qui lui correspond. Le profil `laptop.nix` est actuellement volontairement minimal, mais il constitue le point de composition prévu pour les fonctionnalités communes aux ordinateurs portables. De nouveaux profils pourront être ajoutés sans introduire de sélection dynamique des modules.
+Le profil `laptop.nix` est chargé statiquement avec les autres modules communs, puis activé par l'hôte avec l'option lisible `my.profile = "laptop"`. Il est actuellement volontairement minimal, mais constitue le point de composition prévu pour les fonctionnalités communes aux ordinateurs portables. De nouveaux profils pourront être ajoutés sans introduire de sélection dynamique des modules.
 
 Les hôtes composent donc le système avec des `imports` statiques, puis configurent les fonctionnalités réutilisables via leurs options `my.*`. Les modules déclarent ces options et implémentent leur comportement ; les profils fournissent des presets de configuration de plus haut niveau.
 
