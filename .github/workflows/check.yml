@@ -41,7 +41,6 @@ jobs:
               - 'profiles/**'
               - 'modules/**'
               - 'users/**'
-              - 'users/quentin/**'
               - 'secrets/**'
               - 'flake.nix'
               - 'flake.lock'
