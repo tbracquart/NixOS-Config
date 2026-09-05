@@ -22,6 +22,8 @@ jobs:
       changed: ${{ steps.update.outputs.changed }}
       pr-title: ${{ steps.diff.outputs.title }}
       pr-body: ${{ steps.diff.outputs.body }}
+      build-zenbook: ${{ steps.diff.outputs.build-zenbook }}
+      build-v145: ${{ steps.diff.outputs.build-v145 }}
     steps:
       - uses: actions/checkout@v7.0.1
 
@@ -64,17 +66,24 @@ jobs:
               if ref is None:
                   return None
               node_name = ref if isinstance(ref, str) else ref[-1]
-              return data["nodes"].get(node_name, {}).get("locked", {}).get("lastModified")
+              return data["nodes"].get(node_name, {}).get("locked")
 
           root_inputs = sorted(before["nodes"]["root"]["inputs"].keys())
           changed = []
+          changed_names = set()
           for name in root_inputs:
-              lm_before = resolve(before, name)
-              lm_after = resolve(after, name)
-              if lm_before is not None and lm_after is not None and lm_before != lm_after:
-                  delta_days = round((lm_after - lm_before) / 86400)
-                  sign = "+" if delta_days >= 0 else ""
-                  changed.append(f"{name} ({sign}{delta_days}j)")
+              locked_before = resolve(before, name)
+              locked_after = resolve(after, name)
+              if locked_before is not None and locked_after is not None and locked_before != locked_after:
+                  changed_names.add(name)
+                  lm_before = locked_before.get("lastModified")
+                  lm_after = locked_after.get("lastModified")
+                  if lm_before is not None and lm_after is not None:
+                      delta_days = round((lm_after - lm_before) / 86400)
+                      sign = "+" if delta_days >= 0 else ""
+                      changed.append(f"{name} ({sign}{delta_days}j)")
+                  else:
+                      changed.append(name)
 
           if changed:
               title = "chore: nix flake update — " + ", ".join(changed)
@@ -83,10 +92,18 @@ jobs:
               title = "chore: nix flake update (auto)"
               body_lines = "- Aucun changement détecté dans les inputs de premier niveau"
 
+          # All current root inputs affect both hosts through common modules,
+          # except nix-cachyos-kernel, which is only used by ZenBook-13.
+          # Avoid building V145-15AST when that is the only updated input.
+          build_zenbook = "true"
+          build_v145 = "false" if changed_names == {"nix-cachyos-kernel"} else "true"
+
           print(f"title={title}")
           print("body<<BODY_EOF")
           print(body_lines)
           print("BODY_EOF")
+          print(f"build-zenbook={build_zenbook}")
+          print(f"build-v145={build_v145}")
           EOF
 
       - name: Sauver flake.lock mis à jour
@@ -98,7 +115,7 @@ jobs:
 
   build-ZenBook-13:
     needs: update
-    if: needs.update.outputs.changed == 'true'
+    if: needs.update.outputs.changed == 'true' && needs.update.outputs.build-zenbook == 'true'
     uses: ./.github/workflows/build-host.yml
     with:
       host: ZenBook-13
@@ -108,7 +125,7 @@ jobs:
 
   build-V145-15AST:
     needs: update
-    if: needs.update.outputs.changed == 'true'
+    if: needs.update.outputs.changed == 'true' && needs.update.outputs.build-v145 == 'true'
     uses: ./.github/workflows/build-host.yml
     with:
       host: V145-15AST
@@ -118,7 +135,11 @@ jobs:
 
   open-pr:
     needs: [update, build-ZenBook-13, build-V145-15AST]
-    if: needs.update.outputs.changed == 'true'
+    if: >-
+      always() &&
+      needs.update.outputs.changed == 'true' &&
+      needs.build-ZenBook-13.result == 'success' &&
+      (needs.build-V145-15AST.result == 'success' || needs.build-V145-15AST.result == 'skipped')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -145,6 +166,6 @@ jobs:
             ## Inputs mis à jour
             ${{ needs.update.outputs.pr-body }}
 
-            Les deux hosts ont déjà été buildés et poussés vers Cachix ; les checks de PR devraient donc pouvoir réutiliser ces résultats.
+            Les hosts affectés ont déjà été buildés et poussés vers Cachix ; les checks de PR devraient donc pouvoir réutiliser ces résultats.
           branch: auto/flake-update
           delete-branch: true
