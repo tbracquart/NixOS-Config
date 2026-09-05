@@ -26,8 +26,7 @@ on:
       CACHIX_AUTH_TOKEN:
         required: false
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   # Keep the reusable job itself conditional instead of conditionally invoking
@@ -35,6 +34,8 @@ jobs:
   # check while letting GitHub skip the runner entirely for unaffected hosts.
   build:
     if: inputs.should-build
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
