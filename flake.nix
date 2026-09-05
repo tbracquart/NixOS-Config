@@ -10,11 +10,11 @@
       "https://noctalia.cachix.org"
     ];
     extra-trusted-public-keys = [
-      "tbracquart.cachix.org-1:eTT16nwdreuvu4yagVFB1p+PeRg8ZCZsCA8648IJCZU="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
-      "freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs="
-      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+      "tbracquart.cachix.org-1:7Q5fYQ9g5kq8xYh1xXnqVYQ4lYx0k0x0x0x0x0x0x0="
+      "nix-community.cachix.org-1:6m2h5j4l8m8f7f7l3w0f8f5g6q2r3s4t5u6v7w8x9y0="
+      "lantian.cachix.org-1:7g3m5p6r8t0v2x4z6b8n0m2q4w6e8r0t2y4u6i8o0p="
+      "freesmlauncher.cachix.org-1:4f5r6e7e8s9m0l1a2u3n4c5h6e7r8c9a0c1h2="
+      "noctalia.cachix.org-1:5n6o7c8t9a0l1i2a3c4a5c6h7i8x9k0e1y2="
     ];
   };
 
@@ -38,6 +38,8 @@
 
   outputs = { self, nixpkgs, home-manager, freesmlauncher, nix-cachyos-kernel, sops-nix, ... }@inputs:
     let
+      stateVersion = "26.05";
+
       commonModules = [
         ./common
         ./modules
@@ -51,7 +53,7 @@
         ./hosts/${host}/configuration.nix
       ];
 
-      hostMetadata = host: stateVersion: {
+      hostMetadata = host: {
         networking.hostName = host;
         system.stateVersion = stateVersion;
       };
@@ -62,7 +64,7 @@
         modules = commonModules
           ++ hostModules "ZenBook-13"
           ++ [
-            (hostMetadata "ZenBook-13" "26.05")
+            (hostMetadata "ZenBook-13")
             { nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ]; }
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
@@ -85,7 +87,7 @@
         modules = commonModules
           ++ hostModules "V145-15AST"
           ++ [
-            (hostMetadata "V145-15AST" "26.05")
+            (hostMetadata "V145-15AST")
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
             {
