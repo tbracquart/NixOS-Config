@@ -12,7 +12,6 @@
     ./system/shell.nix
     ./users/thibaut.nix
     ../modules
-    ../profiles
     inputs.home-manager.nixosModules.default
     inputs.sops-nix.nixosModules.sops
   ];
