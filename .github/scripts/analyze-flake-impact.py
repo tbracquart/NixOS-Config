@@ -32,11 +32,17 @@ def node_name(ref):
     return ref if isinstance(ref, str) else ref[-1]
 
 
-def reachable_nodes(data, name):
+def reachable_nodes(data, name, cache):
     """Return every lock node reachable from a top-level root input."""
+    cached = cache.get(name)
+    if cached is not None:
+        return cached
+
     ref = root_input_ref(data, name)
     if ref is None:
-        return set(), False
+        result = (set(), False)
+        cache[name] = result
+        return result
 
     nodes = data.get("nodes", {})
     queue = [node_name(ref)]
@@ -53,7 +59,9 @@ def reachable_nodes(data, name):
         seen.add(current)
         for child_ref in node.get("inputs", {}).values():
             queue.append(node_name(child_ref))
-    return seen, failed
+    result = (seen, failed)
+    cache[name] = result
+    return result
 
 
 def root_locked(data, name):
@@ -68,10 +76,12 @@ def changed_inputs(before, after):
     before_names = set(before.get("nodes", {}).get("root", {}).get("inputs", {}))
     after_names = set(after.get("nodes", {}).get("root", {}).get("inputs", {}))
     changed = []
+    before_cache = {}
+    after_cache = {}
 
     for name in sorted(before_names | after_names):
-        before_nodes, before_failed = reachable_nodes(before, name)
-        after_nodes, after_failed = reachable_nodes(after, name)
+        before_nodes, before_failed = reachable_nodes(before, name, before_cache)
+        after_nodes, after_failed = reachable_nodes(after, name, after_cache)
         if before_failed or after_failed:
             changed.append(name)
             continue
