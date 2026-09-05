@@ -14,7 +14,6 @@ import re
 import sys
 from pathlib import Path
 
-
 HOST_RE = re.compile(r"nixosConfigurations\.([A-Za-z0-9_-]+)\s*=")
 INPUT_RE = re.compile(r"\binputs\.([A-Za-z0-9_-]+)\b")
 PATH_RE = re.compile(r"(?<![A-Za-z0-9_])\./[^\s\"']+")
@@ -36,16 +35,14 @@ def root_locked(data, name):
 def changed_inputs(before, after):
     before_names = set(before.get("nodes", {}).get("root", {}).get("inputs", {}))
     after_names = set(after.get("nodes", {}).get("root", {}).get("inputs", {}))
-    names = sorted(before_names | after_names)
-    changed = []
-    for name in names:
-        if root_locked(before, name) != root_locked(after, name):
-            changed.append(name)
-    return changed
+    return [
+        name
+        for name in sorted(before_names | after_names)
+        if root_locked(before, name) != root_locked(after, name)
+    ]
 
 
 def matching_block(text: str, start: int) -> str:
-    """Return a balanced-brace block starting at the first '{' after start."""
     brace = text.find("{", start)
     if brace < 0:
         raise ValueError("could not find host block")
@@ -64,9 +61,9 @@ def matching_block(text: str, start: int) -> str:
             continue
         if c == '"':
             in_string = True
-        elif c == '{':
+        elif c == "{":
             depth += 1
-        elif c == '}':
+        elif c == "}":
             depth -= 1
             if depth == 0:
                 return text[brace : i + 1]
@@ -75,40 +72,33 @@ def matching_block(text: str, start: int) -> str:
 
 def expand_helper_paths(flake: str, host: str) -> list[str]:
     paths: list[str] = []
-
     common = re.search(r"commonModules\s*=\s*\[(.*?)\];", flake, re.S)
     if common:
         paths.extend(PATH_RE.findall(common.group(1)))
-
     host_modules = re.search(r"hostModules\s*=\s*host\s*:\s*\[(.*?)\];", flake, re.S)
     if host_modules:
         paths.extend(p.replace("${host}", host) for p in PATH_RE.findall(host_modules.group(1)))
-
     return paths
 
 
 def resolve_relative(root: Path, source: Path, raw: str) -> Path | None:
-    raw = raw.rstrip("];,)>")
+    raw = raw.rstrip("];,)>}")
     candidate = (source.parent / raw[2:]).resolve() if raw.startswith("./") else None
-    if candidate is None or root not in candidate.parents and candidate != root:
+    if candidate is None or (root not in candidate.parents and candidate != root):
         return None
-    if candidate.is_file() and candidate.suffix == ".nix":
-        return candidate
     if candidate.is_file():
         return candidate
     if candidate.is_dir():
         default = candidate / "default.nix"
         return default if default.is_file() else None
-    if candidate.with_suffix(".nix").is_file():
-        return candidate.with_suffix(".nix")
-    return None
+    nix_file = candidate.with_suffix(".nix")
+    return nix_file if nix_file.is_file() else None
 
 
 def analyze_host(root: Path, initial_paths: list[str]) -> tuple[set[str], bool]:
     inputs: set[str] = set()
     seen: set[Path] = set()
     queue: list[Path] = []
-
     for raw in initial_paths:
         path = resolve_relative(root, root / "flake.nix", raw)
         if path:
@@ -123,9 +113,7 @@ def analyze_host(root: Path, initial_paths: list[str]) -> tuple[set[str], bool]:
             text = path.read_text()
         except (OSError, UnicodeDecodeError):
             return inputs, True
-
         inputs.update(INPUT_RE.findall(text))
-
         # Following every relative path literal is deliberately conservative:
         # a false positive costs a build, while a missed dependency could make
         # the CI accept an unbuilt host configuration.
@@ -133,7 +121,6 @@ def analyze_host(root: Path, initial_paths: list[str]) -> tuple[set[str], bool]:
             child = resolve_relative(root, path, raw)
             if child:
                 queue.append(child)
-
     return inputs, False
 
 
@@ -145,9 +132,7 @@ def main() -> int:
     before = load(Path(sys.argv[1]))
     after = load(Path(sys.argv[2]))
     root = Path(sys.argv[3]).resolve()
-    flake_path = root / "flake.nix"
-    flake = flake_path.read_text()
-
+    flake = (root / "flake.nix").read_text()
     changed = changed_inputs(before, after)
     print(f"changed-inputs={','.join(changed)}")
 
@@ -173,25 +158,23 @@ def main() -> int:
     if analysis_failed:
         print("analysis-error=dependency-scan-failed", file=sys.stderr)
 
-    # Unknown/removed/new inputs and parsing uncertainty are always handled
-    # conservatively. If no changed input can be mapped, rebuilding every host
-    # is safer than assuming an input is irrelevant.
     changed_set = set(changed)
+    affected_hosts = []
     for host in hosts:
         affected = bool(changed_set & host_inputs.get(host, set()))
-        if analysis_failed or (changed_set and not affected and not host_inputs.get(host)):
+        if analysis_failed:
             affected = True
-        print(f"build-{host}={'true' if affected else 'false'}")
+        if affected:
+            affected_hosts.append(host)
         print(f"host-inputs-{host}={','.join(sorted(host_inputs.get(host, set())))}")
 
-    # A changed input that is not observed by any host is still treated as
-    # potentially relevant to every host: the analyzer must never create a
-    # false negative when the Nix syntax is more dynamic than the scanner.
+    # A changed input not observed by any host means the syntax is more dynamic
+    # than the scanner can prove. Never turn that uncertainty into a false skip.
     mapped = set().union(*host_inputs.values()) if host_inputs else set()
     if changed_set - mapped or analysis_failed:
-        for host in hosts:
-            print(f"build-{host}=true")
+        affected_hosts = hosts
 
+    print("build-hosts=" + json.dumps(affected_hosts, separators=(",", ":")))
     return 0
 
 
