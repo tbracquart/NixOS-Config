@@ -104,7 +104,8 @@ jobs:
           python3 .github/scripts/test-prepare-flake-update.py
 
   # Required check: keep this caller unconditional so GitHub always reports
-  # `flake-check`. The actual Nix evaluation is skipped when unnecessary.
+  # `flake-check`. The actual Nix evaluation runs only when the flake or the
+  # reusable host build mechanism can be affected.
   flake-check:
     needs: changes
     permissions:
@@ -113,19 +114,19 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Vérification non nécessaire
-        if: needs.changes.outputs.flake != 'true' && needs.changes.outputs.ci != 'true'
-        run: echo "Aucun changement affectant la flake ou la CI — vérification ignorée"
+        if: needs.changes.outputs.flake != 'true' && needs.changes.outputs['ci-build'] != 'true'
+        run: echo "Aucun changement affectant la flake ou le mécanisme de build CI — vérification ignorée"
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: needs.changes.outputs.flake == 'true' || needs.changes.outputs.ci == 'true'
+        if: needs.changes.outputs.flake == 'true' || needs.changes.outputs['ci-build'] == 'true'
         with:
           persist-credentials: false
 
       - uses: ./.github/actions/setup-nix-cachix
-        if: needs.changes.outputs.flake == 'true' || needs.changes.outputs.ci == 'true'
+        if: needs.changes.outputs.flake == 'true' || needs.changes.outputs['ci-build'] == 'true'
 
       - name: Vérification de la flake (évaluation seule, pas de build)
-        if: needs.changes.outputs.flake == 'true' || needs.changes.outputs.ci == 'true'
+        if: needs.changes.outputs.flake == 'true' || needs.changes.outputs['ci-build'] == 'true'
         run: nix flake check --no-build --keep-going --accept-flake-config
 
   # For a PR changing only flake.lock, use the analyzer to avoid rebuilding
