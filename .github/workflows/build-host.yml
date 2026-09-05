@@ -17,9 +17,14 @@ on:
         required: false
         type: string
         default: ''
+      push-to-cachix:
+        description: 'Publie le résultat du build sur Cachix (réservé aux workflows de confiance)'
+        required: false
+        type: boolean
+        default: false
     secrets:
       CACHIX_AUTH_TOKEN:
-        required: true
+        required: false
 
 permissions:
   contents: read
@@ -33,7 +38,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -44,7 +48,15 @@ jobs:
         with:
           name: ${{ inputs.flake-lock-artifact }}
 
+      # PR builds execute repository-controlled code, so they deliberately use
+      # the cache setup without receiving the Cachix write credential.
       - uses: ./.github/actions/setup-nix-cachix
+        if: inputs.push-to-cachix == false
+
+      - uses: ./.github/actions/setup-nix-cachix
+        if: inputs.push-to-cachix
+        with:
+          cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Build ${{ inputs.host }}
         run: |
@@ -52,6 +64,7 @@ jobs:
           nix build .#nixosConfigurations.${{ inputs.host }}.config.system.build.toplevel -o result --print-build-logs --accept-flake-config
 
       - name: Push build to Cachix (obligatoire)
+        if: inputs.push-to-cachix
         env:
           CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         run: |
