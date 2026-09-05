@@ -61,9 +61,11 @@ jobs:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Build ${{ inputs.host }}
+        env:
+          HOST: ${{ inputs.host }}
         run: |
           set -eux
-          nix build .#nixosConfigurations.${{ inputs.host }}.config.system.build.toplevel -o result --print-build-logs --accept-flake-config
+          nix build ".#nixosConfigurations.${HOST}.config.system.build.toplevel" -o result --print-build-logs --accept-flake-config
 
       - name: Push build to Cachix (obligatoire)
         if: inputs.push-to-cachix
