@@ -25,7 +25,6 @@ jobs:
       flake-lock: ${{ steps.filter.outputs.flake-lock }}
       flake-definition: ${{ steps.filter.outputs.flake-definition }}
       flake-impact-test: ${{ steps.filter.outputs['flake-impact-test'] }}
-      ci: ${{ steps.filter.outputs.ci }}
       ci-build: ${{ steps.filter.outputs['ci-build'] }}
     steps:
       # paths-filter uses the Git working tree for push events, so checkout is
