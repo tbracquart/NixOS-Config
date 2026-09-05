@@ -1,4 +1,4 @@
-name: PR authorization
+name: Autorisation des PR
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ jobs:
     name: authorization
     runs-on: ubuntu-latest
     steps:
-      - name: Check PR authorization
+      - name: Vérifier l'autorisation de la PR
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
@@ -23,13 +23,13 @@ jobs:
         run: |
           set -euo pipefail
 
-          # pull_request_review events expose the PR through review.pull_request_url.
+          # Les événements pull_request_review exposent la PR via review.pull_request_url.
           if [[ "$PR_NUMBER" == https://api.github.com/repos/*/pulls/* ]]; then
             PR_NUMBER="${PR_NUMBER##*/}"
           fi
 
           if [ -z "$PR_NUMBER" ]; then
-            echo "Unable to determine pull request number."
+            echo "Impossible de déterminer le numéro de la pull request."
             exit 1
           fi
 
@@ -46,19 +46,26 @@ jobs:
           head_sha="$(jq -r '.head.sha' <<<"$pr_json")"
 
           echo "PR #$PR_NUMBER"
-          echo "Author: $author"
-          echo "Head: $head_sha"
+          echo "Auteur : $author"
+          echo "Commit de tête : $head_sha"
 
-          # Repository owner is always authorized to merge their own PRs.
+          # Le propriétaire du dépôt est toujours autorisé à fusionner ses propres PR.
           if [ "$author" = "tbracquart" ]; then
-            echo "Authorized: repository owner."
+            echo "Autorisé : propriétaire du dépôt."
             exit 0
           fi
 
           files="$(curl -fsSL "${api_headers[@]}" \
-            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100")"
+            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100&page=1")"
+          page=1
+          while [ "$(jq 'length' <<<"$files")" -eq 100 ]; do
+            page=$((page + 1))
+            next_files="$(curl -fsSL "${api_headers[@]}" \
+              "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100&page=$page")"
+            files="$(jq -s 'add' <(printf '%s\n' "$files") <(printf '%s\n' "$next_files"))"
+          done
 
-          # Only Quentin gets the delegated path exception.
+          # Seul Quentin bénéficie de l'exception de chemins délégués.
           if [ "$author" = "qbracquart" ]; then
             unauthorized="$(jq -r '.[] | .filename' <<<"$files" | while IFS= read -r file; do
               case "$file" in
@@ -71,28 +78,35 @@ jobs:
             done)"
 
             if [ -z "$unauthorized" ]; then
-              echo "Authorized: all changed paths are delegated to @qbracquart."
+              echo "Autorisé : tous les chemins modifiés sont délégués à @qbracquart."
               exit 0
             fi
 
-            echo "Unauthorized paths for @qbracquart:"
+            echo "Chemins non autorisés pour @qbracquart :"
             printf '%s\n' "$unauthorized"
           else
-            echo "The PR author is not an authorized collaborator for delegated paths."
+            echo "L'auteur de la PR n'est pas un collaborateur autorisé pour les chemins délégués."
           fi
 
           echo
-          echo "An approval from @tbracquart is required."
+          echo "Une approbation de @tbracquart est requise."
 
-          approved="$(curl -fsSL "${api_headers[@]}" \
-            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" \
-            | jq -r --arg sha "$head_sha" 'map(select(.user.login == "tbracquart" and .state == "APPROVED" and .commit_id == $sha)) | length'
-          )"
+          reviews="$(curl -fsSL "${api_headers[@]}" \
+            "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100&page=1")"
+          page=1
+          while [ "$(jq 'length' <<<"$reviews")" -eq 100 ]; do
+            page=$((page + 1))
+            next_reviews="$(curl -fsSL "${api_headers[@]}" \
+              "https://api.github.com/repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100&page=$page")"
+            reviews="$(jq -s 'add' <(printf '%s\n' "$reviews") <(printf '%s\n' "$next_reviews"))"
+          done
+
+          approved="$(jq -r --arg sha "$head_sha" 'map(select(.user.login == "tbracquart" and .state == "APPROVED" and .commit_id == $sha)) | length' <<<"$reviews")"
 
           if [ "$approved" -gt 0 ]; then
-            echo "Authorized: @tbracquart approved the current head commit."
+            echo "Autorisé : @tbracquart a approuvé le commit de tête actuel."
             exit 0
           fi
 
-          echo "Blocked: no approval from @tbracquart for the current head commit."
+          echo "Bloqué : aucune approbation de @tbracquart pour le commit de tête actuel."
           exit 1
