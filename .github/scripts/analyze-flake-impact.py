@@ -16,7 +16,10 @@ from pathlib import Path
 
 HOST_RE = re.compile(r"nixosConfigurations\.([A-Za-z0-9_-]+)\s*=")
 INPUT_RE = re.compile(r"\binputs\.([A-Za-z0-9_-]+)\b")
-PATH_RE = re.compile(r"(?<![A-Za-z0-9_])\./[^\s\"']+")
+# Match complete relative paths, including parent-relative imports such as
+# ../../common and ../modules. The dot in the lookbehind prevents matching a
+# suffix like ./common inside ../../common.
+PATH_RE = re.compile(r"(?<![A-Za-z0-9_.])(?:\.\.?/)+[^\s\"']+")
 
 
 def load(path: Path):
@@ -134,7 +137,7 @@ def expand_helper_paths(flake: str, host: str) -> list[str]:
 
 def resolve_relative(root: Path, source: Path, raw: str) -> Path | None:
     raw = raw.rstrip("];,)>}")
-    candidate = (source.parent / raw[2:]).resolve() if raw.startswith("./") else None
+    candidate = (source.parent / raw).resolve() if raw.startswith(".") else None
     if candidate is None or (root not in candidate.parents and candidate != root):
         return None
     if candidate.is_file():
