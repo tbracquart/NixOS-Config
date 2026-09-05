@@ -66,10 +66,11 @@ jobs:
               - '.github/scripts/test-analyze-flake-impact.py'
               - 'flake.lock'
 
-      # Regression tests need the repository contents, while paths-filter on PRs
-      # deliberately runs without checkout. Keep the checkout only for this case.
+      # Regression tests need the repository contents. On pushes, paths-filter
+      # can still determine the changed paths from the previous commit without
+      # requiring a checkout, so only fetch the repository when the test runs.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: github.event_name == 'push' || steps.filter.outputs['flake-impact-test'] == 'true'
+        if: steps.filter.outputs['flake-impact-test'] == 'true'
         with:
           persist-credentials: false
 
@@ -153,7 +154,7 @@ jobs:
       host: ZenBook-13
       should-build: >-
         ${{ needs.changes.outputs.ZenBook-13 == 'true' ||
-            (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '"ZenBook-13"')) ||
+            (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '\"ZenBook-13\"')) ||
             (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
 
   build-V145-15AST:
@@ -166,5 +167,5 @@ jobs:
       host: V145-15AST
       should-build: >-
         ${{ needs.changes.outputs.V145-15AST == 'true' ||
-            (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '"V145-15AST"')) ||
+            (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '\"V145-15AST\"')) ||
             (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
