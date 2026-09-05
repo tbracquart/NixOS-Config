@@ -62,6 +62,6 @@ autolabeler:
       - '.github/workflows/*'
   - label: 'area: nix-config'
     branch:
-      - '/^update\/.+/'
+      - '/^auto\/.+/'
     title:
       - '/flake.lock/i'
