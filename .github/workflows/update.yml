@@ -58,36 +58,6 @@ jobs:
           with open("flake.lock") as f:
               after = json.load(f)
 
-          def resolve(data, name):
-              ref = data["nodes"]["root"]["inputs"].get(name)
-              if ref is None:
-                  return None
-              node_name = ref if isinstance(ref, str) else ref[-1]
-              return data["nodes"].get(node_name, {}).get("locked")
-
-          before_names = set(before["nodes"]["root"]["inputs"])
-          after_names = set(after["nodes"]["root"]["inputs"])
-          changed = []
-          for name in sorted(before_names | after_names):
-              locked_before = resolve(before, name)
-              locked_after = resolve(after, name)
-              if locked_before != locked_after:
-                  lm_before = locked_before.get("lastModified") if locked_before else None
-                  lm_after = locked_after.get("lastModified") if locked_after else None
-                  if lm_before is not None and lm_after is not None:
-                      delta_days = round((lm_after - lm_before) / 86400)
-                      sign = "+" if delta_days >= 0 else ""
-                      changed.append(f"{name} ({sign}{delta_days}j)")
-                  else:
-                      changed.append(name)
-
-          if changed:
-              title = "chore: nix flake update — " + ", ".join(changed)
-              body_lines = "\n".join(f"- {c}" for c in changed)
-          else:
-              title = "chore: nix flake update (auto)"
-              body_lines = "- Aucun changement détecté dans les inputs de premier niveau"
-
           result = subprocess.run(
               ["python3", ".github/scripts/analyze-flake-impact.py",
                "/tmp/flake.lock.before", "flake.lock", "."],
@@ -101,6 +71,35 @@ jobs:
               if "=" in line:
                   key, value = line.split("=", 1)
                   impact[key] = value
+
+          changed_names = [name for name in impact["changed-inputs"].split(",") if name]
+
+          def resolve(data, name):
+              ref = data["nodes"]["root"]["inputs"].get(name)
+              if ref is None:
+                  return None
+              node_name = ref if isinstance(ref, str) else ref[-1]
+              return data["nodes"].get(node_name, {}).get("locked")
+
+          changed = []
+          for name in changed_names:
+              locked_before = resolve(before, name)
+              locked_after = resolve(after, name)
+              lm_before = locked_before.get("lastModified") if locked_before else None
+              lm_after = locked_after.get("lastModified") if locked_after else None
+              if lm_before is not None and lm_after is not None:
+                  delta_days = round((lm_after - lm_before) / 86400)
+                  sign = "+" if delta_days >= 0 else ""
+                  changed.append(f"{name} ({sign}{delta_days}j)")
+              else:
+                  changed.append(name)
+
+          if changed:
+              title = "chore: nix flake update — " + ", ".join(changed)
+              body_lines = "\n".join(f"- {c}" for c in changed)
+          else:
+              title = "chore: nix flake update (auto)"
+              body_lines = "- Aucun changement détecté dans les inputs de premier niveau"
 
           build_hosts = json.loads(impact["build-hosts"])
           body_lines += "\n\n## Hosts à builder\n"
