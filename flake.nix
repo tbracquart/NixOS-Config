@@ -38,6 +38,8 @@
 
   outputs = { self, nixpkgs, home-manager, freesmlauncher, nix-cachyos-kernel, sops-nix, ... }@inputs:
     let
+      stateVersion = "26.05";
+
       commonModules = [
         ./common
         ./modules
@@ -50,7 +52,7 @@
         ./hosts/${host}/configuration.nix
       ];
 
-      hostMetadata = host: stateVersion: {
+      hostMetadata = host: {
         networking.hostName = host;
         system.stateVersion = stateVersion;
       };
@@ -61,7 +63,7 @@
         modules = commonModules
           ++ hostModules "ZenBook-13"
           ++ [
-            (hostMetadata "ZenBook-13" "26.05")
+            (hostMetadata "ZenBook-13")
             { nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ]; }
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
@@ -84,7 +86,7 @@
         modules = commonModules
           ++ hostModules "V145-15AST"
           ++ [
-            (hostMetadata "V145-15AST" "26.05")
+            (hostMetadata "V145-15AST")
             ./hosts/V145-15AST/users.nix
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
