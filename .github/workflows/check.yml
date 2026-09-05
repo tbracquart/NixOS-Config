@@ -21,7 +21,7 @@ jobs:
       ZenBook-13: ${{ steps.filter.outputs.ZenBook-13 }}
       flake: ${{ steps.filter.outputs.flake }}
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
@@ -70,7 +70,7 @@ jobs:
         if: needs.changes.outputs.flake != 'true'
         run: echo "Aucun changement affectant la flake — vérification ignorée"
 
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: needs.changes.outputs.flake == 'true'
 
       - uses: ./.github/actions/setup-nix-cachix
@@ -85,7 +85,7 @@ jobs:
   flake-impact-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Vérifier l'analyse automatique de l'impact des inputs
         run: |
