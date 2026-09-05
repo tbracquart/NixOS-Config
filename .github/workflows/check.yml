@@ -25,6 +25,7 @@ jobs:
       flake-lock: ${{ steps.filter.outputs.flake-lock }}
       flake-definition: ${{ steps.filter.outputs.flake-definition }}
       flake-impact-test: ${{ steps.filter.outputs['flake-impact-test'] }}
+      ci: ${{ steps.filter.outputs.ci }}
     steps:
       # paths-filter uses the Git working tree for push events, so checkout is
       # required there. Pull requests use the GitHub REST API and skip it.
@@ -73,6 +74,10 @@ jobs:
               - '.github/scripts/analyze-flake-impact.py'
               - '.github/scripts/test-analyze-flake-impact.py'
               - 'flake.lock'
+            ci:
+              - '.github/workflows/**'
+              - '.github/actions/**'
+              - '.github/scripts/**'
 
       # Regression tests need the repository contents. On pushes the checkout
       # above is shared; on pull requests a separate checkout is needed only
@@ -96,20 +101,20 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Vérification non nécessaire
-        if: needs.changes.outputs.flake != 'true'
-        run: echo "Aucun changement affectant la flake — vérification ignorée"
+        if: needs.changes.outputs.flake != 'true' && needs.changes.outputs.ci != 'true'
+        run: echo "Aucun changement affectant la flake ou la CI — vérification ignorée"
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: needs.changes.outputs.flake == 'true'
+        if: needs.changes.outputs.flake == 'true' || needs.changes.outputs.ci == 'true'
         with:
           persist-credentials: false
 
       - uses: ./.github/actions/setup-nix-cachix
-        if: needs.changes.outputs.flake == 'true'
+        if: needs.changes.outputs.flake == 'true' || needs.changes.outputs.ci == 'true'
 
       - name: Vérification de la flake (évaluation seule, pas de build)
-        if: needs.changes.outputs.flake == 'true'
-        run: nix flake check --no-build --accept-flake-config
+        if: needs.changes.outputs.flake == 'true' || needs.changes.outputs.ci == 'true'
+        run: nix flake check --no-build --keep-going --accept-flake-config
 
   # For a PR changing only flake.lock, use the analyzer to avoid rebuilding
   # hosts whose configuration does not reference the changed inputs.
@@ -162,6 +167,7 @@ jobs:
       host: ZenBook-13
       should-build: >-
         ${{ needs.changes.outputs.ZenBook-13 == 'true' ||
+            needs.changes.outputs.ci == 'true' ||
             (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '\"ZenBook-13\"')) ||
             (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
 
@@ -175,5 +181,6 @@ jobs:
       host: V145-15AST
       should-build: >-
         ${{ needs.changes.outputs.V145-15AST == 'true' ||
+            needs.changes.outputs.ci == 'true' ||
             (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '\"V145-15AST\"')) ||
             (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
