@@ -8,6 +8,10 @@
       publish = { enable = true; addresses = true; };
     };
 
+    fwupd.enable = true;
+    gvfs.enable = true;
+    openssh.enable = true;
+
     pipewire = {
       enable = true;
       alsa.enable = true;
@@ -18,9 +22,5 @@
       enable = true;
       drivers = [ pkgs.hplip ];
     };
-
-    openssh.enable = true;
-    gvfs.enable = true;
-    fwupd.enable = true;
   };
 }
