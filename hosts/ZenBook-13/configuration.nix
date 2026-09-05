@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ./boot.nix
     ../../common
+    ../../profiles/laptop.nix
   ];
 
   networking.hostName = "ZenBook-13";
@@ -26,7 +27,6 @@
   };
 
   my.authentication.howdy.ir.enable = true;
-  my.bluetooth.enable = true;
   my.bluetooth.powerOnBoot = true;
   my.compatibility.nix-ld.enable = true;
   my.desktop.hyprland.enable = true;
