@@ -147,7 +147,7 @@ jobs:
     if: >-
       always() &&
       needs.update.outputs.changed == 'true' &&
-      needs.build-hosts.result == 'success'
+      (needs.build-hosts.result == 'success' || needs.build-hosts.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
