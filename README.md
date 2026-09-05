@@ -3,7 +3,7 @@
 # ❄️ NixOS Config
 
 Configuration personnelle NixOS gérée avec **Nix Flakes** et **Home Manager**.
-Le dépôt sépare la configuration système commune, les fonctionnalités réutilisables, les particularités des machines et les environnements utilisateurs.
+Le dépôt sépare la configuration système commune, les fonctionnalités réutilisables, les profils de machines, les particularités des hôtes et les environnements utilisateurs.
 
 ## 🖥️ Hôtes
 
@@ -25,6 +25,8 @@ Home Manager est intégré aux deux configurations. Thibaut est configuré sur l
 │   ├── ZenBook-13/          # Particularités matérielles et système du ZenBook
 │   └── V145-15AST/          # Particularités matérielles et système du V145
 ├── modules/                 # Fonctionnalités NixOS réutilisables et leurs options my.*
+├── profiles/                # Profils de machines composant plusieurs fonctionnalités
+│   └── laptop.nix           # Profil commun aux ordinateurs portables
 ├── users/
 │   ├── thibaut/             # Configuration Home Manager de Thibaut
 │   └── quentin/             # Configuration Home Manager de Quentin
@@ -37,10 +39,13 @@ La règle générale est de placer chaque élément là où se trouve sa respons
 
 - `common/` pour ce qui doit réellement s'appliquer à toutes les machines ;
 - `modules/` pour encapsuler une fonctionnalité réutilisable et déclarer son interface d'options ;
+- `profiles/` pour regrouper plusieurs fonctionnalités cohérentes dans un preset de machine, comme `laptop`, `desktop` ou `server` ;
 - `hosts/` pour les différences propres à une machine et les choix de configuration exposés par les modules ;
 - `users/` pour la configuration Home Manager d'un utilisateur.
 
-Les hôtes composent le système avec des `imports` statiques, puis configurent les fonctionnalités réutilisables via leurs options `my.*`. Les modules déclarent ces options et implémentent leur comportement ; aucune option de configuration ne sert à sélectionner dynamiquement les modules importés.
+Chaque hôte importe explicitement le profil qui lui correspond. Le profil `laptop.nix` est actuellement volontairement minimal, mais il constitue le point de composition prévu pour les fonctionnalités communes aux ordinateurs portables. De nouveaux profils pourront être ajoutés sans introduire de sélection dynamique des modules.
+
+Les hôtes composent donc le système avec des `imports` statiques, puis configurent les fonctionnalités réutilisables via leurs options `my.*`. Les modules déclarent ces options et implémentent leur comportement ; les profils fournissent des presets de configuration de plus haut niveau.
 
 ## 🧩 Principes de configuration
 
