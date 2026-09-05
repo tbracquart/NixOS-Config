@@ -1,6 +1,6 @@
 [![NixOS CI](https://github.com/tbracquart/nixos-config/actions/workflows/check.yml/badge.svg)](https://github.com/tbracquart/nixos-config/actions/workflows/check.yml) [![Update flake](https://github.com/tbracquart/nixos-config/actions/workflows/update.yml/badge.svg)](https://github.com/tbracquart/nixos-config/actions/workflows/update.yml)
 
-# ❄️ nixos-config
+# ❄️ NixOS Config
 
 Configuration personnelle NixOS gérée avec **Nix Flakes** et **Home Manager**.
 Le dépôt sépare la configuration système commune, les types de machines, les fonctionnalités réutilisables, les particularités des machines et les environnements utilisateurs.
