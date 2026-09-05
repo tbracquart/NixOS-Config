@@ -22,7 +22,7 @@ jobs:
       flake: ${{ steps.filter.outputs.flake }}
       flake-lock: ${{ steps.filter.outputs.flake-lock }}
       flake-definition: ${{ steps.filter.outputs.flake-definition }}
-      flake-impact-test: ${{ steps.filter.outputs.flake-impact-test }}
+      flake-impact-test: ${{ steps.filter.outputs['flake-impact-test'] }}
     steps:
       - uses: actions/checkout@v7.0.1
 
@@ -69,7 +69,7 @@ jobs:
       # Keep the regression test on this existing runner: it is independent
       # from Nix evaluation and therefore does not need a dedicated runner.
       - name: Vérifier l'analyse automatique de l'impact des inputs
-        if: steps.filter.outputs.flake-impact-test == 'true'
+        if: steps.filter.outputs['flake-impact-test'] == 'true'
         run: |
           tmpdir=$(mktemp -d)
           cp flake.lock "$tmpdir/before.json"
@@ -157,8 +157,8 @@ jobs:
       host: ZenBook-13
       should-build: >-
         ${{ needs.changes.outputs.ZenBook-13 == 'true' ||
-            (needs.analyze-impact.result == 'success' && contains(needs.analyze-impact.outputs.build-hosts, '"ZenBook-13"')) ||
-            (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs.analyze-impact.result != 'success') }}
+            (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '"ZenBook-13"')) ||
+            (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
@@ -170,7 +170,7 @@ jobs:
       host: V145-15AST
       should-build: >-
         ${{ needs.changes.outputs.V145-15AST == 'true' ||
-            (needs.analyze-impact.result == 'success' && contains(needs.analyze-impact.outputs.build-hosts, '"V145-15AST"')) ||
-            (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs.analyze-impact.result != 'success') }}
+            (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '"V145-15AST"')) ||
+            (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
