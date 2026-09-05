@@ -2,14 +2,14 @@
 
 {
   programs = {
+    bat.enable = true;
+    htop.enable = true;
+
     kdeconnect.enable = true;
 
     vim = {
       enable = true;
       defaultEditor = true;
     };
-
-    htop.enable = true;
-    bat.enable = true;
   };
 }
