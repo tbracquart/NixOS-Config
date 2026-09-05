@@ -19,16 +19,16 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    freesmlauncher.url = "github:FreesmTeam/FreesmLauncher/develop";
 
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    freesmlauncher.url = "github:FreesmTeam/FreesmLauncher/develop";
-
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     sops-nix = {
       url = "github:Mic92/sops-nix";
