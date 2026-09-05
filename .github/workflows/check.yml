@@ -70,10 +70,11 @@ jobs:
               - 'flake.lock'
             flake-definition:
               - 'flake.nix'
+            # The regression suite uses synthetic lock graphs, so changing the
+            # real flake.lock does not change what this test validates.
             flake-impact-test:
               - '.github/scripts/analyze-flake-impact.py'
               - '.github/scripts/test-analyze-flake-impact.py'
-              - 'flake.lock'
             ci:
               - '.github/workflows/**'
               - '.github/actions/**'
