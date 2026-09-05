@@ -1,6 +1,12 @@
 name: 'Setup Nix + Cachix'
 description: 'Installe Nix et active le cache Cachix tbracquart'
 
+inputs:
+  cachix-auth-token:
+    description: 'Jeton Cachix utilisé uniquement par les workflows de confiance'
+    required: false
+    default: ''
+
 runs:
   using: 'composite'
   steps:
@@ -11,7 +17,8 @@ runs:
           experimental-features = nix-command flakes
 
     - name: Activer le cache Cachix 📦
+      if: inputs.cachix-auth-token != ''
       uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866 # v17
       with:
         name: tbracquart
-        authToken: '${{ env.CACHIX_AUTH_TOKEN }}'
+        authToken: '${{ inputs.cachix-auth-token }}'
