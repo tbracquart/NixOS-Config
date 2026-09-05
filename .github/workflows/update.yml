@@ -15,6 +15,7 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
       CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -35,7 +36,7 @@ jobs:
         id: update
         run: |
           nix flake update --accept-flake-config
-          if git diff --quiet flake.lock; then
+          if git diff --quiet -- flake.lock; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -119,6 +120,8 @@ jobs:
         with:
           name: flake-lock
           path: flake.lock
+          if-no-files-found: error
+          retention-days: 1
 
   build-hosts:
     needs: update
@@ -141,6 +144,7 @@ jobs:
       needs.update.outputs.changed == 'true' &&
       needs.build-hosts.result == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
       pull-requests: write
