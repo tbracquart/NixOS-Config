@@ -59,9 +59,11 @@ template: |
 autolabeler:
   - label: 'ci-please'
     files:
-      - '.github/workflows/*'
+      - '.github/workflows/**'
+      - '.github/actions/**'
+      - '.github/scripts/**'
   - label: 'area: nix-config'
     branch:
-      - '/^update\/.+/'
+      - '/^auto\/.+/'
     title:
       - '/flake.lock/i'

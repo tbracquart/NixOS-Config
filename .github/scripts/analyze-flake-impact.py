@@ -124,17 +124,6 @@ def matching_block(text: str, start: int) -> str:
     raise ValueError("unterminated host block")
 
 
-def expand_helper_paths(flake: str, host: str) -> list[str]:
-    paths: list[str] = []
-    common = re.search(r"commonModules\s*=\s*\[(.*?)\];", flake, re.S)
-    if common:
-        paths.extend(PATH_RE.findall(common.group(1)))
-    host_modules = re.search(r"hostModules\s*=\s*host\s*:\s*\[(.*?)\];", flake, re.S)
-    if host_modules:
-        paths.extend(p.replace("${host}", host) for p in PATH_RE.findall(host_modules.group(1)))
-    return paths
-
-
 def resolve_relative(root: Path, source: Path, raw: str) -> Path | None:
     raw = raw.rstrip("];,)>}")
     candidate = (source.parent / raw).resolve() if raw.startswith(".") else None
@@ -235,8 +224,7 @@ def main() -> int:
         try:
             start = flake.find(f"nixosConfigurations.{host} =")
             block = matching_block(flake, start)
-            paths = expand_helper_paths(flake, host)
-            paths.extend(PATH_RE.findall(block))
+            paths = PATH_RE.findall(block)
             found, failed = analyze_host(
                 root,
                 paths,

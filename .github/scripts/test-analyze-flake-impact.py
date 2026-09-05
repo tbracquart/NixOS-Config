@@ -16,20 +16,17 @@ SCRIPT = Path(__file__).with_name("analyze-flake-impact.py")
 def run_case(changed: dict[str, str], expected: list[str]) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
-        (root / "common.nix").write_text("{ }: { }\n")
         (root / "hosts").mkdir()
         (root / "hosts/A.nix").write_text("{ alpha }: { }\n")
         (root / "hosts/B.nix").write_text("{ beta }: { }\n")
         (root / "flake.nix").write_text(
             """
 {
-  commonModules = [ ./common.nix ];
-  hostModules = host: [ ./hosts/${host}.nix ];
   nixosConfigurations.A = { alpha, ... }: {
-    modules = commonModules ++ hostModules "A";
+    modules = [ ./hosts/A.nix ];
   };
   nixosConfigurations.B = { beta, ... }: {
-    modules = commonModules ++ hostModules "B";
+    modules = [ ./hosts/B.nix ];
   };
 }
 """
@@ -75,12 +72,11 @@ def run_transitive_case() -> None:
         (root / "flake.nix").write_text(
             """
 {
-  hostModules = host: [ ./hosts/${host}.nix ];
   nixosConfigurations.A = { alpha, ... }: {
-    modules = hostModules "A";
+    modules = [ ./hosts/A.nix ];
   };
   nixosConfigurations.B = { beta, ... }: {
-    modules = hostModules "B";
+    modules = [ ./hosts/B.nix ];
   };
 }
 """
@@ -127,12 +123,11 @@ def run_unreferenced_input_case() -> None:
         (root / "flake.nix").write_text(
             """
 {
-  hostModules = host: [ ./hosts/${host}.nix ];
   nixosConfigurations.A = { alpha, ... }: {
-    modules = hostModules "A";
+    modules = [ ./hosts/A.nix ];
   };
   nixosConfigurations.B = { beta, ... }: {
-    modules = hostModules "B";
+    modules = [ ./hosts/B.nix ];
   };
 }
 """
