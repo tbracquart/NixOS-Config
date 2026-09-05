@@ -24,7 +24,7 @@ jobs:
       flake-definition: ${{ steps.filter.outputs.flake-definition }}
       flake-impact-test: ${{ steps.filter.outputs['flake-impact-test'] }}
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
@@ -87,7 +87,7 @@ jobs:
         if: needs.changes.outputs.flake != 'true'
         run: echo "Aucun changement affectant la flake — vérification ignorée"
 
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: needs.changes.outputs.flake == 'true'
 
       - uses: ./.github/actions/setup-nix-cachix
@@ -109,7 +109,7 @@ jobs:
     outputs:
       build-hosts: ${{ steps.analyze.outputs.build-hosts }}
     steps:
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
