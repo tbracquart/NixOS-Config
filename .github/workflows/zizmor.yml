@@ -14,12 +14,17 @@ on:
       - '.github/actions/**'
       - '.github/dependabot.yml'
 
+concurrency:
+  group: zizmor-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
   zizmor:
     name: Audit zizmor
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       security-events: write
