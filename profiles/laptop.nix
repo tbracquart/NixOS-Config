@@ -1,0 +1,3 @@
+{
+  my.bluetooth.enable = true;
+}
