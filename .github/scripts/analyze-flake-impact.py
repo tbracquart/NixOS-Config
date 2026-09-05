@@ -147,7 +147,10 @@ def resolve_relative(root: Path, source: Path, raw: str) -> Path | None:
 
 
 def analyze_host(
-    root: Path, initial_paths: list[str], direct_inputs: set[str]
+    root: Path,
+    initial_paths: list[str],
+    direct_inputs: set[str],
+    file_cache: dict[Path, str],
 ) -> tuple[set[str], bool]:
     inputs: set[str] = set()
     seen: set[Path] = set()
@@ -163,7 +166,10 @@ def analyze_host(
             continue
         seen.add(path)
         try:
-            text = path.read_text()
+            text = file_cache.get(path)
+            if text is None:
+                text = path.read_text()
+                file_cache[path] = text
         except (OSError, UnicodeDecodeError):
             return inputs, True
         inputs.update(INPUT_RE.findall(text))
@@ -204,13 +210,14 @@ def main() -> int:
     direct_inputs = set(after.get("nodes", {}).get("root", {}).get("inputs", {}))
     host_inputs: dict[str, set[str]] = {}
     analysis_failed = False
+    file_cache: dict[Path, str] = {root / "flake.nix": flake}
     for host in hosts:
         try:
             start = flake.find(f"nixosConfigurations.{host} =")
             block = matching_block(flake, start)
             paths = expand_helper_paths(flake, host)
             paths.extend(PATH_RE.findall(block))
-            found, failed = analyze_host(root, paths, direct_inputs)
+            found, failed = analyze_host(root, paths, direct_inputs, file_cache)
             found.update(
                 name for name in direct_inputs if re.search(rf"\b{re.escape(name)}\b", block)
             )
