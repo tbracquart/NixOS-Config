@@ -9,11 +9,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   update:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 45
     outputs:
@@ -128,6 +129,8 @@ jobs:
   build-hosts:
     needs: update
     if: needs.update.outputs.changed == 'true'
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
