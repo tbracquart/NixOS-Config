@@ -44,7 +44,6 @@ jobs:
             V145-15AST:
               - 'hosts/V145-15AST/**'
               - 'common/**'
-              - 'profiles/**'
               - 'modules/**'
               - 'users/**'
               - 'secrets/**'
@@ -53,7 +52,6 @@ jobs:
             ZenBook-13:
               - 'hosts/ZenBook-13/**'
               - 'common/**'
-              - 'profiles/**'
               - 'modules/**'
               - 'users/thibaut/**'
               - 'secrets/**'
@@ -62,7 +60,6 @@ jobs:
             flake:
               - 'hosts/**'
               - 'common/**'
-              - 'profiles/**'
               - 'modules/**'
               - 'users/**'
               - 'flake.nix'
