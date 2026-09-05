@@ -3,7 +3,7 @@
 # ❄️ NixOS Config
 
 Configuration personnelle NixOS gérée avec **Nix Flakes** et **Home Manager**.
-Le dépôt sépare la configuration système commune, les types de machines, les fonctionnalités réutilisables, les particularités des machines et les environnements utilisateurs.
+Le dépôt sépare la configuration système commune, les fonctionnalités réutilisables, les profils de machines, les particularités des hôtes et les environnements utilisateurs.
 
 ## 🖥️ Hôtes
 
@@ -24,8 +24,9 @@ Home Manager est intégré aux deux configurations. Thibaut est configuré sur l
 ├── hosts/
 │   ├── ZenBook-13/          # Particularités matérielles et système du ZenBook
 │   └── V145-15AST/          # Particularités matérielles et système du V145
-├── profiles/                # Types de machines, composés uniquement de modules
-├── modules/                 # Fonctionnalités NixOS réutilisables
+├── modules/                 # Fonctionnalités NixOS réutilisables et leurs options my.*
+├── profiles/                # Profils de machines composant plusieurs fonctionnalités
+│   └── laptop.nix           # Profil commun aux ordinateurs portables
 ├── users/
 │   ├── thibaut/             # Configuration Home Manager de Thibaut
 │   └── quentin/             # Configuration Home Manager de Quentin
@@ -37,12 +38,14 @@ Home Manager est intégré aux deux configurations. Thibaut est configuré sur l
 La règle générale est de placer chaque élément là où se trouve sa responsabilité :
 
 - `common/` pour ce qui doit réellement s'appliquer à toutes les machines ;
-- `profiles/` pour représenter un type de machine et composer les modules qui lui correspondent ;
-- `modules/` pour encapsuler une fonctionnalité réutilisable ;
-- `hosts/` pour les différences propres à une machine ;
+- `modules/` pour encapsuler une fonctionnalité réutilisable et déclarer son interface d'options ;
+- `profiles/` pour regrouper plusieurs fonctionnalités cohérentes dans un preset de machine, comme `laptop`, `desktop` ou `server` ;
+- `hosts/` pour les différences propres à une machine et les choix de configuration exposés par les modules ;
 - `users/` pour la configuration Home Manager d'un utilisateur.
 
-Un profil ne contient pas l'implémentation des fonctionnalités qu'il sélectionne : il sert uniquement à regrouper des modules. Par exemple, le profil `laptop` sélectionne les fonctionnalités communes aux ordinateurs portables sans imposer leurs paramètres spécifiques à chaque machine.
+Le profil `laptop.nix` est chargé statiquement avec les autres modules communs, puis activé par l'hôte avec l'option lisible `my.profile = "laptop"`. Il est actuellement volontairement minimal, mais constitue le point de composition prévu pour les fonctionnalités communes aux ordinateurs portables. De nouveaux profils pourront être ajoutés sans introduire de sélection dynamique des modules.
+
+Les hôtes composent donc le système avec des `imports` statiques, puis configurent les fonctionnalités réutilisables via leurs options `my.*`. Les modules déclarent ces options et implémentent leur comportement ; les profils fournissent des presets de configuration de plus haut niveau.
 
 ## 🧩 Principes de configuration
 
