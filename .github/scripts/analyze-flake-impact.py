@@ -24,22 +24,73 @@ def load(path: Path):
         return json.load(f)
 
 
+def root_input_ref(data, name):
+    return data.get("nodes", {}).get("root", {}).get("inputs", {}).get(name)
+
+
+def node_name(ref):
+    return ref if isinstance(ref, str) else ref[-1]
+
+
+def reachable_nodes(data, name):
+    """Return every lock node reachable from a top-level root input."""
+    ref = root_input_ref(data, name)
+    if ref is None:
+        return set(), False
+
+    nodes = data.get("nodes", {})
+    queue = [node_name(ref)]
+    seen: set[str] = set()
+    failed = False
+    while queue:
+        current = queue.pop()
+        if current in seen:
+            continue
+        node = nodes.get(current)
+        if node is None:
+            failed = True
+            continue
+        seen.add(current)
+        for child_ref in node.get("inputs", {}).values():
+            queue.append(node_name(child_ref))
+    return seen, failed
+
+
 def root_locked(data, name):
-    ref = data.get("nodes", {}).get("root", {}).get("inputs", {}).get(name)
+    ref = root_input_ref(data, name)
     if ref is None:
         return None
-    node_name = ref if isinstance(ref, str) else ref[-1]
-    return data.get("nodes", {}).get(node_name, {}).get("locked")
+    return data.get("nodes", {}).get(node_name(ref), {}).get("locked")
 
 
 def changed_inputs(before, after):
+    """Return top-level inputs whose complete lock closure changed."""
     before_names = set(before.get("nodes", {}).get("root", {}).get("inputs", {}))
     after_names = set(after.get("nodes", {}).get("root", {}).get("inputs", {}))
-    return [
-        name
-        for name in sorted(before_names | after_names)
-        if root_locked(before, name) != root_locked(after, name)
-    ]
+    changed = []
+
+    for name in sorted(before_names | after_names):
+        before_nodes, before_failed = reachable_nodes(before, name)
+        after_nodes, after_failed = reachable_nodes(after, name)
+        if before_failed or after_failed:
+            changed.append(name)
+            continue
+        if before_nodes != after_nodes:
+            changed.append(name)
+            continue
+        if root_locked(before, name) != root_locked(after, name):
+            changed.append(name)
+            continue
+        for node in before_nodes:
+            before_data = before.get("nodes", {}).get(node, {})
+            after_data = after.get("nodes", {}).get(node, {})
+            if (
+                before_data.get("locked") != after_data.get("locked")
+                or before_data.get("inputs", {}) != after_data.get("inputs", {})
+            ):
+                changed.append(name)
+                break
+    return changed
 
 
 def matching_block(text: str, start: int) -> str:
