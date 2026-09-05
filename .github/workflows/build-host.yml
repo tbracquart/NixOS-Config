@@ -48,9 +48,15 @@ jobs:
         with:
           name: ${{ inputs.flake-lock-artifact }}
 
+      # PR builds execute repository-controlled code, so they deliberately use
+      # the cache setup without receiving the Cachix write credential.
       - uses: ./.github/actions/setup-nix-cachix
+        if: inputs.push-to-cachix == false
+
+      - uses: ./.github/actions/setup-nix-cachix
+        if: inputs.push-to-cachix
         with:
-          cachix-auth-token: ${{ inputs.push-to-cachix && secrets.CACHIX_AUTH_TOKEN || '' }}
+          cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Build ${{ inputs.host }}
         run: |
