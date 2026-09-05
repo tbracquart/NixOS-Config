@@ -12,12 +12,17 @@ on:
       - '.github/workflows/**'
       - '.github/actions/**'
 
+concurrency:
+  group: actionlint-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
   actionlint:
     name: Lint GitHub Actions
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
