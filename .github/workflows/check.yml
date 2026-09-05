@@ -22,6 +22,7 @@ jobs:
       flake: ${{ steps.filter.outputs.flake }}
       flake-lock: ${{ steps.filter.outputs.flake-lock }}
       flake-definition: ${{ steps.filter.outputs.flake-definition }}
+      flake-impact-test: ${{ steps.filter.outputs.flake-impact-test }}
     steps:
       - uses: actions/checkout@v7.0.1
 
@@ -61,6 +62,9 @@ jobs:
               - 'flake.lock'
             flake-definition:
               - 'flake.nix'
+            flake-impact-test:
+              - '.github/scripts/analyze-flake-impact.py'
+              - 'flake.lock'
 
       # Keep the regression test on this existing runner: it is independent
       # from Nix evaluation and therefore does not need a dedicated runner.
