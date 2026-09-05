@@ -107,7 +107,7 @@ jobs:
               else:
                   body_lines += f"- `{host}` : ignoré (aucune dépendance affectée)\n"
 
-          print(f"title={title}")
+          print(f"title={title[:70]}")
           print("body<<BODY_EOF")
           print(body_lines)
           print("BODY_EOF")
