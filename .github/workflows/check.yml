@@ -80,23 +80,25 @@ jobs:
         if: needs.changes.outputs.flake == 'true'
         run: nix flake check --no-build --accept-flake-config
 
-  # Required checks `build-<host> / build` must remain visible. Therefore the
-  # caller stays unconditional; `build-host.yml` decides at job level whether
-  # a runner is needed, avoiding a runner when the host is unaffected.
-  build-ZenBook-13:
-    needs: changes
-    uses: ./.github/workflows/build-host.yml
-    with:
-      host: ZenBook-13
-      should-build: ${{ needs.changes.outputs.ZenBook-13 == 'true' }}
-    secrets:
-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - name: Vérifier l'analyse automatique de l'impact des inputs
+        if: needs.changes.outputs.flake == 'true'
+        run: |
+          tmpdir=$(mktemp -d)
+          cp flake.lock "$tmpdir/before.json"
+          python3 - "$tmpdir/before.json" "$tmpdir/after.json" <<'PY'
+          import json
+          import sys
 
-  build-V145-15AST:
-    needs: changes
-    uses: ./.github/workflows/build-host.yml
-    with:
-      host: V145-15AST
-      should-build: ${{ needs.changes.outputs.V145-15AST == 'true' }}
-    secrets:
-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          with open(sys.argv[1]) as f:
+              lock = json.load(f)
+          lock["nodes"]["nix-cachyos-kernel"]["locked"]["rev"] = "ci-test-revision"
+          with open(sys.argv[2], "w") as f:
+              json.dump(lock, f)
+          PY
+
+          output=$(python3 .github/scripts/analyze-flake-impact.py \
+            "$tmpdir/before.json" "$tmpdir/after.json" .)
+          echo "$output"
+          expected='["ZenBook-13","V145-15AST"]'
+          actual=$(printf '%s\n' "$output" | sed -n 's/^build-hosts=//p')
+          test "$actual" = "$expected"
