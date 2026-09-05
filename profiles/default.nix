@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, ... }:
 
 {
   imports = [
@@ -6,15 +6,7 @@
   ];
 
   options.my.profile = lib.mkOption {
-    type = lib.types.nullOr (lib.types.enum [ "laptop" ]);
-    default = null;
+    type = lib.types.enum [ "laptop" ];
     description = "Profil matériel et fonctionnel de la machine.";
   };
-
-  config.assertions = [
-    {
-      assertion = config.my.profile != null;
-      message = "Chaque host doit déclarer un profil avec my.profile.";
-    }
-  ];
 }
