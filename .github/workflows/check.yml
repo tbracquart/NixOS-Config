@@ -99,6 +99,27 @@ jobs:
           output=$(python3 .github/scripts/analyze-flake-impact.py \
             "$tmpdir/before.json" "$tmpdir/after.json" .)
           echo "$output"
-          expected='["ZenBook-13","V145-15AST"]'
+          expected='["ZenBook-13"]'
           actual=$(printf '%s\n' "$output" | sed -n 's/^build-hosts=//p')
           test "$actual" = "$expected"
+
+  # Required checks `build-<host> / build` must remain visible. Therefore the
+  # caller stays unconditional; `build-host.yml` decides at job level whether
+  # a runner is needed, avoiding a runner when the host is unaffected.
+  build-ZenBook-13:
+    needs: changes
+    uses: ./.github/workflows/build-host.yml
+    with:
+      host: ZenBook-13
+      should-build: ${{ needs.changes.outputs.ZenBook-13 == 'true' }}
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+  build-V145-15AST:
+    needs: changes
+    uses: ./.github/workflows/build-host.yml
+    with:
+      host: V145-15AST
+      should-build: ${{ needs.changes.outputs.V145-15AST == 'true' }}
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
