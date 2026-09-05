@@ -5,10 +5,6 @@
     ./hardware-configuration.nix
     ./boot.nix
     ../../common
-    ../../modules
-    ../../profiles
-    inputs.home-manager.nixosModules.default
-    inputs.sops-nix.nixosModules.sops
   ];
 
   networking.hostName = "ZenBook-13";
