@@ -1,4 +1,34 @@
+{ inputs, ... }:
+
 {
+  imports = [
+    ./hardware-configuration.nix
+    ./boot.nix
+    ../../common
+    ../../modules
+    ../../profiles
+    inputs.home-manager.nixosModules.default
+    inputs.sops-nix.nixosModules.sops
+  ];
+
+  networking.hostName = "ZenBook-13";
+  system.stateVersion = "26.05";
+
+  nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
+
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = { inherit inputs; };
+
+    users.thibaut = {
+      imports = [
+        ../../users/thibaut/base
+        ../../users/thibaut/variants/zenbook.nix
+      ];
+    };
+  };
+
   my.profile = "laptop";
 
   my.authentication.howdy.ir.enable = true;
