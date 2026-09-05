@@ -81,8 +81,6 @@ jobs:
     needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     steps:
       - name: Vérification non nécessaire
         if: needs.changes.outputs.flake != 'true'

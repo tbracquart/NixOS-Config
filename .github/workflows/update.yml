@@ -16,9 +16,6 @@ jobs:
   update:
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     outputs:
       changed: ${{ steps.update.outputs.changed }}
       pr-title: ${{ steps.diff.outputs.title }}
@@ -31,7 +28,8 @@ jobs:
 
       - uses: ./.github/actions/setup-nix-cachix
         with:
-          cachix-auth-token: ${{ env.CACHIX_AUTH_TOKEN }}
+          github-access-token: ${{ secrets.GITHUB_TOKEN }}
+          cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Sauver flake.lock avant mise à jour
         run: cp flake.lock /tmp/flake.lock.before
