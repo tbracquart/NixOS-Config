@@ -27,6 +27,7 @@ jobs:
       flake-impact-test: ${{ steps.filter.outputs['flake-impact-test'] }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: github.event_name == 'push'
         with:
           persist-credentials: false
 
@@ -118,8 +119,11 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           persist-credentials: false
+
+      - name: Récupérer la version de base de flake.lock
+        run: git fetch --no-tags origin '${{ github.event.pull_request.base.sha }}' --depth=1
 
       - name: Préparer les versions de flake.lock
         run: |
