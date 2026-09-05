@@ -140,7 +140,6 @@ jobs:
         ${{ needs.changes.outputs.ZenBook-13 == 'true' ||
             (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '"ZenBook-13"')) ||
             (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
-    # No Cachix secret on PRs: untrusted PR code must not receive credentials.
 
   build-V145-15AST:
     needs: [changes, analyze-impact]
@@ -148,4 +147,7 @@ jobs:
     uses: ./.github/workflows/build-host.yml
     with:
       host: V145-15AST
-    # No Cachix secret on PRs: untrusted PR code must not receive credentials.
+      should-build: >-
+        ${{ needs.changes.outputs.V145-15AST == 'true' ||
+            (needs['analyze-impact'].result == 'success' && contains(needs['analyze-impact'].outputs['build-hosts'], '"V145-15AST"')) ||
+            (needs.changes.outputs.flake-lock == 'true' && needs.changes.outputs.flake-definition != 'true' && needs['analyze-impact'].result != 'success') }}
