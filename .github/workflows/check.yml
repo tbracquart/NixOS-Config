@@ -49,7 +49,7 @@ jobs:
               - 'common/**'
               - 'profiles/**'
               - 'modules/**'
-              - 'users/**'
+              - 'users/thibaut/**'
               - 'secrets/**'
               - 'flake.nix'
               - 'flake.lock'
