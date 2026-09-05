@@ -3,8 +3,8 @@
 
 The analysis starts at each nixosConfiguration declared in flake.nix, follows
 relative Nix paths found in that configuration and in reachable files, and
-records every inputs.<name> reference it encounters. Unknown constructs are
-handled conservatively by building every host.
+records every input reference it encounters. Unknown constructs are handled
+conservatively by building every host.
 """
 
 from __future__ import annotations
@@ -95,7 +95,9 @@ def resolve_relative(root: Path, source: Path, raw: str) -> Path | None:
     return nix_file if nix_file.is_file() else None
 
 
-def analyze_host(root: Path, initial_paths: list[str]) -> tuple[set[str], bool]:
+def analyze_host(
+    root: Path, initial_paths: list[str], direct_inputs: set[str]
+) -> tuple[set[str], bool]:
     inputs: set[str] = set()
     seen: set[Path] = set()
     queue: list[Path] = []
@@ -114,6 +116,13 @@ def analyze_host(root: Path, initial_paths: list[str]) -> tuple[set[str], bool]:
         except (OSError, UnicodeDecodeError):
             return inputs, True
         inputs.update(INPUT_RE.findall(text))
+        # Host definitions in flake.nix receive flake inputs as bare variables
+        # (for example `nix-cachyos-kernel.overlays...`), so inspect the host
+        # block separately instead of requiring an `inputs.` prefix.
+        if path == root / "flake.nix":
+            inputs.update(
+                name for name in direct_inputs if re.search(rf"\b{re.escape(name)}\b", text)
+            )
         # Following every relative path literal is deliberately conservative:
         # a false positive costs a build, while a missed dependency could make
         # the CI accept an unbuilt host configuration.
@@ -141,6 +150,7 @@ def main() -> int:
         print("analysis-error=no-nixos-configurations", file=sys.stderr)
         return 1
 
+    direct_inputs = set(after.get("nodes", {}).get("root", {}).get("inputs", {}))
     host_inputs: dict[str, set[str]] = {}
     analysis_failed = False
     for host in hosts:
@@ -149,7 +159,10 @@ def main() -> int:
             block = matching_block(flake, start)
             paths = expand_helper_paths(flake, host)
             paths.extend(PATH_RE.findall(block))
-            found, failed = analyze_host(root, paths)
+            found, failed = analyze_host(root, paths, direct_inputs)
+            found.update(
+                name for name in direct_inputs if re.search(rf"\b{re.escape(name)}\b", block)
+            )
             host_inputs[host] = found
             analysis_failed |= failed
         except (OSError, ValueError):
