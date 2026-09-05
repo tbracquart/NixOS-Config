@@ -2,14 +2,14 @@
 
 {
   environment.systemPackages = with pkgs; [
-    pciutils
-    tree
-    file
-    ripgrep
     cachix
+    fastfetch
+    file
+    pciutils
+    ripgrep
     sops
     ssh-to-age
+    tree
     usbutils
-    fastfetch
   ];
 }
