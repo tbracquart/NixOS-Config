@@ -73,7 +73,8 @@ jobs:
             flake-impact-test:
               - '.github/scripts/analyze-flake-impact.py'
               - '.github/scripts/test-analyze-flake-impact.py'
-              - 'flake.lock'
+              - '.github/scripts/prepare-flake-update.py'
+              - '.github/scripts/test-prepare-flake-update.py'
             ci:
               - '.github/workflows/**'
               - '.github/actions/**'
@@ -87,9 +88,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Vérifier l'analyse automatique de l'impact des inputs
+      - name: Vérifier les scripts d'analyse d'impact
         if: steps.filter.outputs['flake-impact-test'] == 'true'
-        run: python3 .github/scripts/test-analyze-flake-impact.py
+        run: |
+          python3 .github/scripts/test-analyze-flake-impact.py
+          python3 .github/scripts/test-prepare-flake-update.py
 
   # Required check: keep this caller unconditional so GitHub always reports
   # `flake-check`. The actual Nix evaluation is skipped when unnecessary.
