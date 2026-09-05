@@ -33,4 +33,8 @@
   my.authentication.howdy.enable = true;
   my.desktop.plasma.enable = true;
   my.flatpak.enable = true;
+
+  # Le profil laptop définit 80 % par défaut, mais cette machine ne doit pas
+  # appliquer de limite de charge en raison de l'état de sa batterie.
+  my.power.batteryChargeLimit = null;
 }
