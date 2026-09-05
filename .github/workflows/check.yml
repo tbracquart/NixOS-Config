@@ -54,16 +54,12 @@ jobs:
               - 'users/**'
               - 'secrets/**'
               - 'flake.nix'
-              - 'flake.lock'
-            flake-impact-test:
-              - '.github/scripts/analyze-flake-impact.py'
-              - 'flake.lock'
 
       # Keep the analyzer regression test in the existing change-detection
       # runner. It only needs a second invocation when the flake or analyzer
       # itself changes, avoiding a dedicated runner for unrelated PRs.
       - name: Vérifier l'analyse automatique de l'impact des inputs
-        if: steps.filter.outputs.flake == 'true' || steps.filter.outputs.flake-impact-test == 'true'
+        if: steps.filter.outputs.flake == 'true' || steps.filter.outputs['flake-impact-test'] == 'true'
         run: |
           tmpdir=$(mktemp -d)
           cp flake.lock "$tmpdir/before.json"
