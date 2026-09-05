@@ -55,6 +55,35 @@ jobs:
               - 'secrets/**'
               - 'flake.nix'
               - 'flake.lock'
+            flake-impact-test:
+              - '.github/scripts/analyze-flake-impact.py'
+              - 'flake.lock'
+
+      # Keep the analyzer regression test in the existing change-detection
+      # runner. It only needs a second invocation when the flake or analyzer
+      # itself changes, avoiding a dedicated runner for unrelated PRs.
+      - name: Vérifier l'analyse automatique de l'impact des inputs
+        if: steps.filter.outputs.flake == 'true' || steps.filter.outputs.flake-impact-test == 'true'
+        run: |
+          tmpdir=$(mktemp -d)
+          cp flake.lock "$tmpdir/before.json"
+          python3 - "$tmpdir/before.json" "$tmpdir/after.json" <<'PY'
+          import json
+          import sys
+
+          with open(sys.argv[1]) as f:
+              lock = json.load(f)
+          lock["nodes"]["nix-cachyos-kernel"]["locked"]["rev"] = "ci-test-revision"
+          with open(sys.argv[2], "w") as f:
+              json.dump(lock, f)
+          PY
+
+          output=$(python3 .github/scripts/analyze-flake-impact.py \
+            "$tmpdir/before.json" "$tmpdir/after.json" .)
+          echo "$output"
+          expected='["ZenBook-13"]'
+          actual=$(printf '%s\n' "$output" | sed -n 's/^build-hosts=//p')
+          test "$actual" = "$expected"
 
   # Required check: keep this caller unconditional so GitHub always reports
   # `flake-check`. The actual Nix evaluation is skipped when unnecessary.
@@ -79,35 +108,6 @@ jobs:
       - name: Vérification de la flake (évaluation seule, pas de build)
         if: needs.changes.outputs.flake == 'true'
         run: nix flake check --no-build --accept-flake-config
-
-  # This test is independent from the Nix evaluation so changes to the
-  # analyzer itself cannot accidentally skip its regression test.
-  flake-impact-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7.0.1
-
-      - name: Vérifier l'analyse automatique de l'impact des inputs
-        run: |
-          tmpdir=$(mktemp -d)
-          cp flake.lock "$tmpdir/before.json"
-          python3 - "$tmpdir/before.json" "$tmpdir/after.json" <<'PY'
-          import json
-          import sys
-
-          with open(sys.argv[1]) as f:
-              lock = json.load(f)
-          lock["nodes"]["nix-cachyos-kernel"]["locked"]["rev"] = "ci-test-revision"
-          with open(sys.argv[2], "w") as f:
-              json.dump(lock, f)
-          PY
-
-          output=$(python3 .github/scripts/analyze-flake-impact.py \
-            "$tmpdir/before.json" "$tmpdir/after.json" .)
-          echo "$output"
-          expected='["ZenBook-13"]'
-          actual=$(printf '%s\n' "$output" | sed -n 's/^build-hosts=//p')
-          test "$actual" = "$expected"
 
   # Required checks `build-<host> / build` must remain visible. Therefore the
   # caller stays unconditional; `build-host.yml` decides at job level whether
