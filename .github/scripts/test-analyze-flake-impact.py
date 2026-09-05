@@ -65,11 +65,66 @@ def run_case(changed: dict[str, str], expected: list[str]) -> None:
             raise AssertionError(f"expected {expected}, got {actual}")
 
 
+def run_transitive_case() -> None:
+    """A nested lock-node change must affect the top-level input that reaches it."""
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        (root / "hosts").mkdir()
+        (root / "hosts/A.nix").write_text("{ alpha }: { }\n")
+        (root / "hosts/B.nix").write_text("{ beta }: { }\n")
+        (root / "flake.nix").write_text(
+            """
+{
+  hostModules = host: [ ./hosts/${host}.nix ];
+  nixosConfigurations.A = { alpha, ... }: {
+    modules = hostModules "A";
+  };
+  nixosConfigurations.B = { beta, ... }: {
+    modules = hostModules "B";
+  };
+}
+"""
+        )
+
+        before = {
+            "nodes": {
+                "root": {"inputs": {"alpha": "alpha", "beta": "beta"}},
+                "alpha": {"locked": {"rev": "a"}, "inputs": {"child": "child"}},
+                "beta": {"locked": {"rev": "b"}},
+                "child": {"locked": {"rev": "child-a"}},
+            }
+        }
+        after = json.loads(json.dumps(before))
+        after["nodes"]["child"]["locked"]["rev"] = "child-b"
+
+        before_path = root / "before.json"
+        after_path = root / "after.json"
+        before_path.write_text(json.dumps(before))
+        after_path.write_text(json.dumps(after))
+
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), str(before_path), str(after_path), str(root)],
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+        actual = next(
+            line.removeprefix("build-hosts=")
+            for line in result.stdout.splitlines()
+            if line.startswith("build-hosts=")
+        )
+        if json.loads(actual) != ["A"]:
+            raise AssertionError(f"expected ['A'], got {actual}")
+
+
 # Host-specific inputs must only rebuild the host that references them.
 run_case({"alpha": "a2"}, ["A"])
 run_case({"beta": "b2"}, ["B"])
 
 # An input unknown to the static dependency graph must conservatively rebuild all hosts.
 run_case({"gamma": "g2"}, ["A", "B"])
+
+# A transitive lock-node change must rebuild hosts using the affected top-level input.
+run_transitive_case()
 
 print("analyze-flake-impact regression tests: OK")
