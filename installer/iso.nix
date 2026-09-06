@@ -1,6 +1,7 @@
 { modulesPath, ... }:
 {
   imports = [
+    # Profil officiel de l'image d'installation minimale NixOS.
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
   ];
 
