@@ -7,6 +7,9 @@
   isoImage.volumeID = "NIXOS_CONFIG_INSTALLER";
   isoImage.isoName = "nixos-config-installer.iso";
 
+  # Le profil minimal upstream construit une ISO démarrable ; nous ajoutons
+  # simplement le dépôt et notre installateur par-dessus.
+
   # Instantané du dépôt utilisé pour construire cette ISO.
   environment.etc."nixos-config".source = repoSource;
 
