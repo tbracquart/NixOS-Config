@@ -37,6 +37,15 @@
   };
 
   outputs = { nixpkgs, ... }@inputs: {
+    nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      specialArgs = {
+        inherit inputs;
+        modulesPath = "${nixpkgs}/nixos/modules";
+      };
+      modules = [ ./installer/iso.nix ];
+    };
+
     nixosConfigurations.ZenBook-13 = nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [ ./hosts/ZenBook-13/configuration.nix ];

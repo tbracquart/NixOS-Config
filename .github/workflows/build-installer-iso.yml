@@ -1,0 +1,61 @@
+name: Construire l'ISO d'installation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "installer/**"
+      - "common/**"
+      - ".github/workflows/build-installer-iso.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: build-installer-iso-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  build:
+    name: Construire l'ISO d'installation
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-nix-cachix
+        with:
+          github-access-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Construire l'ISO
+        run: |
+          set -eux
+          nix build .#nixosConfigurations.installer.config.system.build.isoImage \
+            -o result \
+            --no-update-lock-file \
+            --print-build-logs \
+            --accept-flake-config
+
+      - name: Mettre à jour la release rolling
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          if ! gh release view installer-latest >/dev/null 2>&1; then
+            gh release create installer-latest \
+              --title "Dernière ISO d'installation" \
+              --prerelease \
+              --latest=false \
+              --notes "ISO NixOS d'installation reconstruite automatiquement depuis la branche main."
+          fi
+
+          gh release upload installer-latest result/iso/*.iso --clobber
