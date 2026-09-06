@@ -124,7 +124,18 @@ apply_partition_plan() {
   echo "  EFI   : $EFI_PARTITION"
   echo "  Racine: $ROOT_PARTITION"
   echo
-  echo "Aucun formatage n'est encore effectué."
+  echo "Formatage et montage..."
+  mkfs.fat -F 32 -n NIXOS_BOOT "$EFI_PARTITION"
+  mkfs.ext4 -F -L NIXOS_ROOT "$ROOT_PARTITION"
+
+  mount "$ROOT_PARTITION" /mnt
+  mkdir -p /mnt/boot
+  mount "$EFI_PARTITION" /mnt/boot
+
+  echo
+  echo "Partitions formatées et montées :"
+  findmnt /mnt
+  findmnt /mnt/boot
   pause
 }
 
