@@ -25,7 +25,8 @@ L'installateur peut maintenant :
 
 - afficher le choix entre une nouvelle machine et une machine existante ;
 - générer un rapport matériel avec `nixos-facter` pour une nouvelle machine ;
-- enregistrer temporairement ce rapport dans `/tmp/nixos-config-installer/facter.json` ;
+- enregistrer temporairement le rapport matériel ;
+- tenter de générer un module Nix matériel réutilisable pour la configuration sélectionnée ;
 - consulter les configurations existantes embarquées dans l'ISO ;
 - afficher le plan et la commande d'installation prévue pour une machine existante ;
 - détecter et sélectionner explicitement un disque cible sans le modifier ;
