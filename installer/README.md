@@ -28,6 +28,8 @@ L'installateur peut maintenant :
 - enregistrer temporairement ce rapport dans `/tmp/nixos-config-installer/facter.json` ;
 - consulter les configurations existantes embarquées dans l'ISO ;
 - afficher le plan et la commande d'installation prévue pour une machine existante ;
+- détecter et sélectionner explicitement un disque cible sans le modifier ;
+- afficher l'état actuel du disque sélectionné avant toute opération destructive ;
 - utiliser les outils nécessaires à la découverte du matériel.
 
 Le rapport matériel est temporaire : il disparaît au redémarrage de l'environnement live.

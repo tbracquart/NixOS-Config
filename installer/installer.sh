@@ -11,6 +11,73 @@ pause() {
   read -r -p "Appuyez sur Entrée pour continuer..." _
 }
 
+select_target_disk() {
+  local disks=()
+  local disk
+
+  while IFS= read -r disk; do
+    [ -n "$disk" ] && disks+=("$disk")
+  done < <(lsblk -dn -o PATH,TYPE | awk '$2 == "disk" { print $1 }')
+
+  if [ "${#disks[@]}" -eq 0 ]; then
+    echo
+    echo "Aucun disque utilisable n'a été détecté."
+    pause
+    return 1
+  fi
+
+  echo
+  echo "Disques détectés :"
+  lsblk -d -o PATH,SIZE,MODEL,TRAN
+  echo
+  echo "Choisissez le disque cible."
+  echo "Aucune modification ne sera effectuée à cette étape."
+  echo
+
+  select disk in "${disks[@]}" "Retour"; do
+    case "$disk" in
+      "Retour")
+        return 1
+        ;;
+      "")
+        echo "Choix invalide."
+        ;;
+      *)
+        TARGET_DISK="$disk"
+        return 0
+        ;;
+    esac
+  done
+}
+
+preview_storage_plan() {
+  local mode="$1"
+
+  if ! select_target_disk; then
+    return
+  fi
+
+  clear
+  echo "========================================"
+  echo "       Plan de stockage"
+  echo "========================================"
+  echo
+  echo "Mode : $mode"
+  echo
+  echo "Disque sélectionné :"
+  echo "  $TARGET_DISK"
+  echo
+  echo "--- État actuel ---"
+  lsblk "$TARGET_DISK" -o NAME,PATH,SIZE,TYPE,FSTYPE,MOUNTPOINTS
+  echo
+  echo "⚠️  IMPORTANT"
+  echo "Ce disque n'est PAS encore modifié."
+  echo
+  echo "La prochaine étape définira explicitement le schéma"
+  echo "de partitions avant toute opération destructive."
+  pause
+}
+
 discover_hardware() {
   mkdir -p "$WORK_DIR"
 
@@ -103,7 +170,7 @@ select_existing_host() {
         echo
         echo "Le stockage n'est pas encore prêt : cette commande"
         echo "n'est donc volontairement pas exécutée."
-        pause
+        preview_storage_plan "Machine existante"
         return
         ;;
     esac
@@ -131,6 +198,7 @@ while true; do
   case "$choice" in
     1)
       discover_hardware
+      preview_storage_plan "Nouvelle machine"
       ;;
     2)
       select_existing_host
