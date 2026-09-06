@@ -50,6 +50,59 @@ select_target_disk() {
   done
 }
 
+choose_partition_scheme() {
+  echo
+  echo "Schéma de stockage proposé :"
+  echo
+  echo "  1) EFI + racine (partitionnement automatique simple)"
+  echo "  2) Retour"
+  echo
+
+  while true; do
+    read -r -p "Votre choix [1-2] : " scheme
+
+    case "$scheme" in
+      1)
+        PARTITION_SCHEME="efi-root"
+        return 0
+        ;;
+      2)
+        return 1
+        ;;
+      *)
+        echo "Choix invalide."
+        ;;
+    esac
+  done
+}
+
+preview_partition_plan() {
+  clear
+  echo "========================================"
+  echo "     Plan de partitionnement proposé"
+  echo "========================================"
+  echo
+  echo "Disque cible :"
+  echo "  $TARGET_DISK"
+  echo
+  echo "Schéma : EFI + racine"
+  echo
+  echo "Le plan suivant sera utilisé ultérieurement :"
+  echo
+  echo "  1. Table de partitions GPT"
+  echo "  2. Partition EFI : 1 GiB"
+  echo "     - format : FAT32"
+  echo "     - montage : /mnt/boot"
+  echo "  3. Partition racine : espace restant"
+  echo "     - format : ext4"
+  echo "     - montage : /mnt"
+  echo
+  echo "⚠️  IMPORTANT"
+  echo "Ce plan est uniquement affiché."
+  echo "Aucune partition n'est créée et aucun disque n'est modifié."
+  pause
+}
+
 preview_storage_plan() {
   local mode="$1"
 
@@ -70,12 +123,10 @@ preview_storage_plan() {
   echo "--- État actuel ---"
   lsblk "$TARGET_DISK" -o NAME,PATH,SIZE,TYPE,FSTYPE,MOUNTPOINTS
   echo
-  echo "⚠️  IMPORTANT"
-  echo "Ce disque n'est PAS encore modifié."
-  echo
-  echo "La prochaine étape définira explicitement le schéma"
-  echo "de partitions avant toute opération destructive."
-  pause
+
+  if choose_partition_scheme; then
+    preview_partition_plan
+  fi
 }
 
 discover_hardware() {
