@@ -233,6 +233,45 @@ preview_storage_plan() {
   fi
 }
 
+select_new_machine_host() {
+  local hosts=()
+  local host
+
+  while IFS= read -r -d "" host; do
+    hosts+=("$(basename "$host")")
+  done < <(find "$CONFIG_DIR/hosts" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
+
+  if [ "${#hosts[@]}" -eq 0 ]; then
+    echo
+    echo "Aucune configuration n'a été trouvée dans $CONFIG_DIR."
+    pause
+    return 1
+  fi
+
+  echo
+  echo "Choisissez la configuration de base à utiliser pour cette nouvelle machine."
+  echo
+  echo "Le matériel sera détecté séparément avec nixos-facter."
+  echo
+
+  select host in "${hosts[@]}" "Retour"; do
+    case "$host" in
+      "Retour")
+        return 1
+        ;;
+      "")
+        echo "Choix invalide."
+        ;;
+      *)
+        SELECTED_HOST="$host"
+        echo
+        echo "Configuration de base sélectionnée : #$SELECTED_HOST"
+        return 0
+        ;;
+    esac
+  done
+}
+
 discover_hardware() {
   mkdir -p "$WORK_DIR"
 
@@ -357,8 +396,10 @@ while true; do
 
   case "$choice" in
     1)
-      discover_hardware
-      preview_storage_plan "Nouvelle machine"
+      if select_new_machine_host; then
+        discover_hardware
+        preview_storage_plan "Nouvelle machine"
+      fi
       ;;
     2)
       prepare_existing_host
