@@ -5,6 +5,7 @@ set -euo pipefail
 CONFIG_DIR="/etc/nixos-config"
 WORK_DIR="/tmp/nixos-config-installer"
 FACTER_REPORT="$WORK_DIR/facter.json"
+FACTER_MODULE="$WORK_DIR/facter.nix"
 
 pause() {
   echo
@@ -306,8 +307,17 @@ discover_hardware() {
     echo
     echo "Fichier : $FACTER_REPORT"
     echo
-    echo "Ce rapport pourra être utilisé lors de la création"
-    echo "de la configuration de la nouvelle machine."
+    echo "Le rapport sera converti en module Nix utilisable par"
+    echo "la configuration sélectionnée."
+
+    if nixos-facter -o "$FACTER_MODULE" --format nix 2>/dev/null; then
+      echo
+      echo "Module Nix généré : $FACTER_MODULE"
+    else
+      echo
+      echo "Le rapport JSON est disponible, mais la génération directe"
+      echo "du module Nix n'a pas été prise en charge par cette version."
+    fi
   else
     echo
     echo "La génération du rapport matériel a échoué."
