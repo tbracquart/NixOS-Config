@@ -1,10 +1,10 @@
-{ modulesPath, ... }:
+{ modulesPath, pkgs, ... }:
 {
   imports = [
-    # Profil officiel de l'image d'installation minimale NixOS.
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
+    ./service.nix
   ];
-
   isoImage.volumeID = "NIXOS_CONFIG_INSTALLER";
   isoImage.isoName = "nixos-config-installer.iso";
+  environment.systemPackages = with pkgs; [ git nixos-facter ];
 }
