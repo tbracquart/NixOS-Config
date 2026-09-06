@@ -49,3 +49,17 @@ Après confirmation explicite du disque puis du mot `EFFACER`, l'installateur pe
 ## Fin de l'installation
 
 Lorsque `nixos-install` réussit, l'installateur affiche une confirmation claire et propose de redémarrer immédiatement. Le support d'installation doit être retiré avant le redémarrage.
+
+
+## Test de l'ISO
+
+Avant d'utiliser l'installateur sur une machine réelle, l'ISO doit être testée dans une machine virtuelle.
+
+Le premier test de fumée vérifie notamment :
+
+1. le démarrage de l'image ;
+2. la disponibilité du dépôt embarqué ;
+3. le lancement du service d'installation ;
+4. la disponibilité de `git`, `nix` et `nixos-facter`.
+
+Les tests destructifs de partitionnement et d'installation complète doivent être effectués sur un disque virtuel dédié.
