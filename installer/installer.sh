@@ -209,6 +209,38 @@ preview_partition_plan() {
   confirm_partition_plan
 }
 
+integrate_hardware_module() {
+  local host_file="$1"
+  local import_line='    ./facter.nix'
+
+  if [ ! -f "$FACTER_MODULE" ]; then
+    return 0
+  fi
+
+  if [ ! -f "$host_file" ]; then
+    echo "Impossible de trouver le module principal du host : $host_file"
+    return 1
+  fi
+
+  if grep -Fq "./facter.nix" "$host_file"; then
+    echo "Le module matériel est déjà importé."
+    return 0
+  fi
+
+  if grep -q "imports = \[" "$host_file"; then
+    sed -i '/imports = \[/a\'"$import_line" "$host_file"
+    return 0
+  fi
+
+  cat >> "$host_file" <<'EOF'
+
+# Matériel détecté par l'installateur.
+imports = [
+  ./facter.nix
+];
+EOF
+}
+
 prepare_new_machine_configuration() {
   if [ -z "${SELECTED_HOST:-}" ]; then
     echo "Aucune configuration de base n'a été sélectionnée."
@@ -224,8 +256,24 @@ prepare_new_machine_configuration() {
 
   if [ -f "$FACTER_MODULE" ]; then
     mkdir -p "$GENERATED_CONFIG_DIR/hosts/$SELECTED_HOST"
-    cp "$FACTER_MODULE" "$GENERATED_CONFIG_DIR/hosts/$SELECTED_HOST/facter.nix"
-    echo "Module matériel intégré à la copie de travail."
+    host_dir="$GENERATED_CONFIG_DIR/hosts/$SELECTED_HOST"
+    cp "$FACTER_MODULE" "$host_dir/facter.nix"
+
+    host_file=""
+    for candidate in "$host_dir/default.nix" "$host_dir/configuration.nix"; do
+      if [ -f "$candidate" ]; then
+        host_file="$candidate"
+        break
+      fi
+    done
+
+    if [ -n "$host_file" ]; then
+      integrate_hardware_module "$host_file"
+      echo "Module matériel intégré à : $host_file"
+    else
+      echo "Module matériel copié, mais aucun fichier de configuration du host"
+      echo "n'a été trouvé pour l'importer automatiquement."
+    fi
   else
     echo "Aucun module matériel Nix disponible."
     echo "La configuration de base sera utilisée telle quelle."
