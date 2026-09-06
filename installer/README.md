@@ -17,7 +17,7 @@ Il s'agit d'un instantané de la configuration au moment de la construction de l
 3. sélectionner une configuration de base embarquée ;
 4. identifier ou générer la configuration matérielle ;
 5. préparer une copie de travail de la configuration embarquée pour l'installation ;
-5. préparer explicitement le stockage ;
+6. préparer explicitement le stockage ;
 6. installer la configuration sélectionnée.
 
 ## État actuel
