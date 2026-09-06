@@ -42,6 +42,7 @@
       specialArgs = {
         inherit inputs;
         modulesPath = "${nixpkgs}/nixos/modules";
+        repoSource = ./.;
       };
       modules = [ ./installer/iso.nix ];
     };
