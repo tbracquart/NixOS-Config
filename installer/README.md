@@ -44,3 +44,8 @@ La commande finale prévue pour une machine existante est affichée avant toute 
 Après confirmation explicite du disque puis du mot `EFFACER`, l'installateur peut créer le schéma GPT + EFI + racine. Le formatage est suivi d'une confirmation explicite avant l'exécution de `nixos-install` avec le host sélectionné.
 
 ⚠️ Cette étape supprime les signatures et partitions existantes du disque explicitement confirmé.
+
+
+## Fin de l'installation
+
+Lorsque `nixos-install` réussit, l'installateur affiche une confirmation claire et propose de redémarrer immédiatement. Le support d'installation doit être retiré avant le redémarrage.
