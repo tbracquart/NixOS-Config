@@ -27,8 +27,11 @@ L'installateur peut maintenant :
 - générer un rapport matériel avec `nixos-facter` pour une nouvelle machine ;
 - enregistrer temporairement ce rapport dans `/tmp/nixos-config-installer/facter.json` ;
 - consulter les configurations existantes embarquées dans l'ISO ;
+- afficher le plan et la commande d'installation prévue pour une machine existante ;
 - utiliser les outils nécessaires à la découverte du matériel.
 
 Le rapport matériel est temporaire : il disparaît au redémarrage de l'environnement live.
+
+La commande finale prévue pour une machine existante est affichée avant toute installation, mais elle n'est pas encore exécutée.
 
 Aucun disque n'est modifié automatiquement.
