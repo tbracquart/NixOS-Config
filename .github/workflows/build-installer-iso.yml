@@ -1,0 +1,44 @@
+name: Build installer ISO
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "installer/**"
+      - "common/**"
+      - ".github/workflows/build-installer-iso.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build installer ISO
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v19
+
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
+
+      - name: Build ISO
+        run: nix build .#nixosConfigurations.installer.config.system.build.isoImage --print-build-logs
+
+      - name: Replace rolling installer release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: installer-latest
+          name: Latest installer
+          prerelease: true
+          make_latest: false
+          files: result/iso/*.iso
+          body: |
+            Rolling NixOS installer image built automatically from the current `main` branch.
+
+            This release is replaced whenever the installer is rebuilt successfully.
