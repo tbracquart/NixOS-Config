@@ -14,7 +14,7 @@ Il s'agit d'un instantané de la configuration au moment de la construction de l
 
 1. démarrer l'ISO ;
 2. choisir entre une nouvelle machine et une machine existante ;
-3. utiliser la configuration embarquée ;
+3. sélectionner une configuration de base embarquée ;
 4. identifier ou générer la configuration matérielle ;
 5. préparer explicitement le stockage ;
 6. installer la configuration sélectionnée.
