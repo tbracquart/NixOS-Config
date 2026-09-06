@@ -36,9 +36,7 @@
     };
   };
 
-  outputs = { nixpkgs, ... }@inputs: let
-    system = "x86_64-linux";
-  in {
+  outputs = { nixpkgs, ... }@inputs: {
     nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
       specialArgs = {
         inherit inputs;
