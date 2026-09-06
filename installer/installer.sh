@@ -85,7 +85,24 @@ select_existing_host() {
       *)
         echo
         echo "Configuration sélectionnée : $host"
-        echo "La prochaine étape utilisera cette configuration pour reconstruire la machine."
+        echo
+        echo "========================================"
+        echo "        Plan d'installation"
+        echo "========================================"
+        echo
+        echo "Source de la configuration :"
+        echo "  $CONFIG_DIR"
+        echo
+        echo "Configuration NixOS :"
+        echo "  #$host"
+        echo
+        echo "Commande qui sera utilisée après la préparation"
+        echo "explicite du stockage :"
+        echo
+        echo "  nixos-install --flake $CONFIG_DIR#$host"
+        echo
+        echo "Le stockage n'est pas encore prêt : cette commande"
+        echo "n'est donc volontairement pas exécutée."
         pause
         return
         ;;
