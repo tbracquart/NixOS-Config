@@ -36,9 +36,14 @@
     };
   };
 
-  outputs = { nixpkgs, ... }@inputs: {
+  outputs = { nixpkgs, ... }@inputs: let
+    system = "x86_64-linux";
+  in {
     nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs; };
+      specialArgs = {
+        inherit inputs;
+        modulesPath = "${nixpkgs}/nixos/modules";
+      };
       modules = [ ./installer/iso.nix ];
     };
 
