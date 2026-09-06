@@ -76,6 +76,58 @@ choose_partition_scheme() {
   done
 }
 
+apply_partition_plan() {
+  clear
+  echo "========================================"
+  echo "   Application du plan de stockage"
+  echo "========================================"
+  echo
+  echo "Disque confirmé : $TARGET_DISK"
+  echo
+  echo "Cette opération va supprimer les partitions existantes"
+  echo "sur ce disque et créer le nouveau schéma."
+  echo
+
+  read -r -p "Tapez exactement EFFACER pour lancer l'opération : " destructive_confirmation
+
+  if [ "$destructive_confirmation" != "EFFACER" ]; then
+    echo
+    echo "Opération annulée."
+    pause
+    return
+  fi
+
+  echo
+  echo "Nettoyage des signatures existantes..."
+  wipefs -a "$TARGET_DISK"
+
+  echo "Création de la table GPT..."
+  parted -s "$TARGET_DISK" mklabel gpt
+
+  echo "Création de la partition EFI..."
+  parted -s "$TARGET_DISK" mkpart ESP fat32 1MiB 1025MiB
+  parted -s "$TARGET_DISK" set 1 esp on
+
+  echo "Création de la partition racine..."
+  parted -s "$TARGET_DISK" mkpart primary ext4 1025MiB 100%
+
+  PARTITION_SEPARATOR=""
+  case "$TARGET_DISK" in
+    *nvme*|*mmcblk*) PARTITION_SEPARATOR="p" ;;
+  esac
+
+  EFI_PARTITION="${TARGET_DISK}${PARTITION_SEPARATOR}1"
+  ROOT_PARTITION="${TARGET_DISK}${PARTITION_SEPARATOR}2"
+
+  echo
+  echo "Partitionnement terminé :"
+  echo "  EFI   : $EFI_PARTITION"
+  echo "  Racine: $ROOT_PARTITION"
+  echo
+  echo "Aucun formatage n'est encore effectué."
+  pause
+}
+
 confirm_partition_plan() {
   echo
   echo "⚠️  CONFIRMATION REQUISE"
@@ -90,6 +142,7 @@ confirm_partition_plan() {
     echo "Confirmation enregistrée."
     echo "Aucune modification n'est encore effectuée."
     PARTITION_PLAN_CONFIRMED=1
+    apply_partition_plan
   else
     echo
     echo "Confirmation incorrecte. Le plan est annulé."

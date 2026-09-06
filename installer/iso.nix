@@ -14,5 +14,7 @@
   environment.systemPackages = with pkgs; [
     git
     nixos-facter
+    parted
+    util-linux
   ];
 }

@@ -39,4 +39,6 @@ Le rapport matériel est temporaire : il disparaît au redémarrage de l'environ
 
 La commande finale prévue pour une machine existante est affichée avant toute installation, mais elle n'est pas encore exécutée.
 
-Aucun disque n'est modifié automatiquement.
+Après confirmation explicite du disque puis du mot `EFFACER`, l'installateur peut créer le schéma GPT + EFI + racine. Le formatage et l'installation NixOS restent des étapes séparées.
+
+⚠️ Cette étape supprime les signatures et partitions existantes du disque explicitement confirmé.
