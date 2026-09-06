@@ -3,6 +3,58 @@
 set -euo pipefail
 
 CONFIG_DIR="/etc/nixos-config"
+WORK_DIR="/tmp/nixos-config-installer"
+FACTER_REPORT="$WORK_DIR/facter.json"
+
+pause() {
+  echo
+  read -r -p "Appuyez sur Entrée pour continuer..." _
+}
+
+discover_hardware() {
+  mkdir -p "$WORK_DIR"
+
+  clear
+  echo "========================================"
+  echo "       Découverte du matériel"
+  echo "========================================"
+  echo
+  echo "Cette étape analyse uniquement la machine."
+  echo "Aucun disque ne sera modifié."
+  echo
+
+  echo "--- Architecture ---"
+  uname -m
+  echo
+
+  echo "--- Processeur ---"
+  lscpu | grep -E "Model name|Architecture" || true
+  echo
+
+  echo "--- Stockage détecté ---"
+  lsblk -o NAME,SIZE,TYPE,MODEL
+  echo
+
+  echo "--- Rapport matériel ---"
+  echo "Génération de : $FACTER_REPORT"
+  echo
+
+  if nixos-facter -o "$FACTER_REPORT"; then
+    echo
+    echo "Rapport matériel généré avec succès."
+    echo
+    echo "Fichier : $FACTER_REPORT"
+    echo
+    echo "Ce rapport pourra être utilisé lors de la création"
+    echo "de la configuration de la nouvelle machine."
+  else
+    echo
+    echo "La génération du rapport matériel a échoué."
+    echo "Consultez les messages ci-dessus avant de continuer."
+  fi
+
+  pause
+}
 
 select_existing_host() {
   local hosts=()
@@ -15,6 +67,7 @@ select_existing_host() {
   if [ "${#hosts[@]}" -eq 0 ]; then
     echo
     echo "Aucune configuration existante n'a été trouvée."
+    pause
     return
   fi
 
@@ -33,7 +86,7 @@ select_existing_host() {
         echo
         echo "Configuration sélectionnée : $host"
         echo "La prochaine étape utilisera cette configuration pour reconstruire la machine."
-        read -r -p "Appuyez sur Entrée pour revenir au menu..." _
+        pause
         return
         ;;
     esac
@@ -60,10 +113,7 @@ while true; do
 
   case "$choice" in
     1)
-      echo
-      echo "Mode : nouvelle machine"
-      echo "La prochaine étape préparera la détection du matériel."
-      read -r -p "Appuyez sur Entrée pour revenir au menu..." _
+      discover_hardware
       ;;
     2)
       select_existing_host
@@ -76,7 +126,7 @@ while true; do
     *)
       echo
       echo "Choix invalide."
-      read -r -p "Appuyez sur Entrée pour réessayer..." _
+      pause
       ;;
   esac
 done
