@@ -278,7 +278,7 @@ discover_hardware() {
   pause
 }
 
-select_existing_host() {
+prepare_existing_host() {
   local hosts=()
   local host
 
@@ -326,6 +326,10 @@ select_existing_host() {
         echo
         echo "Le stockage n'est pas encore prêt : cette commande"
         echo "n'est donc volontairement pas exécutée."
+        echo
+        echo "Configuration prête pour l'installation : #$SELECTED_HOST"
+        echo "Vous allez maintenant pouvoir préparer le stockage."
+        pause
         preview_storage_plan "Machine existante"
         return
         ;;
@@ -357,7 +361,7 @@ while true; do
       preview_storage_plan "Nouvelle machine"
       ;;
     2)
-      select_existing_host
+      prepare_existing_host
       ;;
     3)
       echo
