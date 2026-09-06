@@ -1,7 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, modulesPath, ... }:
 {
   imports = [
-    "${pkgs.path}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares.nix"
+    (modulesPath + "/installer/cd-dvd/installation-cd-graphical-calamares.nix")
   ];
 
   isoImage.volumeID = "NIXOS_CONFIG_INSTALLER";
