@@ -53,7 +53,6 @@ jobs:
           if ! gh release view installer-latest >/dev/null 2>&1; then
             gh release create installer-latest \
               --title "Dernière ISO d'installation" \
-              --prerelease \
               --latest=false \
               --notes "ISO NixOS d'installation reconstruite automatiquement depuis la branche main."
           fi
@@ -64,5 +63,7 @@ jobs:
           while IFS= read -r asset; do
             gh release delete-asset installer-latest "$asset" --yes
           done < <(gh release view installer-latest --json assets --jq '.assets[].name')
+
+          gh release edit installer-latest --prerelease=false --latest=false
 
           gh release upload installer-latest result/iso/*.iso
