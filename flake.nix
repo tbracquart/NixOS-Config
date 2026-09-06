@@ -38,6 +38,7 @@
 
   outputs = { nixpkgs, ... }@inputs: {
     nixosConfigurations.installer = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
       specialArgs = {
         inherit inputs;
         modulesPath = "${nixpkgs}/nixos/modules";
