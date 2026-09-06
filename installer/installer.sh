@@ -136,6 +136,22 @@ apply_partition_plan() {
   echo "Partitions formatées et montées :"
   findmnt /mnt
   findmnt /mnt/boot
+  echo
+  echo "Installation NixOS..."
+  echo "La configuration sera installée depuis :"
+  echo "  $CONFIG_DIR"
+  echo
+  read -r -p "Tapez INSTALLER pour lancer nixos-install : " install_confirmation
+
+  if [ "$install_confirmation" = "INSTALLER" ]; then
+    nixos-install --root /mnt --flake "$CONFIG_DIR#$SELECTED_HOST" --no-root-passwd
+    echo
+    echo "Installation terminée."
+  else
+    echo
+    echo "Installation annulée."
+  fi
+
   pause
 }
 
@@ -290,6 +306,7 @@ select_existing_host() {
         ;;
       *)
         echo
+        SELECTED_HOST="$host"
         echo "Configuration sélectionnée : $host"
         echo
         echo "========================================"
