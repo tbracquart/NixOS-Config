@@ -76,6 +76,29 @@ choose_partition_scheme() {
   done
 }
 
+confirm_partition_plan() {
+  echo
+  echo "⚠️  CONFIRMATION REQUISE"
+  echo
+  echo "La prochaine version de l'installateur pourra effacer"
+  echo "et repartitionner le disque sélectionné."
+  echo
+  read -r -p "Tapez exactement le chemin du disque ($TARGET_DISK) pour confirmer : " confirmation
+
+  if [ "$confirmation" = "$TARGET_DISK" ]; then
+    echo
+    echo "Confirmation enregistrée."
+    echo "Aucune modification n'est encore effectuée."
+    PARTITION_PLAN_CONFIRMED=1
+  else
+    echo
+    echo "Confirmation incorrecte. Le plan est annulé."
+    PARTITION_PLAN_CONFIRMED=0
+  fi
+
+  pause
+}
+
 preview_partition_plan() {
   clear
   echo "========================================"
@@ -100,7 +123,8 @@ preview_partition_plan() {
   echo "⚠️  IMPORTANT"
   echo "Ce plan est uniquement affiché."
   echo "Aucune partition n'est créée et aucun disque n'est modifié."
-  pause
+
+  confirm_partition_plan
 }
 
 preview_storage_plan() {
