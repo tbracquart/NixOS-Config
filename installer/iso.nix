@@ -7,6 +7,7 @@
   isoImage.volumeID = "NIXOS_CONFIG_INSTALLER";
   isoImage.isoName = "nixos-config-installer.iso";
 
+  # Validation continue : toute modification de l'installateur déclenche la recette ISO.
   # Le profil minimal upstream construit une ISO démarrable ; nous ajoutons
   # simplement le dépôt et notre installateur par-dessus.
 
