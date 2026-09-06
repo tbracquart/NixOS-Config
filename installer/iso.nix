@@ -1,14 +1,9 @@
-{ pkgs, modulesPath, ... }:
+{ modulesPath, ... }:
 {
   imports = [
-    (modulesPath + "/installer/cd-dvd/installation-cd-graphical-calamares.nix")
+    (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
   ];
 
   isoImage.volumeID = "NIXOS_CONFIG_INSTALLER";
   isoImage.isoName = "nixos-config-installer.iso";
-
-  environment.systemPackages = with pkgs; [
-    git
-    gh
-  ];
 }
