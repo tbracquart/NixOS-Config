@@ -148,7 +148,22 @@ apply_partition_plan() {
   if [ "$install_confirmation" = "INSTALLER" ]; then
     nixos-install --root /mnt --flake "${INSTALL_CONFIG_DIR:-$CONFIG_DIR}#$SELECTED_HOST" --no-root-passwd
     echo
-    echo "Installation terminée."
+    echo "Installation terminée avec succès."
+    echo
+    echo "La configuration NixOS est maintenant installée sur le disque."
+    echo "Retirez le support d'installation avant de redémarrer."
+
+    read -r -p "Redémarrer maintenant ? [o/N] " reboot_answer
+    case "$reboot_answer" in
+      o|O|oui|OUI|y|Y|yes|YES)
+        echo "Redémarrage..."
+        sync
+        reboot
+        ;;
+      *)
+        echo "Vous pouvez redémarrer plus tard avec la commande : reboot"
+        ;;
+    esac
   else
     echo
     echo "Installation annulée."
