@@ -6,5 +6,10 @@
   ];
   isoImage.volumeID = "NIXOS_CONFIG_INSTALLER";
   isoImage.isoName = "nixos-config-installer.iso";
-  environment.systemPackages = with pkgs; [ git nixos-facter ];
+
+  # Outils nécessaires aux prochaines étapes de l'installateur personnalisé.
+  environment.systemPackages = with pkgs; [
+    git
+    nixos-facter
+  ];
 }
