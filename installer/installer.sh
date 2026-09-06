@@ -6,6 +6,7 @@ CONFIG_DIR="/etc/nixos-config"
 WORK_DIR="/tmp/nixos-config-installer"
 FACTER_REPORT="$WORK_DIR/facter.json"
 FACTER_MODULE="$WORK_DIR/facter.nix"
+GENERATED_CONFIG_DIR="$WORK_DIR/configuration"
 
 pause() {
   echo
@@ -145,7 +146,7 @@ apply_partition_plan() {
   read -r -p "Tapez INSTALLER pour lancer nixos-install : " install_confirmation
 
   if [ "$install_confirmation" = "INSTALLER" ]; then
-    nixos-install --root /mnt --flake "$CONFIG_DIR#$SELECTED_HOST" --no-root-passwd
+    nixos-install --root /mnt --flake "${INSTALL_CONFIG_DIR:-$CONFIG_DIR}#$SELECTED_HOST" --no-root-passwd
     echo
     echo "Installation terminée."
   else
@@ -206,6 +207,33 @@ preview_partition_plan() {
   echo "Aucune partition n'est créée et aucun disque n'est modifié."
 
   confirm_partition_plan
+}
+
+prepare_new_machine_configuration() {
+  if [ -z "${SELECTED_HOST:-}" ]; then
+    echo "Aucune configuration de base n'a été sélectionnée."
+    return 1
+  fi
+
+  rm -rf "$GENERATED_CONFIG_DIR"
+  mkdir -p "$GENERATED_CONFIG_DIR"
+
+  echo
+  echo "Préparation de la configuration pour la nouvelle machine..."
+  cp -a "$CONFIG_DIR/." "$GENERATED_CONFIG_DIR/"
+
+  if [ -f "$FACTER_MODULE" ]; then
+    mkdir -p "$GENERATED_CONFIG_DIR/hosts/$SELECTED_HOST"
+    cp "$FACTER_MODULE" "$GENERATED_CONFIG_DIR/hosts/$SELECTED_HOST/facter.nix"
+    echo "Module matériel intégré à la copie de travail."
+  else
+    echo "Aucun module matériel Nix disponible."
+    echo "La configuration de base sera utilisée telle quelle."
+  fi
+
+  INSTALL_CONFIG_DIR="$GENERATED_CONFIG_DIR"
+  echo "Configuration de travail prête : $INSTALL_CONFIG_DIR"
+  return 0
 }
 
 preview_storage_plan() {
@@ -408,6 +436,7 @@ while true; do
     1)
       if select_new_machine_host; then
         discover_hardware
+        prepare_new_machine_configuration
         preview_storage_plan "Nouvelle machine"
       fi
       ;;
