@@ -31,7 +31,8 @@ L'installateur peut maintenant :
 - détecter et sélectionner explicitement un disque cible sans le modifier ;
 - afficher l'état actuel du disque sélectionné avant toute opération destructive ;
 - proposer explicitement un schéma de partitionnement ;
-- afficher le plan complet avant toute création de partition.
+- afficher le plan complet avant toute création de partition ;
+- demander une confirmation explicite du disque cible avant une future opération destructive.
 - utiliser les outils nécessaires à la découverte du matériel.
 
 Le rapport matériel est temporaire : il disparaît au redémarrage de l'environnement live.
