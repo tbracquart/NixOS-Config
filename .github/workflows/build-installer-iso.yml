@@ -58,4 +58,11 @@ jobs:
               --notes "ISO NixOS d'installation reconstruite automatiquement depuis la branche main."
           fi
 
-          gh release upload installer-latest result/iso/*.iso --clobber
+          # La release rolling ne doit contenir que l'image la plus récente.
+          # Les noms des ISO changent avec la version de Nixpkgs, donc --clobber
+          # seul ne suffit pas à remplacer l'ancien fichier.
+          while IFS= read -r asset; do
+            gh release delete-asset installer-latest "$asset" --yes
+          done < <(gh release view installer-latest --json assets --jq '.assets[].name')
+
+          gh release upload installer-latest result/iso/*.iso
