@@ -7,8 +7,12 @@ on:
     paths:
       - "flake.nix"
       - "flake.lock"
-      - "installer/**"
+      # Un changement de documentation ne modifie pas l'ISO.
+      - "installer/iso.nix"
+      - "installer/service.nix"
+      - "installer/installer.sh"
       - "common/**"
+      - ".github/actions/setup-nix-cachix/**"
       - ".github/workflows/build-installer-iso.yml"
   workflow_dispatch:
 
