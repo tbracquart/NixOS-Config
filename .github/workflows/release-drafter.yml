@@ -55,6 +55,7 @@ jobs:
           tag: v${{ steps.calver.outputs.version }}
           name: v${{ steps.calver.outputs.name }}
           version: ${{ steps.calver.outputs.version }}
-          publish: true
+          publish: false
+          # Maintient une prochaine release en brouillon. La publication est volontaire.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

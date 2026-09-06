@@ -52,6 +52,9 @@ change-title-escapes: '\<*_&'
 no-changes-template: '- Aucun changement'
 
 template: |
+  > Cette release est préparée automatiquement. Elle est publiée lorsqu'un jalon du projet est considéré comme terminé.
+
+
   ## Changements
 
   $CHANGES
