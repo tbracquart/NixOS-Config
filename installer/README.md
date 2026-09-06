@@ -30,6 +30,8 @@ L'installateur peut maintenant :
 - afficher le plan et la commande d'installation prévue pour une machine existante ;
 - détecter et sélectionner explicitement un disque cible sans le modifier ;
 - afficher l'état actuel du disque sélectionné avant toute opération destructive ;
+- proposer explicitement un schéma de partitionnement ;
+- afficher le plan complet avant toute création de partition.
 - utiliser les outils nécessaires à la découverte du matériel.
 
 Le rapport matériel est temporaire : il disparaît au redémarrage de l'environnement live.
